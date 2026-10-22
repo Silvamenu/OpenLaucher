@@ -46,6 +46,7 @@ export function LoginScreen() {
   const [usePin, setUsePin] = useState(false)
   const [newPin, setNewPin] = useState('')
   const [createError, setCreateError] = useState('')
+  const [creating, setCreating] = useState(false)
   const [filled, setFilled] = useState(false)
   const [toast, setToast] = useState('')
   const toastTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
@@ -145,13 +146,17 @@ export function LoginScreen() {
 
   const canCreate = newName.trim() !== '' && (!usePin || PIN_PATTERN.test(newPin))
   const create = async () => {
+    if (creating) return
     if (!newName.trim()) return setCreateError(t('login.error.name'))
     if (usePin && !PIN_PATTERN.test(newPin)) return setCreateError(t('login.error.pin'))
+    setCreating(true)
     try {
       enter(await window.api.profiles.create({ name: newName, color: newColor, pin: usePin ? newPin : null }))
     } catch (err) {
       const field = (err as { params?: { field?: string } }).params?.field
       setCreateError(field === 'pin' ? t('login.error.pin') : field === 'name' ? t('login.error.name') : errorMessage(err, t))
+    } finally {
+      setCreating(false)
     }
   }
 

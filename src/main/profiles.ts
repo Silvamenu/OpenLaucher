@@ -105,8 +105,11 @@ export class ProfileService {
 
   async create(input: unknown): Promise<ProfilesState> {
     const { name, color, pin } = parse(newProfileSchema, input)
+    // O hash vem antes da conferência do nome: entre ela e a gravação não há espera, então
+    // duas criações ao mesmo tempo (clique duplo) não passam as duas.
+    const pinHash = pin ? await hashPin(pin) : null
     this.assertNameFree(name)
-    const profile: StoredProfile = { id: randomUUID(), name, color, pin: pin ? await hashPin(pin) : null, createdAt: new Date().toISOString() }
+    const profile: StoredProfile = { id: randomUUID(), name, color, pin: pinHash, createdAt: new Date().toISOString() }
     this.store.setProfiles([...this.store.getProfiles(), profile])
     this.currentId = profile.id
     return this.state()
@@ -132,12 +135,13 @@ export class ProfileService {
 
   /** Só o perfil em uso pode ser alterado (quem entrou nele já passou pelo PIN). */
   async update(id: string, input: unknown): Promise<ProfilesState> {
+    const patch = parse(patchSchema, input)
+    // Como em create: o hash antes das conferências, que leem o estado já atualizado.
+    const pinHash = typeof patch.pin === 'string' ? await hashPin(patch.pin) : patch.pin
     const profile = this.require(id)
     if (profile.id !== this.currentId) throw new AppError('PERMISSION_DENIED', id)
-    const patch = parse(patchSchema, input)
     if (patch.name !== undefined) this.assertNameFree(patch.name, id)
-    let pin = profile.pin
-    if (patch.pin !== undefined) pin = patch.pin === null ? null : await hashPin(patch.pin)
+    const pin = pinHash === undefined ? profile.pin : pinHash
     const next: StoredProfile = { ...profile, name: patch.name ?? profile.name, color: patch.color ?? profile.color, pin }
     this.store.setProfiles(this.store.getProfiles().map((p) => (p.id === id ? next : p)))
     return this.state()

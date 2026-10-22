@@ -126,7 +126,11 @@ export class LibraryService {
     // "Zelda 64: Recompiled" vira "Zelda 64 Recompiled" (":" não vale em nome de pasta no Windows).
     const dir = path.join(path.resolve(parent), sanitizeFileName(manifest.name.replace(/:/g, '')))
     const inLibrary = this.ctx.store.getEntries().some((e) => path.resolve(e.path).toLowerCase() === dir.toLowerCase())
-    const contents = await fs.readdir(dir).catch(() => [])
+    // Só "não existe" conta como vazia; pasta que não dá para listar (permissão) não pode receber a instalação.
+    const contents = await fs.readdir(dir).catch((err: NodeJS.ErrnoException) => {
+      if (err.code === 'ENOENT') return []
+      throw err
+    })
     if (inLibrary || contents.length > 0) throw new AppError('FOLDER_NOT_EMPTY', dir, { path: dir })
     await fs.mkdir(dir, { recursive: true })
     return this.add(dir, manifest.id)

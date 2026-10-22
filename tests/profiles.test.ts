@@ -31,6 +31,13 @@ describe('perfis locais', () => {
     await expect(service.create({ name: 'ANA', color: 2, pin: null })).rejects.toMatchObject({ code: 'PROFILE_EXISTS' })
   })
 
+  it('duas criações iguais ao mesmo tempo (clique duplo) geram um perfil só', async () => {
+    const { service, saved } = setup()
+    const results = await Promise.allSettled([service.create({ name: 'Ana', color: 0, pin: '1234' }), service.create({ name: 'Ana', color: 0, pin: '1234' })])
+    expect(results.map((r) => r.status).sort()).toEqual(['fulfilled', 'rejected'])
+    expect(saved()).toHaveLength(1)
+  })
+
   it('PIN errado não entra e espera antes de responder; o certo entra', async () => {
     const { service, waits } = setup()
     const { current } = await service.create({ name: 'Ana', color: 0, pin: '4321' })
