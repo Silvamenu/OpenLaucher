@@ -88,6 +88,27 @@ export async function hashFile(file: string, algorithm: 'sha1' | 'sha256'): Prom
   return hash.digest('hex')
 }
 
+/**
+ * Lê um arquivo de texto pequeno, recusando (null) se passar de `maxBytes`. Abre uma vez só e lê
+ * no máximo maxBytes + 1: não há corrida entre conferir o tamanho e ler, nem arquivo enorme na memória.
+ */
+export async function readSmallTextFile(file: string, maxBytes: number): Promise<string | null> {
+  const handle = await fs.open(file, 'r')
+  try {
+    const buffer = Buffer.alloc(maxBytes + 1)
+    let size = 0
+    for (;;) {
+      const { bytesRead } = await handle.read(buffer, size, buffer.length - size, size)
+      if (bytesRead === 0) break
+      size += bytesRead
+      if (size > maxBytes) return null
+    }
+    return buffer.subarray(0, size).toString('utf8')
+  } finally {
+    await handle.close()
+  }
+}
+
 /** Escrita atômica: grava em arquivo temporário e renomeia. */
 export async function writeFileAtomic(file: string, content: string | Buffer): Promise<void> {
   await fs.mkdir(path.dirname(file), { recursive: true })

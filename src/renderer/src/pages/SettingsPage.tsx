@@ -1,9 +1,11 @@
-import { RefreshCw, ShieldCheck } from 'lucide-react'
+import { Lock, RefreshCw, ShieldCheck } from 'lucide-react'
 import { useEffect, useState, type ReactNode } from 'react'
-import type { RateLimitInfo, ThemeSetting } from '../../../shared/types'
-import { Button, Chip, Dot, Page, PageHeader, SectionLabel, Toggle } from '../components/ui'
+import { PIN_PATTERN, PROFILE_COLORS, PROFILE_NAME_MAX } from '../../../shared/profile'
+import type { ProfilePatch, ProfileView, RateLimitInfo, ThemeSetting } from '../../../shared/types'
+import { ProfileAvatar } from '../components/ProfileAvatar'
+import { Button, Chip, ConfirmModal, Dot, Page, PageHeader, Pill, SectionLabel, Toggle } from '../components/ui'
 import { useI18n } from '../i18n'
-import { errorMessage, formatRateLimit, initials } from '../lib/format'
+import { errorMessage, formatRateLimit } from '../lib/format'
 import { useAppState } from '../state/AppState'
 
 const LAUNCHER_REPO = 'https://github.com/Silvamenu/Relaunch'
@@ -29,20 +31,159 @@ function Row({ title, hint, children }: { title: ReactNode; hint?: ReactNode; ch
   )
 }
 
+type Save = (fn: () => Promise<unknown>, success?: string) => Promise<void>
+
+/** Perfil em uso (nome, cor, PIN, exportar) e a lista de perfis deste computador. */
+function ProfileSettings({ save }: { save: Save }) {
+  const { profiles, setProfiles, toast } = useAppState()
+  const { t } = useI18n()
+  const current = profiles?.current
+  const [name, setName] = useState(current?.name ?? '')
+  const [newPin, setNewPin] = useState<string | null>(null)
+  const [removing, setRemoving] = useState<ProfileView | null>(null)
+
+  // Mantém o campo em sincronia se o nome mudar por fora.
+  const [savedName, setSavedName] = useState(current?.name ?? '')
+  if ((current?.name ?? '') !== savedName) {
+    setSavedName(current?.name ?? '')
+    setName(current?.name ?? '')
+  }
+  if (!profiles || !current) return null
+
+  const update = (patch: ProfilePatch, success?: string) => save(async () => setProfiles(await window.api.profiles.update(current.id, patch)), success)
+  const rename = () => {
+    if (!name.trim()) setName(current.name)
+    else if (name !== current.name) void update({ name })
+  }
+  const savePin = async () => {
+    if (newPin === null || !PIN_PATTERN.test(newPin)) return
+    await update({ pin: newPin }, t('settings.profilePinSaved'))
+    setNewPin(null)
+  }
+
+  return (
+    <>
+      <Section title={t('settings.profile')}>
+        <Row title={t('settings.profileName')} hint={t('settings.profileNameHint')}>
+          <ProfileAvatar profile={{ name, color: current.color }} size={32} fontSize={12} />
+          <input
+            id="profile-name"
+            className="input w-56"
+            value={name}
+            maxLength={PROFILE_NAME_MAX}
+            onChange={(e) => setName(e.target.value)}
+            onBlur={rename}
+            onKeyDown={(e) => e.key === 'Enter' && (e.target as HTMLInputElement).blur()}
+          />
+        </Row>
+        <Row title={t('settings.profileColor')}>
+          {PROFILE_COLORS.slice(0, 4).map((bg, i) => (
+            <button
+              key={bg}
+              type="button"
+              aria-label={`${t('settings.profileColor')} ${i + 1}`}
+              aria-pressed={i === current.color}
+              onClick={() => void update({ color: i })}
+              className="h-7 w-7 rounded-full"
+              style={{ background: bg, boxShadow: `0 0 0 2px var(--panel), 0 0 0 ${i === current.color ? 4 : 0}px var(--fg)` }}
+            />
+          ))}
+        </Row>
+        <Row title={t('settings.profilePin')} hint={t('settings.profilePinHint')}>
+          {newPin !== null ? (
+            <form
+              className="flex items-center gap-2"
+              onSubmit={(e) => {
+                e.preventDefault()
+                void savePin()
+              }}
+            >
+              <input
+                autoFocus
+                aria-label="PIN"
+                className="input w-24 font-mono tracking-[.3em]"
+                inputMode="numeric"
+                autoComplete="off"
+                maxLength={4}
+                placeholder="0000"
+                value={newPin}
+                onChange={(e) => setNewPin(e.target.value.replace(/\D/g, '').slice(0, 4))}
+              />
+              <Button size="sm" variant="primary" type="submit" disabled={!PIN_PATTERN.test(newPin)}>
+                {t('common.save')}
+              </Button>
+              <Button size="sm" variant="ghost" onClick={() => setNewPin(null)}>
+                {t('common.cancel')}
+              </Button>
+            </form>
+          ) : (
+            <>
+              {current.locked && (
+                <Button size="sm" onClick={() => setNewPin('')}>
+                  {t('settings.profilePinChange')}
+                </Button>
+              )}
+              <Toggle
+                checked={current.locked}
+                onChange={(on) => (on ? setNewPin('') : void update({ pin: null }, t('settings.profilePinRemoved')))}
+                label={current.locked ? t('settings.on') : t('settings.off')}
+              />
+            </>
+          )}
+        </Row>
+        <Row title={t('settings.profileExport')} hint={t('settings.profileExportHint')}>
+          <Button onClick={() => void save(async () => (await window.api.profiles.export()) && toast('success', t('settings.profileExported')))}>
+            {t('settings.profileExportButton')}
+          </Button>
+        </Row>
+      </Section>
+
+      <Section title={t('settings.profiles')}>
+        {profiles.profiles.map((p) => (
+          <Row
+            key={p.id}
+            title={
+              <span className="flex items-center gap-2.5">
+                <ProfileAvatar profile={p} size={26} fontSize={10} />
+                <span className="truncate">{p.name}</span>
+                {p.locked && <Lock size={12} className="shrink-0 text-faint" aria-label={t('settings.profilePin')} />}
+                {p.id === current.id && <Pill>{t('settings.profileCurrent')}</Pill>}
+              </span>
+            }
+          >
+            <Button size="sm" variant="ghost" onClick={() => setRemoving(p)}>
+              {t('settings.profileRemove')}
+            </Button>
+          </Row>
+        ))}
+      </Section>
+
+      {removing && (
+        <ConfirmModal
+          title={t('settings.profileRemoveTitle', { name: removing.name })}
+          body={t('settings.profileRemoveBody')}
+          confirmLabel={t('settings.profileRemove')}
+          cancelLabel={t('common.cancel')}
+          danger
+          onConfirm={() => {
+            const id = removing.id
+            setRemoving(null)
+            void save(async () => setProfiles(await window.api.profiles.remove(id)))
+          }}
+          onCancel={() => setRemoving(null)}
+        />
+      )}
+    </>
+  )
+}
+
 export function SettingsPage() {
   const { settings, updateSettings, items, manifests, setManifests, info, appUpdate, toast, openDevlog } = useAppState()
   const { t, locale } = useI18n()
-  const [name, setName] = useState(settings?.userName ?? '')
   const [token, setToken] = useState('')
   const [rescanning, setRescanning] = useState(false)
   const [rateLimit, setRateLimit] = useState<RateLimitInfo | null>(null)
 
-  // Mantém o campo em sincronia se o nome mudar por fora (ex.: outra tela).
-  const [savedName, setSavedName] = useState(settings?.userName ?? '')
-  if ((settings?.userName ?? '') !== savedName) {
-    setSavedName(settings?.userName ?? '')
-    setName(settings?.userName ?? '')
-  }
   useEffect(() => {
     void window.api.updates.rateLimit().then(setRateLimit)
   }, [settings?.hasGithubToken])
@@ -101,20 +242,7 @@ export function SettingsPage() {
     <Page narrow>
       <PageHeader title={t('settings.title')} />
 
-      <Section title={t('settings.profile')}>
-        <Row title={t('settings.userName')} hint={t('settings.userNameHint')}>
-          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-chip text-[12px] font-semibold">{initials(name) || '–'}</span>
-          <input
-            id="user-name"
-            className="input w-56"
-            value={name}
-            maxLength={60}
-            onChange={(e) => setName(e.target.value)}
-            onBlur={() => name !== settings.userName && void save(() => updateSettings({ userName: name }))}
-            onKeyDown={(e) => e.key === 'Enter' && (e.target as HTMLInputElement).blur()}
-          />
-        </Row>
-      </Section>
+      <ProfileSettings save={save} />
 
       <Section title={t('settings.appearance')}>
         <Row title={t('settings.theme')}>

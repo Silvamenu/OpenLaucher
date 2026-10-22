@@ -3,7 +3,7 @@ import path from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { loadManifests } from '../src/main/manifests'
 import { parseManifest, parseManifestText } from '../src/shared/manifest'
-import { assetPatternsFor, collectTodos, configPathCandidates, executablesFor, launchArgsFor } from '../src/shared/manifestUtils'
+import { assetPatternsFor, collectTodos, configPathCandidates, executablesFor, installableOn, launchArgsFor } from '../src/shared/manifestUtils'
 import { tempDir } from './helpers/fs'
 
 const minimal = {
@@ -140,6 +140,16 @@ describe('manifestos embutidos', () => {
       expect(soh.updates.preserve).toContain('oot.o2r')
       expect(soh.updates.preserve).not.toContain('*.o2r')
     }
+  })
+
+  it('só projetos com binários para a plataforma podem ser baixados pelo app', async () => {
+    const { manifests } = await loadManifests([{ dir, origin: 'builtin' }])
+    const byId = (id: string) => manifests.find((m) => m.id === id)!
+    expect(installableOn(byId('soh'), 'win32')).toBe(true)
+    expect(installableOn(byId('sm64-port'), 'win32')).toBe(false)
+    const noLinux = parseManifest({ ...minimal, updates: { source: 'github-releases', repo: 'o/r', assetPatterns: { win32: '*.zip' } } })
+    if (!noLinux.ok) throw new Error(noLinux.error)
+    expect(installableOn(noLinux.manifest, 'linux')).toBe(false)
   })
 
   it('manifesto do usuário substitui o embutido com o mesmo id e erros são reportados', async () => {

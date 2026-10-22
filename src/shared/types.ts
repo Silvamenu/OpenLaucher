@@ -11,7 +11,6 @@ export type Language = 'pt-BR' | 'en'
 export interface Settings {
   theme: ThemeSetting
   language: Language
-  userName: string
   notifications: boolean
   checkGameUpdates: boolean
 }
@@ -24,6 +23,39 @@ export interface SettingsView extends Settings {
 export interface SettingsPatch extends Partial<Settings> {
   /** string vazia remove o token. */
   githubToken?: string
+}
+
+// ---------------------------------------------------------------------------
+// Perfis (locais, sem conta online)
+// ---------------------------------------------------------------------------
+
+/** Perfil como a interface o vê: o PIN nunca sai do processo principal. */
+export interface ProfileView {
+  id: string
+  name: string
+  /** Índice em PROFILE_COLORS. */
+  color: number
+  /** Tem PIN. */
+  locked: boolean
+}
+
+export interface ProfilesState {
+  profiles: ProfileView[]
+  /** Perfil em uso nesta sessão; null mostra a tela de entrada. */
+  current: ProfileView | null
+}
+
+export interface NewProfile {
+  name: string
+  color: number
+  pin: string | null
+}
+
+/** `pin: null` remove o PIN. */
+export interface ProfilePatch {
+  name?: string
+  color?: number
+  pin?: string | null
 }
 
 // ---------------------------------------------------------------------------
@@ -159,7 +191,9 @@ export type UpdateStage = 'checking' | 'downloading' | 'verifying' | 'backup' | 
 
 export interface UpdateProgress {
   entryId: string
-  kind: 'update' | 'rollback'
+  /** Nome do jogo, para avisos que chegam depois de ele sair da biblioteca (instalação que falhou). */
+  name?: string
+  kind: 'update' | 'rollback' | 'install'
   stage: UpdateStage
   /** 0–1 quando conhecido. */
   progress?: number
@@ -240,6 +274,10 @@ export type AppErrorCode =
   | 'NOT_FOUND'
   | 'INVALID_FILE'
   | 'DISK_FULL'
+  | 'FOLDER_NOT_EMPTY'
+  | 'WRONG_PIN'
+  | 'PROFILE_EXISTS'
+  | 'INVALID_PROFILE'
   | 'UNKNOWN'
 
 export interface AppErrorShape {

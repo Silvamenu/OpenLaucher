@@ -80,7 +80,7 @@ export function DownloadsPage() {
                 <div key={item.entry.id}>
                   <Row item={item} onOpen={() => navigate({ page: 'game', id: item.entry.id, tab: 'updates' })}>
                     <span className="font-mono text-[12px] text-subtle">{p?.version}</span>
-                    {p?.kind === 'update' && (
+                    {p && p.kind !== 'rollback' && (
                       <Button size="sm" variant="danger" onClick={() => void window.api.updates.cancel(item.entry.id)}>
                         {t('upd.cancel')}
                       </Button>
@@ -135,7 +135,9 @@ export function DownloadsPage() {
                     <span className="truncate">
                       {h.kind === 'rollback'
                         ? t('downloads.rolledBackTo', { version: h.version ?? '' })
-                        : t('downloads.updatedTo', { version: h.version ?? '' })}
+                        : h.kind === 'install'
+                          ? t('downloads.installed', { version: h.version ?? '' })
+                          : t('downloads.updatedTo', { version: h.version ?? '' })}
                       {' · '}
                       {h.stage === 'error' && h.error ? errorMessage(h.error, t) : t(`stage.${h.stage}`)}
                     </span>

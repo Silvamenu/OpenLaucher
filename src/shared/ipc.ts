@@ -7,6 +7,9 @@ import type {
   DevlogView,
   LibraryItem,
   ManifestsReport,
+  NewProfile,
+  ProfilePatch,
+  ProfilesState,
   RateLimitInfo,
   ReleaseInfo,
   RequirementsReport,
@@ -64,6 +67,21 @@ export interface RelaunchApi {
     icon(entryId: string): Promise<string | null>
     pickCover(entryId: string): Promise<LibraryItem>
     clearCover(entryId: string): Promise<LibraryItem>
+    /** Escolhe a pasta, cadastra o jogo e baixa a versão mais recente em segundo plano (null se cancelar o diálogo). */
+    install(manifestId: string): Promise<LibraryItem | null>
+  }
+  profiles: {
+    state(): Promise<ProfilesState>
+    create(profile: NewProfile): Promise<ProfilesState>
+    enter(profileId: string, pin?: string): Promise<ProfilesState>
+    leave(): Promise<ProfilesState>
+    /** Só o perfil em uso pode ser alterado. */
+    update(profileId: string, patch: ProfilePatch): Promise<ProfilesState>
+    remove(profileId: string): Promise<ProfilesState>
+    /** Lê um arquivo .relaunch (null se cancelar o diálogo). */
+    import(): Promise<ProfilesState | null>
+    /** Salva o perfil em uso num arquivo .relaunch (false se cancelar o diálogo). */
+    export(): Promise<boolean>
   }
   configs: {
     list(entryId: string): Promise<ConfigFileView[]>

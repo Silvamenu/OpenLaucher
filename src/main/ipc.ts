@@ -1,15 +1,21 @@
-import { app, dialog, ipcMain, shell, type OpenDialogOptions } from 'electron'
+import { app, dialog, ipcMain, shell, type OpenDialogOptions, type SaveDialogOptions } from 'electron'
 import path from 'node:path'
 import { AppError, toErrorShape } from '../shared/errors'
 import type { EntryPatch } from '../shared/ipc'
+import { installableOn } from '../shared/manifestUtils'
 import type { AppInfo, ConfigFileView, IpcResult, SettingsPatch, SettingsView } from '../shared/types'
 import type { AppUpdater } from './appUpdater'
 import { listConfigBackups, readConfigFile, restoreConfigBackup, saveConfigFile } from './configFiles'
 import type { AppContext } from './context'
 import type { DevlogTracker } from './devlogState'
+import { readSmallTextFile, sanitizeFileName, writeFileAtomic } from './fsutil'
 import type { GameUpdateService } from './gameUpdates'
 import { mainText } from './i18n'
 import { COVER_EXTENSIONS, type LibraryService } from './library'
+import type { ProfileService } from './profiles'
+
+/** Um arquivo .relaunch tem poucos bytes; o limite só evita ler um arquivo enorme por engano. */
+const PROFILE_FILE_MAX_BYTES = 64 * 1024
 
 export interface Services {
   ctx: AppContext
@@ -17,6 +23,7 @@ export interface Services {
   updates: GameUpdateService
   appUpdater: AppUpdater
   devlog: DevlogTracker
+  profiles: ProfileService
 }
 
 function str(value: unknown, name = 'valor'): string {
@@ -42,12 +49,17 @@ function handle(channel: string, fn: (...args: unknown[]) => unknown): void {
 }
 
 export function registerIpc(s: Services): void {
-  const { ctx, library, updates, appUpdater, devlog } = s
+  const { ctx, library, updates, appUpdater, devlog, profiles } = s
   const text = () => mainText(ctx.store.getSettings().language)
 
   const openDialog = async (options: OpenDialogOptions): Promise<string | null> => {
     const result = ctx.window ? await dialog.showOpenDialog(ctx.window, options) : await dialog.showOpenDialog(options)
     return result.canceled || result.filePaths.length === 0 ? null : result.filePaths[0]
+  }
+
+  const saveDialog = async (options: SaveDialogOptions): Promise<string | null> => {
+    const result = ctx.window ? await dialog.showSaveDialog(ctx.window, options) : await dialog.showSaveDialog(options)
+    return result.canceled || !result.filePath ? null : result.filePath
   }
 
   const entryOrThrow = (id: string) => {
@@ -152,6 +164,36 @@ export function registerIpc(s: Services): void {
     return file ? library.setCover(str(id), file) : library.item(entryOrThrow(str(id)).entry)
   })
   handle('library:clearCover', (id) => library.clearCover(str(id)))
+  // Pasta escolhida aqui no diálogo; o download segue o mesmo caminho validado das atualizações.
+  handle('library:install', async (manifestId) => {
+    const manifest = ctx.getManifest(str(manifestId, 'manifestId'))
+    if (!manifest || !installableOn(manifest, ctx.platform)) throw new AppError('UPDATES_DISABLED')
+    const parent = await openDialog({ title: text().pickInstallFolder(manifest.name), properties: ['openDirectory', 'createDirectory'] })
+    return parent ? updates.install(manifest, parent) : null
+  })
+
+  // Perfis ------------------------------------------------------------------
+  const profileFilters = () => [{ name: text().profileFile, extensions: ['relaunch'] }]
+  handle('profiles:state', () => profiles.state())
+  handle('profiles:create', (input) => profiles.create(input))
+  handle('profiles:enter', (id, pin) => profiles.enter(str(id), pin))
+  handle('profiles:leave', () => profiles.leave())
+  handle('profiles:update', (id, patch) => profiles.update(str(id), patch))
+  handle('profiles:remove', (id) => profiles.remove(str(id)))
+  handle('profiles:import', async () => {
+    const file = await openDialog({ title: text().importProfile, properties: ['openFile'], filters: profileFilters() })
+    if (!file) return null
+    const content = await readSmallTextFile(file, PROFILE_FILE_MAX_BYTES)
+    if (content === null) throw new AppError('INVALID_FILE')
+    return profiles.importFile(content)
+  })
+  handle('profiles:export', async () => {
+    const { name, content } = profiles.exportCurrent()
+    const file = await saveDialog({ title: text().exportProfile, defaultPath: `${sanitizeFileName(name)}.relaunch`, filters: profileFilters() })
+    if (!file) return false
+    await writeFileAtomic(file, content)
+    return true
+  })
 
   // Configs -----------------------------------------------------------------
   const configView = async (
@@ -202,7 +244,6 @@ export function registerIpc(s: Services): void {
     const clean: Partial<SettingsView> = {}
     if (p.theme === 'dark' || p.theme === 'light' || p.theme === 'system') clean.theme = p.theme
     if (p.language === 'pt-BR' || p.language === 'en') clean.language = p.language
-    if (typeof p.userName === 'string') clean.userName = p.userName.slice(0, 60)
     if (typeof p.notifications === 'boolean') clean.notifications = p.notifications
     if (typeof p.checkGameUpdates === 'boolean') clean.checkGameUpdates = p.checkGameUpdates
     ctx.store.setSettings(clean)

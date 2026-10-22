@@ -2,6 +2,7 @@ import { safeStorage } from 'electron'
 import Store from 'electron-store'
 import type { HttpCacheEntry } from './github'
 import { STORE_NAME } from './legacyData'
+import type { ProfileStore, StoredProfile } from './profiles'
 import type { GameEntry, GameUpdateState, RateLimitInfo, Settings, SettingsView } from '../shared/types'
 
 interface StoredToken {
@@ -17,6 +18,7 @@ interface Schema {
   rateLimit: RateLimitInfo | null
   /** SHA-1 dos arquivos do usuário (ROMs), por caminho|tamanho|data de modificação. */
   fileHashes: Record<string, string>
+  profiles: StoredProfile[]
   app: {
     lastSeenVersion?: string
     releaseNotes: Record<string, { notes: string; date: string | null }>
@@ -26,7 +28,6 @@ interface Schema {
 export const DEFAULT_SETTINGS: Settings = {
   theme: 'dark',
   language: 'pt-BR',
-  userName: '',
   notifications: true,
   checkGameUpdates: true
 }
@@ -38,7 +39,7 @@ const FILE_HASH_LIMIT = 50
  * Persistência local em JSON (electron-store) com acesso tipado.
  * Com `cache`, o arquivo é lido uma vez e os valores devolvidos vêm congelados: copie antes de alterar.
  */
-export class AppStore {
+export class AppStore implements ProfileStore {
   private readonly store = new Store<Schema>({
     name: STORE_NAME,
     cache: true,
@@ -49,6 +50,7 @@ export class AppStore {
       githubToken: null,
       rateLimit: null,
       fileHashes: {},
+      profiles: [],
       app: { releaseNotes: {} }
     }
   })
@@ -73,6 +75,24 @@ export class AppStore {
 
   settingsView(): SettingsView {
     return { ...this.getSettings(), hasGithubToken: !!this.getGithubToken() }
+  }
+
+  /** Nome salvo pelas versões sem perfis; sai das configurações ao ser lido (vira o primeiro perfil uma vez só). */
+  takeLegacyUserName(): string {
+    const { userName, ...settings } = this.store.get('settings') as Settings & { userName?: unknown }
+    if (userName === undefined) return ''
+    this.store.set('settings', settings)
+    return typeof userName === 'string' ? userName : ''
+  }
+
+  // Perfis ------------------------------------------------------------------
+
+  getProfiles(): readonly StoredProfile[] {
+    return this.store.get('profiles')
+  }
+
+  setProfiles(profiles: StoredProfile[]): void {
+    this.store.set('profiles', profiles)
   }
 
   getGithubToken(): string | null {

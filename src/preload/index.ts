@@ -42,7 +42,18 @@ const api: RelaunchApi = {
     launch: (id) => call('library:launch', id),
     icon: (id) => call('library:icon', id),
     pickCover: (id) => call('library:pickCover', id),
-    clearCover: (id) => call('library:clearCover', id)
+    clearCover: (id) => call('library:clearCover', id),
+    install: (manifestId) => call('library:install', manifestId)
+  },
+  profiles: {
+    state: () => call('profiles:state'),
+    create: (profile) => call('profiles:create', profile),
+    enter: (id, pin) => call('profiles:enter', id, pin),
+    leave: () => call('profiles:leave'),
+    update: (id, patch) => call('profiles:update', id, patch),
+    remove: (id) => call('profiles:remove', id),
+    import: () => call('profiles:import'),
+    export: () => call('profiles:export')
   },
   configs: {
     list: (id) => call('configs:list', id),

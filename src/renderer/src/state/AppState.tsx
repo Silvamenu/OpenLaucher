@@ -1,5 +1,15 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
-import type { AppInfo, AppUpdateState, DevlogView, LibraryItem, ManifestsReport, SettingsPatch, SettingsView, UpdateProgress } from '../../../shared/types'
+import type {
+  AppInfo,
+  AppUpdateState,
+  DevlogView,
+  LibraryItem,
+  ManifestsReport,
+  ProfilesState,
+  SettingsPatch,
+  SettingsView,
+  UpdateProgress
+} from '../../../shared/types'
 import { I18nProvider } from '../i18n'
 
 export type Route = { page: 'library' } | { page: 'add' } | { page: 'downloads' } | { page: 'settings' } | { page: 'game'; id: string; tab?: GameTab }
@@ -25,6 +35,9 @@ interface AppStateValue {
   ready: boolean
   info: AppInfo | null
   settings: SettingsView | null
+  /** null enquanto carrega; sem `current`, a tela de entrada aparece. */
+  profiles: ProfilesState | null
+  setProfiles: (state: ProfilesState) => void
   items: LibraryItem[]
   manifests: ManifestsReport
   appUpdate: AppUpdateState
@@ -62,6 +75,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false)
   const [info, setInfo] = useState<AppInfo | null>(null)
   const [settings, setSettings] = useState<SettingsView | null>(null)
+  const [profiles, setProfiles] = useState<ProfilesState | null>(null)
   const [items, setItems] = useState<LibraryItem[]>([])
   const [manifests, setManifests] = useState<ManifestsReport>({ manifests: [], errors: [] })
   const [appUpdate, setAppUpdate] = useState<AppUpdateState>({ status: 'idle' })
@@ -106,11 +120,17 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let alive = true
     void (async () => {
-      const [appInfo, view, update] = await Promise.all([window.api.app.info(), window.api.settings.get(), window.api.appUpdate.state()])
+      const [appInfo, view, update, people] = await Promise.all([
+        window.api.app.info(),
+        window.api.settings.get(),
+        window.api.appUpdate.state(),
+        window.api.profiles.state()
+      ])
       if (!alive) return
       setInfo(appInfo)
       setSettings(view)
       setAppUpdate(update)
+      setProfiles(people)
       await refresh()
       setReady(true)
       const pending = await window.api.devlog.pending()
@@ -149,6 +169,8 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       ready,
       info,
       settings,
+      profiles,
+      setProfiles,
       items,
       manifests,
       appUpdate,
@@ -171,6 +193,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       ready,
       info,
       settings,
+      profiles,
       items,
       manifests,
       appUpdate,

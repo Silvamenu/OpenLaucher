@@ -4,10 +4,11 @@ import { promises as fs } from 'node:fs'
 import path from 'node:path'
 import { AppError } from '../shared/errors'
 import type { EntryPatch } from '../shared/ipc'
+import type { Manifest } from '../shared/manifest'
 import type { DetectionCandidate, GameEntry, LibraryItem, RequirementsReport } from '../shared/types'
 import type { AppContext } from './context'
 import { detectGame } from './detect'
-import { isDirectory, isFile, isInside, pathExists } from './fsutil'
+import { isDirectory, isFile, isInside, pathExists, sanitizeFileName } from './fsutil'
 import type { GameLauncher } from './launcher'
 import { evaluateRequirements, validateUserFile } from './requirements'
 import { listBackups, toBackupInfo } from './updateCore'
@@ -115,6 +116,32 @@ export class LibraryService {
     this.ctx.store.saveEntry(entry)
     await this.broadcast()
     return this.item(entry)
+  }
+
+  /**
+   * Pasta nova para instalar um port: <pasta escolhida>/<nome do jogo>. Ela precisa estar vazia
+   * (ou não existir) e não pode já estar na biblioteca, para a instalação não misturar arquivos.
+   */
+  async prepareInstall(parent: string, manifest: Manifest): Promise<LibraryItem> {
+    // "Zelda 64: Recompiled" vira "Zelda 64 Recompiled" (":" não vale em nome de pasta no Windows).
+    const dir = path.join(path.resolve(parent), sanitizeFileName(manifest.name.replace(/:/g, '')))
+    const inLibrary = this.ctx.store.getEntries().some((e) => path.resolve(e.path).toLowerCase() === dir.toLowerCase())
+    // Só "não existe" conta como vazia; pasta que não dá para listar (permissão) não pode receber a instalação.
+    const contents = await fs.readdir(dir).catch((err: NodeJS.ErrnoException) => {
+      if (err.code === 'ENOENT') return []
+      throw err
+    })
+    if (inLibrary || contents.length > 0) throw new AppError('FOLDER_NOT_EMPTY', dir, { path: dir })
+    await fs.mkdir(dir, { recursive: true })
+    return this.add(dir, manifest.id)
+  }
+
+  /** Desfaz uma instalação que não terminou: tira o jogo da biblioteca e apaga a pasta se ela ficou vazia. */
+  async discardInstall(id: string): Promise<void> {
+    const entry = this.ctx.store.getEntry(id)
+    if (!entry) return
+    await this.remove(id)
+    await fs.rmdir(entry.path).catch(() => undefined)
   }
 
   async remove(id: string): Promise<void> {
