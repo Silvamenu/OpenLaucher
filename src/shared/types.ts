@@ -1,8 +1,6 @@
 import type { Manifest, Platform } from './manifest'
 import type { NoteSection } from './devlog'
 
-export type { Manifest, Platform }
-
 // ---------------------------------------------------------------------------
 // Configurações do app
 // ---------------------------------------------------------------------------

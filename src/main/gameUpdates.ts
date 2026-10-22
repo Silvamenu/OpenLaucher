@@ -104,8 +104,8 @@ export class GameUpdateService {
         if (latest) {
           state.latest = latest
           state.assetName = pickAsset(latest.assets, assetPatternsFor(updates, this.ctx.platform))?.name ?? null
-          state.available = isNewerRelease(latest, { tag: entry.installedVersion ?? '', publishedAt: entry.installedPublishedAt })
-          if (!entry.installedVersion) state.available = false
+          // Sem versão instalada conhecida não há como comparar: nada é oferecido.
+          state.available = !!entry.installedVersion && isNewerRelease(latest, { tag: entry.installedVersion, publishedAt: entry.installedPublishedAt })
           if (state.available && previous.notifiedTag !== latest.tag) {
             state.notifiedTag = latest.tag
             if (!entry.autoUpdate) this.notify(entry, this.text().updateAvailable(latest.tag))

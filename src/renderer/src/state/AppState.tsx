@@ -21,12 +21,6 @@ export interface HistoryItem {
   at: number
 }
 
-interface DevlogState {
-  view: DevlogView
-  /** Aberto automaticamente após atualizar: fechar marca a versão como vista. */
-  markOnClose: boolean
-}
-
 interface AppStateValue {
   ready: boolean
   info: AppInfo | null
@@ -40,15 +34,14 @@ interface AppStateValue {
   setQuery: (query: string) => void
   route: Route
   navigate: (route: Route) => void
-  refresh: () => Promise<void>
   setItems: (items: LibraryItem[]) => void
   updateSettings: (patch: SettingsPatch) => Promise<void>
   setManifests: (report: ManifestsReport) => void
   toasts: Toast[]
   toast: (kind: Toast['kind'], message: string) => void
   dismissToast: (id: number) => void
-  devlog: DevlogState | null
-  openDevlog: (view: DevlogView, markOnClose?: boolean) => void
+  devlog: DevlogView | null
+  openDevlog: (view: DevlogView) => void
   closeDevlog: () => void
 }
 
@@ -78,7 +71,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const [query, setQuery] = useState('')
   const [route, setRoute] = useState<Route>({ page: 'library' })
   const [toasts, setToasts] = useState<Toast[]>([])
-  const [devlog, setDevlog] = useState<DevlogState | null>(null)
+  const [devlog, setDevlog] = useState<DevlogView | null>(null)
   const toastId = useRef(0)
 
   const toast = useCallback((kind: Toast['kind'], message: string) => {
@@ -104,7 +97,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     document.getElementById('main-scroll')?.scrollTo({ top: 0 })
   }, [])
 
-  const openDevlog = useCallback((view: DevlogView, markOnClose = false) => setDevlog({ view, markOnClose }), [])
+  const openDevlog = useCallback((view: DevlogView) => setDevlog(view), [])
   const closeDevlog = useCallback(() => {
     void window.api.devlog.markSeen()
     setDevlog(null)
@@ -122,7 +115,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       await refresh()
       setReady(true)
       const pending = await window.api.devlog.pending()
-      if (alive && pending) setDevlog({ view: pending, markOnClose: true })
+      if (alive && pending) setDevlog(pending)
     })()
     const offs = [
       window.api.on('library:changed', (list) => setItems(list)),
@@ -166,7 +159,6 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       setQuery,
       route,
       navigate,
-      refresh,
       setItems,
       updateSettings,
       setManifests,
@@ -189,7 +181,6 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       query,
       route,
       navigate,
-      refresh,
       updateSettings,
       toasts,
       toast,

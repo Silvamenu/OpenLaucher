@@ -43,8 +43,7 @@ export function hasPathVariables(template: string): boolean {
 
 /** Substitui {variáveis}. Caminhos relativos sem variáveis são resolvidos a partir da pasta do jogo. */
 export function resolvePathTemplate(template: string, ctx: PathContext): string {
-  const vars = pathVariables(ctx)
-  const replaced = template.replace(VAR_RE, (whole, name: string) => vars[name] ?? whole)
+  const replaced = expandVariables(template, ctx)
   const native = ctx.platform === 'win32' ? replaced.replace(/\//g, '\\') : replaced
   return path.isAbsolute(native) ? path.normalize(native) : path.join(ctx.gameDir, native)
 }
