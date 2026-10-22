@@ -1,0 +1,32 @@
+{
+  "id": "sm64-port",
+  "name": "Super Mario 64 PC Port",
+  "originalGame": "Super Mario 64",
+  "description": "Port para PC de Super Mario 64 baseado na decompilação. O projeto não publica executáveis: compile a partir do código-fonte usando sua própria ROM. Também reconhece builds do sm64ex.",
+  "repoUrl": "https://github.com/sm64-port/sm64-port",
+  "accentColor": "#d4a017",
+  "executables": {
+    "win32": ["sm64.*.exe"],
+    "linux": ["sm64.*.f3dex2e"]
+  },
+  "detectFiles": ["sm64.*.f3dex2e.exe", "sm64.*.f3dex2e"],
+  "requirements": [],
+  "configFiles": [
+    {
+      "path": {
+        "win32": ["sm64config.txt", "{appData}/sm64ex/sm64config.txt"],
+        "linux": ["sm64config.txt", "{localAppData}/sm64ex/sm64config.txt"]
+      },
+      "format": "text",
+      "label": "Configurações (sm64config.txt)",
+      "editable": true
+    }
+  ],
+  "launchArgs": [],
+  "updates": {
+    "source": "none"
+  },
+  "_todo": [
+    "O arquivo de configuração e o save (sm64_save_file.bin) são criados na pasta de onde o jogo é aberto; o sm64ex usa %APPDATA%\\sm64ex ou ~/.local/share/sm64ex (ou --savepath)."
+  ]
+}

@@ -1,0 +1,102 @@
+{
+  "id": "zelda64recomp",
+  "name": "Zelda 64: Recompiled",
+  "originalGame": "The Legend of Zelda: Majora's Mask",
+  "description": "Recompilação estática de Majora's Mask para PC, com renderização moderna (RT64), alta taxa de quadros e mods.",
+  "repoUrl": "https://github.com/Zelda64Recomp/Zelda64Recomp",
+  "accentColor": "#b83b5e",
+  "executables": {
+    "win32": ["Zelda64Recompiled.exe"],
+    "linux": ["Zelda64Recompiled"]
+  },
+  "detectFiles": ["Zelda64Recompiled.exe", "Zelda64Recompiled", "recompcontrollerdb.txt"],
+  "requirements": [
+    {
+      "id": "rom",
+      "type": "userFile",
+      "label": "Sua ROM de Majora's Mask (N64, EUA)",
+      "optional": true,
+      "extensions": ["z64", "n64", "v64"],
+      "validation": {
+        "sha1": [
+          {
+            "sha1": "d6133ace5afaa0882cf214cf88daba39e266c078",
+            "label": "NTSC-U 1.0 (.z64)"
+          }
+        ]
+      },
+      "helpText": "Opcional: a ROM é escolhida dentro do próprio jogo, na tela inicial. Só a versão americana do N64 é aceita; arquivos .n64/.v64 são convertidos pelo jogo (e têm SHA-1 diferente do .z64).",
+      "_todo": "SHA-1 inferido do 2 Ship 2 Harkinian (NTSC-U 1.0); o Zelda64Recomp valida a ROM por XXH3, não por SHA-1."
+    },
+    {
+      "id": "select-rom",
+      "type": "firstRun",
+      "label": "Selecionar sua ROM no menu do jogo",
+      "doneWhen": ["mm.n64.us.1.0.z64", "{localAppData}/Zelda64Recompiled/mm.n64.us.1.0.z64", "{home}/.config/Zelda64Recompiled/mm.n64.us.1.0.z64"],
+      "helpText": "Abra o jogo e use \"Setup ROM\" para escolher sua ROM. O jogo valida e guarda uma cópia em sua pasta de dados (%LOCALAPPDATA%\\Zelda64Recompiled no Windows ou ~/.config/Zelda64Recompiled no Linux; ou na pasta do jogo, se existir um arquivo portable.txt)."
+    }
+  ],
+  "configFiles": [
+    {
+      "path": {
+        "win32": ["general.json", "{localAppData}/Zelda64Recompiled/general.json"],
+        "linux": ["general.json", "{home}/.config/Zelda64Recompiled/general.json"]
+      },
+      "format": "json",
+      "label": "Geral (general.json)",
+      "editable": true
+    },
+    {
+      "path": {
+        "win32": ["graphics.json", "{localAppData}/Zelda64Recompiled/graphics.json"],
+        "linux": ["graphics.json", "{home}/.config/Zelda64Recompiled/graphics.json"]
+      },
+      "format": "json",
+      "label": "Gráficos (graphics.json)",
+      "editable": true
+    },
+    {
+      "path": {
+        "win32": ["controls.json", "{localAppData}/Zelda64Recompiled/controls.json"],
+        "linux": ["controls.json", "{home}/.config/Zelda64Recompiled/controls.json"]
+      },
+      "format": "json",
+      "label": "Controles (controls.json)",
+      "editable": true
+    },
+    {
+      "path": {
+        "win32": ["sound.json", "{localAppData}/Zelda64Recompiled/sound.json"],
+        "linux": ["sound.json", "{home}/.config/Zelda64Recompiled/sound.json"]
+      },
+      "format": "json",
+      "label": "Som (sound.json)",
+      "editable": true
+    }
+  ],
+  "launchArgs": [],
+  "updates": {
+    "source": "github-releases",
+    "repo": "Zelda64Recomp/Zelda64Recomp",
+    "assetPatterns": {
+      "win32": "*-Windows.zip",
+      "linux": "*-Linux-X64.zip"
+    },
+    "includePrereleases": false,
+    "preserve": [
+      "portable.txt",
+      "saves/**",
+      "mods/**",
+      "mod_config/**",
+      "mods.json",
+      "general.json",
+      "graphics.json",
+      "controls.json",
+      "sound.json",
+      "*.z64",
+      "*.n64",
+      "*.v64"
+    ],
+    "_todo": "Linux ARM64 (Zelda64Recompiled-*-Linux-ARM64.zip) e Flatpak não são selecionados automaticamente."
+  }
+}

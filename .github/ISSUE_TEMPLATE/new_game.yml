@@ -1,0 +1,32 @@
+name: Suporte a um novo jogo
+description: Peça um manifesto para um port/recompilação que ainda não é suportado
+labels: ['manifesto']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Cada jogo é descrito por um arquivo `manifests/<id>.json`. Quanto mais destes dados você trouxer, mais rápido o suporte sai.
+        Só aceitamos projetos que exigem os arquivos do próprio usuário — nada de ROMs ou assets distribuídos.
+  - type: input
+    id: repo
+    attributes:
+      label: Repositório do projeto
+      placeholder: https://github.com/dono/projeto
+    validations:
+      required: true
+  - type: input
+    id: original
+    attributes:
+      label: Jogo original
+    validations:
+      required: true
+  - type: textarea
+    id: files
+    attributes:
+      label: Executáveis e arquivos da pasta
+      description: Nome do executável no Windows/Linux e arquivos que identificam a instalação.
+  - type: textarea
+    id: user-files
+    attributes:
+      label: Arquivos gerados a partir da ROM, saves e configs
+      description: O que precisa ser preservado nas atualizações.

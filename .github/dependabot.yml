@@ -1,0 +1,51 @@
+# Atualizações automáticas de dependências (PRs semanais, agrupados).
+# "cooldown" espera alguns dias antes de propor versões recém-publicadas — proteção contra
+# pacotes comprometidos logo após o lançamento. Correções de segurança não esperam.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+      timezone: America/Sao_Paulo
+    cooldown:
+      default-days: 7
+    open-pull-requests-limit: 10
+    ignore:
+      # Os tipos do Node acompanham a versão do runtime do projeto (.nvmrc), não a última do Node.
+      - dependency-name: '@types/node'
+        update-types: ['version-update:semver-major']
+      # Versão maior do TypeScript só quando o typescript-eslint aceitar (peerDependency); atualização manual.
+      - dependency-name: 'typescript'
+        update-types: ['version-update:semver-major']
+    commit-message:
+      prefix: 'chore(deps)'
+      prefix-development: 'chore(deps-dev)'
+    groups:
+      electron:
+        patterns: ['electron', 'electron-*', '7zip-bin']
+      react:
+        patterns: ['react', 'react-dom', '@types/react*', 'react-markdown', 'remark-*', 'lucide-react']
+      build:
+        patterns: ['vite', '@vitejs/*', 'tailwindcss', '@tailwindcss/*', 'typescript', '@fontsource-variable/*']
+      lint:
+        patterns: ['eslint', '@eslint/*', 'typescript-eslint', 'eslint-*', 'prettier', 'globals']
+      test:
+        patterns: ['vitest']
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+      timezone: America/Sao_Paulo
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: 'ci'
+    groups:
+      actions:
+        patterns: ['*']
