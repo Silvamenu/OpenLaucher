@@ -239,6 +239,37 @@ describe('formatos de pacote', () => {
     expect(await readTree(root)).toEqual({ 'jogo.exe': 'bin', 'data/a.txt': 'a' })
   })
 
+  it('aplica o teto de extração à listagem de pacotes .7z', async () => {
+    const { check7zListing, MAX_EXTRACTED_BYTES, MAX_EXTRACTED_ENTRIES } = await import('../src/main/archive')
+    const entry = (name: string, size: number) => `Path = ${name}\nSize = ${size}\nPacked Size = 1\n`
+    expect(() => check7zListing([entry('Jogo', 0), entry('Jogo/jogo.exe', 1024)].join('\n'))).not.toThrow()
+    expect(() => check7zListing(entry('bomba.bin', MAX_EXTRACTED_BYTES + 1))).toThrow(/grande demais/)
+    const muitos = Array.from({ length: MAX_EXTRACTED_ENTRIES + 1 }, (_, i) => entry(`f${i}`, 0)).join('\n')
+    expect(() => check7zListing(muitos)).toThrow(/grande demais/)
+  })
+
+  it('lê a listagem do .7z aos poucos e para assim que o teto é ultrapassado', async () => {
+    const { create7zListingCheck, MAX_EXTRACTED_BYTES, MAX_EXTRACTED_ENTRIES } = await import('../src/main/archive')
+    // Pedaços cortados em qualquer ponto (inclusive entre \r e \n) contam igual à listagem inteira.
+    const listing = `Path = a\r\nSize = ${MAX_EXTRACTED_BYTES}\r\n\r\nPath = b\r\nSize = 1\r\n`
+    const check = create7zListingCheck()
+    expect(() => {
+      for (let i = 0; i < listing.length; i += 3) check.push(listing.slice(i, i + 3))
+      check.end()
+    }).toThrow(/grande demais/)
+
+    // O erro sai durante a leitura, antes do fim da listagem (o 7-Zip é encerrado nesse momento).
+    const many = create7zListingCheck()
+    let pushed = 0
+    expect(() => {
+      for (; pushed <= MAX_EXTRACTED_ENTRIES + 10; pushed++) many.push(`Path = f${pushed}\nSize = 0\n`)
+    }).toThrow(/grande demais/)
+    expect(pushed).toBe(MAX_EXTRACTED_ENTRIES + 1)
+
+    // Uma linha sem fim (saída inválida) não cresce sem limite na memória.
+    expect(() => create7zListingCheck().push('x'.repeat(70 * 1024))).toThrow(/inválida/)
+  })
+
   it('recusa formatos desconhecidos', async () => {
     const work = await tempDir('work-')
     const file = path.join(work, 'pacote.rar')
