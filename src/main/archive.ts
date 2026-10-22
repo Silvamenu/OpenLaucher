@@ -229,15 +229,20 @@ async function executable7z(): Promise<string> {
   }
 }
 
+/** Maior linha aceita na listagem do 7-Zip (nomes de arquivo cabem com folga). */
+const MAX_7Z_LISTING_LINE = 64 * 1024
+
 /**
- * Aplica o teto de extração à listagem técnica do 7-Zip (`7za l -slt -ba`).
+ * Aplica o teto de extração à listagem técnica do 7-Zip (`7za l -slt -ba`), lida aos poucos:
+ * `push` recebe cada pedaço da saída e lança o erro assim que o teto é ultrapassado, sem esperar a listagem toda.
  * Cada entrada começa com "Path = ..." e traz o tamanho descompactado em "Size = ...".
  */
-export function check7zListing(listing: string): void {
+export function create7zListingCheck(): { push: (chunk: string) => void; end: () => void } {
   const count = extractionBudget()
   let size = 0
   let inEntry = false
-  for (const line of listing.split(/\r?\n/)) {
+  let rest = ''
+  const readLine = (line: string) => {
     if (line.startsWith('Path = ')) {
       if (inEntry) count(size)
       inEntry = true
@@ -246,18 +251,54 @@ export function check7zListing(listing: string): void {
       size = Number(line.slice('Size = '.length)) || 0
     }
   }
-  if (inEntry) count(size)
+  return {
+    push(chunk) {
+      const lines = (rest + chunk).split(/\r?\n/)
+      rest = lines.pop() ?? ''
+      if (rest.length > MAX_7Z_LISTING_LINE) throw new AppError('EXTRACT_FAILED', 'Listagem do 7-Zip inválida')
+      for (const line of lines) readLine(line)
+    },
+    end() {
+      if (rest) readLine(rest)
+      rest = ''
+      if (inEntry) count(size)
+      inEntry = false
+    }
+  }
 }
 
-function run7z(bin: string, args: string[], signal?: AbortSignal): Promise<string> {
-  return new Promise<string>((resolve, reject) => {
-    const child = spawn(bin, args, { stdio: ['ignore', 'pipe', 'pipe'], signal })
-    let stdout = ''
+/** Atalho para uma listagem completa (usado nos testes). */
+export function check7zListing(listing: string): void {
+  const check = create7zListingCheck()
+  check.push(listing)
+  check.end()
+}
+
+/** Roda o 7-Zip; `onStdout` recebe a saída aos poucos e, se lançar um erro, o processo é encerrado na hora. */
+function run7z(bin: string, args: string[], signal?: AbortSignal, onStdout?: (chunk: string) => void): Promise<void> {
+  return new Promise<void>((resolve, reject) => {
+    const child = spawn(bin, args, { stdio: ['ignore', onStdout ? 'pipe' : 'ignore', 'pipe'], signal })
     let stderr = ''
-    child.stdout?.on('data', (d) => (stdout += String(d)))
-    child.stderr?.on('data', (d) => (stderr += String(d)))
+    let failure: unknown = null
+    child.stdout?.setEncoding('utf8')
+    child.stdout?.on('data', (chunk: string) => {
+      if (failure) return
+      try {
+        onStdout?.(chunk)
+      } catch (err) {
+        failure = err
+        child.kill()
+      }
+    })
+    child.stderr?.on('data', (d) => {
+      if (stderr.length < MAX_7Z_LISTING_LINE) stderr += String(d)
+    })
     child.on('error', reject)
-    child.on('close', (code) => (code === 0 ? resolve(stdout) : reject(new AppError('EXTRACT_FAILED', stderr.trim() || `7za saiu com código ${code}`))))
+    child.on('close', (code) => {
+      if (failure) reject(failure)
+      else if (code === 0) resolve()
+      else reject(new AppError('EXTRACT_FAILED', stderr.trim() || `7za saiu com código ${code}`))
+    })
   })
 }
 
@@ -265,7 +306,9 @@ async function extract7z(file: string, dest: string, signal?: AbortSignal): Prom
   await fs.mkdir(dest, { recursive: true })
   const bin = await executable7z()
   // Confere o tamanho e a quantidade de arquivos antes de extrair, como no ZIP e no TAR.
-  check7zListing(await run7z(bin, ['l', '-t7z', '-slt', '-ba', file], signal))
+  const listing = create7zListingCheck()
+  await run7z(bin, ['l', '-t7z', '-slt', '-ba', file], signal, (chunk) => listing.push(chunk))
+  listing.end()
   await run7z(bin, ['x', '-t7z', '-y', '-bd', `-o${dest}`, file], signal)
 }
 
