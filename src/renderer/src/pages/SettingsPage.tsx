@@ -6,7 +6,7 @@ import { useI18n } from '../i18n'
 import { errorMessage, initials } from '../lib/format'
 import { useAppState } from '../state/AppState'
 
-const LAUNCHER_REPO = 'https://github.com/Silvamenu/OpenLaucher'
+const LAUNCHER_REPO = 'https://github.com/Silvamenu/Relaunch'
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (

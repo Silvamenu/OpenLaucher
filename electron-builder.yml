@@ -60,5 +60,5 @@ linux:
 publish:
   provider: github
   owner: Silvamenu
-  repo: OpenLaucher
+  repo: Relaunch
   releaseType: release

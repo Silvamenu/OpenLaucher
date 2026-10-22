@@ -5,9 +5,9 @@
   </picture>
 </h1>
 
-[![CI](https://github.com/Silvamenu/OpenLaucher/actions/workflows/ci.yml/badge.svg)](https://github.com/Silvamenu/OpenLaucher/actions/workflows/ci.yml)
-[![Segurança](https://github.com/Silvamenu/OpenLaucher/actions/workflows/security.yml/badge.svg)](https://github.com/Silvamenu/OpenLaucher/actions/workflows/security.yml)
-[![CodeQL](https://github.com/Silvamenu/OpenLaucher/actions/workflows/codeql.yml/badge.svg)](https://github.com/Silvamenu/OpenLaucher/actions/workflows/codeql.yml)
+[![CI](https://github.com/Silvamenu/Relaunch/actions/workflows/ci.yml/badge.svg)](https://github.com/Silvamenu/Relaunch/actions/workflows/ci.yml)
+[![Segurança](https://github.com/Silvamenu/Relaunch/actions/workflows/security.yml/badge.svg)](https://github.com/Silvamenu/Relaunch/actions/workflows/security.yml)
+[![CodeQL](https://github.com/Silvamenu/Relaunch/actions/workflows/codeql.yml/badge.svg)](https://github.com/Silvamenu/Relaunch/actions/workflows/codeql.yml)
 
 **Seus ports favoritos, num só lugar.**
 
@@ -28,7 +28,7 @@ O Relaunch é um launcher para Windows e Linux que reúne os **ports e recompila
 
 ### Para jogar
 
-1. **Instale o Relaunch.** Baixe o `Relaunch-Setup-<versão>.exe` na página de [Releases](https://github.com/Silvamenu/OpenLaucher/releases) e execute. O instalador deixa escolher a pasta e cria atalhos na área de trabalho e no menu Iniciar.
+1. **Instale o Relaunch.** Baixe o `Relaunch-Setup-<versão>.exe` na página de [Releases](https://github.com/Silvamenu/Relaunch/releases) e execute. O instalador deixa escolher a pasta e cria atalhos na área de trabalho e no menu Iniciar.
 2. **Tenha o port instalado.** O Relaunch trabalha com jogos que você já instalou pelo site ou repositório oficial do projeto; ele não faz a primeira instalação.
 3. **Adicione o jogo.** Clique em **Adicionar jogo → Escolher pasta…** e aponte a pasta do port. O app reconhece o projeto sozinho; confirme em **Adicionar à biblioteca**.
 4. **Siga o checklist** da aba **Configuração**: por exemplo, selecionar a sua ROM ou abrir o jogo uma vez para gerar os assets.
@@ -42,8 +42,8 @@ O instalador não é assinado digitalmente, então o Windows SmartScreen pode av
 ### Para rodar a partir do código
 
 ```bash
-git clone https://github.com/Silvamenu/OpenLaucher.git
-cd OpenLaucher
+git clone https://github.com/Silvamenu/Relaunch.git
+cd Relaunch
 npm install     # também baixa o binário do Electron
 npm run dev     # abre o app com recarregamento automático da interface
 npm run check   # tipos + lint + formatação + testes; rode antes de todo push
@@ -72,7 +72,7 @@ Manifestos que já vêm no app. Todos têm executáveis para Windows e Linux.
 | [SpaghettiKart](https://github.com/HarbourMasters/SpaghettiKart)         | Mario Kart 64                        | Sim                                                                    |
 | [Super Mario 64 PC Port](https://github.com/sm64-port/sm64-port)         | Super Mario 64                       | Não: o projeto só publica código-fonte. Também reconhece o **sm64ex**. |
 
-Falta algum? Cada jogo é um arquivo JSON, sem mexer no código: veja [Criar um manifesto](#criar-um-manifesto) ou peça com o modelo de issue [Suporte a um novo jogo](https://github.com/Silvamenu/OpenLaucher/issues/new/choose).
+Falta algum? Cada jogo é um arquivo JSON, sem mexer no código: veja [Criar um manifesto](#criar-um-manifesto) ou peça com o modelo de issue [Suporte a um novo jogo](https://github.com/Silvamenu/Relaunch/issues/new/choose).
 
 ## O que o Relaunch faz
 
@@ -425,9 +425,9 @@ Cada PR e cada push na `main` passam por verificações automáticas.
 | Quero…                        | Caminho                                                                                                                                |
 | ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
 | Enviar código ou um manifesto | Siga o [CONTRIBUTING.md](CONTRIBUTING.md): branch a partir da `main`, Conventional Commits, `npm run check` verde e PR com o template. |
-| Pedir suporte a um jogo       | Abra a issue [Suporte a um novo jogo](https://github.com/Silvamenu/OpenLaucher/issues/new/choose), ou envie o manifesto num PR.        |
-| Reportar um bug               | Abra a issue [Bug](https://github.com/Silvamenu/OpenLaucher/issues/new/choose).                                                        |
-| Sugerir uma melhoria          | Abra a issue [Ideia ou melhoria](https://github.com/Silvamenu/OpenLaucher/issues/new/choose).                                          |
+| Pedir suporte a um jogo       | Abra a issue [Suporte a um novo jogo](https://github.com/Silvamenu/Relaunch/issues/new/choose), ou envie o manifesto num PR.           |
+| Reportar um bug               | Abra a issue [Bug](https://github.com/Silvamenu/Relaunch/issues/new/choose).                                                           |
+| Sugerir uma melhoria          | Abra a issue [Ideia ou melhoria](https://github.com/Silvamenu/Relaunch/issues/new/choose).                                             |
 | Reportar uma vulnerabilidade  | Em privado, como explica o [SECURITY.md](SECURITY.md). **Nunca** em issue pública.                                                     |
 
 - Commits no padrão [Conventional Commits](https://www.conventionalcommits.org/pt-br/), em português. Use `npm run format` para corrigir a formatação.

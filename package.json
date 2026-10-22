@@ -8,7 +8,7 @@
   },
   "private": true,
   "main": "./out/main/index.js",
-  "homepage": "https://github.com/Silvamenu/OpenLaucher",
+  "homepage": "https://github.com/Silvamenu/Relaunch",
   "scripts": {
     "dev": "electron-vite dev",
     "start": "electron-vite preview",

@@ -8,7 +8,7 @@ Só a versão mais recente do Relaunch recebe correções de segurança. O launc
 
 **Não abra uma issue pública.** Reporte em privado para [@Silvamenu](https://github.com/Silvamenu):
 
-- pelo [relato privado de vulnerabilidades](https://github.com/Silvamenu/OpenLaucher/security/advisories/new) (aba **Security → Report a vulnerability**), o caminho preferido; ou
+- pelo [relato privado de vulnerabilidades](https://github.com/Silvamenu/Relaunch/security/advisories/new) (aba **Security → Report a vulnerability**), o caminho preferido; ou
 - por mensagem privada no GitHub.
 
 Inclua o que for possível: versão do Relaunch, sistema operacional, passos para reproduzir e o impacto esperado. Você recebe uma resposta em até 7 dias.
