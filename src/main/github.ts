@@ -26,7 +26,6 @@ interface RawAsset {
   name: string
   size: number
   browser_download_url: string
-  content_type?: string
   digest?: string | null
   state?: string
 }
@@ -45,7 +44,7 @@ interface RawRelease {
 export function toReleaseInfo(raw: RawRelease): ReleaseInfo {
   const assets: ReleaseAsset[] = (raw.assets ?? [])
     .filter((a) => !a.state || a.state === 'uploaded')
-    .map((a) => ({ name: a.name, size: a.size, url: a.browser_download_url, contentType: a.content_type, digest: a.digest ?? null }))
+    .map((a) => ({ name: a.name, size: a.size, url: a.browser_download_url, digest: a.digest ?? null }))
   return {
     tag: raw.tag_name,
     name: raw.name || raw.tag_name,

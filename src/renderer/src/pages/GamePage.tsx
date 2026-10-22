@@ -7,7 +7,7 @@ import { GearIcon } from '../components/icons'
 import { statusTone, useStatusLabel } from '../components/Status'
 import { Button, Card, Chip, ConfirmModal, Dot, PromptModal } from '../components/ui'
 import { useI18n } from '../i18n'
-import { errorMessage, formatDate, formatPlaytime, formatRelative } from '../lib/format'
+import { errorMessage, formatDate, formatPlaytime, formatRelative, isApiError } from '../lib/format'
 import { useAppState, type GameTab } from '../state/AppState'
 import { ChecklistTab } from './game/ChecklistTab'
 import { ConfigsTab } from './game/ConfigsTab'
@@ -160,8 +160,8 @@ export function GamePage({ id, tab }: { id: string; tab?: GameTab }) {
         await window.api.updates.start(id)
         toast('success', t('upd.updated', { name: item.name, version: item.update.latest?.tag ?? '' }))
       } catch (err) {
-        if ((err as { code?: string }).code === 'GAME_RUNNING') showSection('updates')
-        if ((err as { code?: string }).code !== 'CANCELLED') throw err
+        if (isApiError(err, 'GAME_RUNNING')) showSection('updates')
+        if (!isApiError(err, 'CANCELLED')) throw err
       }
     })
 

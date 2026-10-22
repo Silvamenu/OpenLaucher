@@ -9,11 +9,6 @@ function compile(pattern: string): (input: string) => boolean {
   return picomatch(pattern, { nocase: true, dot: true })
 }
 
-/** Testa um nome de arquivo (sem diretório) contra uma lista de globs, sem diferenciar maiúsculas. */
-export function matchesAnyName(name: string, patterns: string[]): boolean {
-  return patterns.some((pattern) => compile(pattern)(name))
-}
-
 // ---------------------------------------------------------------------------
 // Escolha do asset do release
 // ---------------------------------------------------------------------------

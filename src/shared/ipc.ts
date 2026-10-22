@@ -1,7 +1,6 @@
 import type {
   AppInfo,
   AppUpdateState,
-  BackupInfo,
   ConfigBackup,
   ConfigFileView,
   DetectionCandidate,
@@ -16,13 +15,15 @@ import type {
   UpdateProgress
 } from './types'
 
+/** Protocolo interno que serve as capas escolhidas pelo usuário (main, interface e CSP). */
+export const COVER_SCHEME = 'rl-cover'
+
 /** Eventos enviados do processo principal para a interface. */
 export interface ApiEvents {
   'library:changed': LibraryItem[]
   'game:progress': UpdateProgress
   'appUpdate:state': AppUpdateState
   'settings:changed': SettingsView
-  'devlog:show': DevlogView
   'navigate:game': string
 }
 
@@ -36,7 +37,7 @@ export interface EntryPatch {
 }
 
 /** API exposta em `window.api` pelo preload. Todos os métodos rejeitam com AppError. */
-export interface RecompApi {
+export interface RelaunchApi {
   app: {
     info(): Promise<AppInfo>
     openExternal(url: string): Promise<void>
@@ -44,7 +45,6 @@ export interface RecompApi {
   }
   manifests: {
     list(): Promise<ManifestsReport>
-    reload(): Promise<ManifestsReport>
   }
   library: {
     list(): Promise<LibraryItem[]>
@@ -77,7 +77,6 @@ export interface RecompApi {
     start(entryId: string): Promise<void>
     cancel(entryId: string): Promise<void>
     rollback(entryId: string): Promise<void>
-    backups(entryId: string): Promise<BackupInfo[]>
     rateLimit(): Promise<RateLimitInfo | null>
   }
   settings: {

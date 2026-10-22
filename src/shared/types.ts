@@ -83,7 +83,6 @@ export interface ReleaseAsset {
   name: string
   size: number
   url: string
-  contentType?: string
   digest?: string | null
 }
 
@@ -189,7 +188,6 @@ export interface DevlogView {
   version: string
   date: string | null
   sections: NoteSection[]
-  raw: string
 }
 
 export interface AppInfo {

@@ -3,7 +3,7 @@ import { useEffect, useState, type ReactNode } from 'react'
 import type { RateLimitInfo, ThemeSetting } from '../../../shared/types'
 import { Button, Chip, Dot, Page, PageHeader, SectionLabel, Toggle } from '../components/ui'
 import { useI18n } from '../i18n'
-import { errorMessage, initials } from '../lib/format'
+import { errorMessage, formatRateLimit, initials } from '../lib/format'
 import { useAppState } from '../state/AppState'
 
 const LAUNCHER_REPO = 'https://github.com/Silvamenu/Relaunch'
@@ -31,7 +31,7 @@ function Row({ title, hint, children }: { title: ReactNode; hint?: ReactNode; ch
 
 export function SettingsPage() {
   const { settings, updateSettings, items, setItems, manifests, setManifests, info, appUpdate, toast, openDevlog } = useAppState()
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
   const [name, setName] = useState(settings?.userName ?? '')
   const [token, setToken] = useState('')
   const [rescanning, setRescanning] = useState(false)
@@ -202,15 +202,7 @@ export function SettingsPage() {
               </Button>
             )}
           </div>
-          {rateLimit && (
-            <p className="mt-2 font-mono text-[11px] text-faint">
-              {t('upd.rateLimit', {
-                remaining: rateLimit.remaining,
-                limit: rateLimit.limit,
-                time: new Date(rateLimit.resetAt).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })
-              })}
-            </p>
-          )}
+          {rateLimit && <p className="mt-2 font-mono text-[11px] text-faint">{formatRateLimit(rateLimit, t, locale)}</p>}
         </div>
       </Section>
 

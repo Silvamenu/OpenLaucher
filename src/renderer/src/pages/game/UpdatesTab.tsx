@@ -5,7 +5,7 @@ import type { LibraryItem, RateLimitInfo, ReleaseInfo } from '../../../../shared
 import { Markdown } from '../../components/Markdown'
 import { Button, Card, ConfirmModal, Dot, ProgressBar, SectionLabel, Toggle } from '../../components/ui'
 import { useI18n } from '../../i18n'
-import { errorMessage, formatBytes, formatDate, formatRelative, isApiError } from '../../lib/format'
+import { errorMessage, formatBytes, formatDate, formatProgressDetail, formatRateLimit, formatRelative, isApiError } from '../../lib/format'
 import { useAppState } from '../../state/AppState'
 
 export function UpdatesTab({ item }: { item: LibraryItem }) {
@@ -206,13 +206,7 @@ export function UpdatesTab({ item }: { item: LibraryItem }) {
         <div className="rounded-xl border border-line px-4 pt-3 pb-4">
           <div className="mb-2.5 flex items-center justify-between gap-2 text-[13px]">
             <span className={p.stage === 'error' ? 'text-bad' : 'text-fg-2'}>{t(`stage.${p.stage}`)}</span>
-            <span className="font-mono text-[11.5px] text-subtle">
-              {p.stage === 'downloading' && p.totalBytes
-                ? `${formatBytes(p.receivedBytes, locale)} / ${formatBytes(p.totalBytes, locale)}`
-                : p.progress !== undefined
-                  ? `${Math.round(p.progress * 100)}%`
-                  : ''}
-            </span>
+            <span className="font-mono text-[11.5px] text-subtle">{formatProgressDetail(p, locale)}</span>
           </div>
           {p.stage !== 'error' && p.stage !== 'cancelled' && <ProgressBar value={p.stage === 'done' ? 1 : p.progress} />}
           {p.error && p.stage === 'error' && <p className="text-[12.5px] text-bad">{errorMessage(p.error, t)}</p>}
@@ -275,15 +269,7 @@ export function UpdatesTab({ item }: { item: LibraryItem }) {
             ))}
           </div>
           <p className="mt-3 text-[11.5px] text-faint">{t('upd.source', { repo: updates.repo })}</p>
-          {rateLimit && (
-            <p className="mt-1 text-[11.5px] text-faint">
-              {t('upd.rateLimit', {
-                remaining: rateLimit.remaining,
-                limit: rateLimit.limit,
-                time: new Date(rateLimit.resetAt).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })
-              })}
-            </p>
-          )}
+          {rateLimit && <p className="mt-1 text-[11.5px] text-faint">{formatRateLimit(rateLimit, t, locale)}</p>}
         </div>
       </div>
 

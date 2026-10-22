@@ -61,27 +61,6 @@ export async function walkFiles(root: string, maxDepth = Infinity): Promise<Walk
   return out
 }
 
-/** Lista diretórios (relativos) até a profundidade indicada. */
-export async function walkDirs(root: string, maxDepth = Infinity): Promise<string[]> {
-  const out: string[] = []
-  const visit = async (dir: string, depth: number) => {
-    let entries: Dirent[]
-    try {
-      entries = await fs.readdir(dir, { withFileTypes: true })
-    } catch {
-      return
-    }
-    for (const entry of entries) {
-      if (!entry.isDirectory() || entry.isSymbolicLink()) continue
-      const abs = path.join(dir, entry.name)
-      out.push(toPosix(path.relative(root, abs)))
-      if (depth < maxDepth) await visit(abs, depth + 1)
-    }
-  }
-  await visit(root, 0)
-  return out
-}
-
 /**
  * Filtra arquivos já listados pelos padrões (relativos à raiz; sem diferenciar maiúsculas).
  * Padrões sem "/" só casam com arquivos da raiz. Retorna na ordem dos padrões.
@@ -98,14 +77,6 @@ export function matchWalked(files: WalkedFile[], patterns: string[]): string[] {
     }
   }
   return found
-}
-
-/** Procura arquivos que casem com os padrões a partir de `root`. */
-export async function findMatches(root: string, patterns: string[], maxDepth = 3): Promise<string[]> {
-  if (patterns.length === 0) return []
-  const needsDepth = patterns.some((p) => toPosix(p).includes('/'))
-  const files = await walkFiles(root, needsDepth ? maxDepth : 0)
-  return matchWalked(files, patterns)
 }
 
 export async function hashFile(file: string, algorithm: 'sha1' | 'sha256'): Promise<string> {
@@ -136,6 +107,11 @@ export async function writeFileAtomic(file: string, content: string | Buffer): P
 export function isInside(parent: string, child: string): boolean {
   const rel = path.relative(path.resolve(parent), path.resolve(child))
   return rel !== '' && !rel.startsWith('..') && !path.isAbsolute(rel)
+}
+
+/** `child` é a própria pasta `parent` ou fica dentro dela. */
+export function isSameOrInside(parent: string, child: string): boolean {
+  return path.resolve(parent) === path.resolve(child) || isInside(parent, child)
 }
 
 export function sanitizeFileName(name: string): string {

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { LibraryItem } from '../../../shared/types'
+import { COVER_SCHEME } from '../../../shared/ipc'
 
 const iconCache = new Map<string, Promise<string | null>>()
 
@@ -66,7 +67,7 @@ export function monogram(name: string): string {
 }
 
 export function coverUrl(item: LibraryItem): string | null {
-  return item.entry.coverVersion ? `rl-cover://cover/${item.entry.id}?v=${item.entry.coverVersion}` : null
+  return item.entry.coverVersion ? `${COVER_SCHEME}://cover/${item.entry.id}?v=${item.entry.coverVersion}` : null
 }
 
 /** Capa: imagem escolhida pelo usuário, ou gradiente listrado com ícone do .exe / monograma. */

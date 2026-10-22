@@ -1,4 +1,4 @@
-import type { AppErrorShape } from '../../../shared/types'
+import type { AppErrorShape, RateLimitInfo, UpdateProgress } from '../../../shared/types'
 import type { TFunction, TranslationKey } from '../i18n'
 
 export function formatBytes(bytes: number | undefined, locale: string): string {
@@ -11,6 +11,21 @@ export function formatBytes(bytes: number | undefined, locale: string): string {
     unit++
   }
   return `${value.toLocaleString(locale, { maximumFractionDigits: unit === 0 ? 0 : 1 })} ${units[unit]}`
+}
+
+/** Detalhe do progresso de uma atualização: bytes baixados ou porcentagem. */
+export function formatProgressDetail(p: UpdateProgress, locale: string): string {
+  if (p.stage === 'downloading' && p.totalBytes) return `${formatBytes(p.receivedBytes, locale)} / ${formatBytes(p.totalBytes, locale)}`
+  return p.progress !== undefined ? `${Math.round(p.progress * 100)}%` : ''
+}
+
+/** Linha com o limite de consultas à API do GitHub e o horário em que ele volta. */
+export function formatRateLimit(info: RateLimitInfo, t: TFunction, locale: string): string {
+  return t('upd.rateLimit', {
+    remaining: info.remaining,
+    limit: info.limit,
+    time: new Date(info.resetAt).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })
+  })
 }
 
 export function formatPlaytime(seconds: number): string {

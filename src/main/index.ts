@@ -2,6 +2,7 @@ import { app, BrowserWindow, Menu, net, protocol, session, shell } from 'electro
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
+import { COVER_SCHEME } from '../shared/ipc'
 import { AppUpdater } from './appUpdater'
 import { AppContext } from './context'
 import { DevlogTracker } from './devlogState'
@@ -10,8 +11,6 @@ import { registerIpc } from './ipc'
 import { GameLauncher } from './launcher'
 import { migrateLegacyUserData } from './legacyData'
 import { LibraryService } from './library'
-
-const COVER_SCHEME = 'rl-cover'
 
 protocol.registerSchemesAsPrivileged([{ scheme: COVER_SCHEME, privileges: { standard: true, secure: true, supportFetchAPI: true } }])
 
@@ -90,6 +89,8 @@ async function bootstrap(): Promise<void> {
     }
     callback({ cancel: host !== '' })
   })
+  // A interface não usa câmera, microfone, localização etc.: nega qualquer pedido de permissão do navegador.
+  session.defaultSession.setPermissionRequestHandler((_webContents, _permission, callback) => callback(false))
 
   const ctx = new AppContext()
   await ctx.reloadManifests()

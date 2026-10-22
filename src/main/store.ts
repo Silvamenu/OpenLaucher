@@ -114,14 +114,6 @@ export class AppStore {
     this.store.set('library', list)
   }
 
-  patchEntry(id: string, patch: Partial<GameEntry>): GameEntry | undefined {
-    const entry = this.getEntry(id)
-    if (!entry) return undefined
-    const next = { ...entry, ...patch }
-    this.saveEntry(next)
-    return next
-  }
-
   removeEntry(id: string): void {
     this.store.set(
       'library',

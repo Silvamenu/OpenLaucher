@@ -9,7 +9,7 @@ import yauzl from 'yauzl'
 import yazl from 'yazl'
 import { AppError } from '../shared/errors'
 import { toPosix } from '../shared/patterns'
-import { isInside, walkFiles } from './fsutil'
+import { isInside, isSameOrInside, walkFiles } from './fsutil'
 
 export type ArchiveKind = 'zip' | '7z' | 'tar' | 'raw'
 
@@ -40,7 +40,7 @@ export async function ensureSafeTarget(realRoot: string, target: string, label: 
   const parent = path.dirname(target)
   await fs.mkdir(parent, { recursive: true })
   const realParent = await fs.realpath(parent)
-  if (realParent !== realRoot && !isInside(realRoot, realParent)) throw new AppError('EXTRACT_FAILED', `Caminho inseguro: ${label}`)
+  if (!isSameOrInside(realRoot, realParent)) throw new AppError('EXTRACT_FAILED', `Caminho inseguro: ${label}`)
   const stat = await fs.lstat(target).catch(() => null)
   if (stat && !stat.isFile()) throw new AppError('EXTRACT_FAILED', `Caminho inseguro: ${label}`)
 }

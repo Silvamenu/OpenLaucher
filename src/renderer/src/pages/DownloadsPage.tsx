@@ -4,7 +4,7 @@ import type { LibraryItem } from '../../../shared/types'
 import { GameTile } from '../components/GameArt'
 import { Button, Dot, Page, PageHeader, ProgressBar, SectionLabel } from '../components/ui'
 import { useI18n } from '../i18n'
-import { errorMessage, formatBytes, formatRelative, isApiError } from '../lib/format'
+import { errorMessage, formatProgressDetail, formatRelative, isApiError } from '../lib/format'
 import { useAppState } from '../state/AppState'
 
 function Row({ item, children, onOpen }: { item: LibraryItem; children: React.ReactNode; onOpen: () => void }) {
@@ -90,13 +90,7 @@ export function DownloadsPage() {
                     <div className="px-4 pb-4">
                       <div className="mb-2 flex justify-between text-[12px] text-subtle">
                         <span>{t(`stage.${p.stage}`)}</span>
-                        <span className="font-mono">
-                          {p.stage === 'downloading' && p.totalBytes
-                            ? `${formatBytes(p.receivedBytes, locale)} / ${formatBytes(p.totalBytes, locale)}`
-                            : p.progress !== undefined
-                              ? `${Math.round(p.progress * 100)}%`
-                              : ''}
-                        </span>
+                        <span className="font-mono">{formatProgressDetail(p, locale)}</span>
                       </div>
                       <ProgressBar value={p.progress} />
                     </div>
