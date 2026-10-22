@@ -6,6 +6,12 @@
   "author": {
     "name": "Relaunch contributors"
   },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Silvamenu/Relaunch.git"
+  },
+  "bugs": "https://github.com/Silvamenu/Relaunch/issues",
   "private": true,
   "main": "./out/main/index.js",
   "homepage": "https://github.com/Silvamenu/Relaunch",

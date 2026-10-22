@@ -22,7 +22,7 @@ O Relaunch é um launcher para Windows e Linux que reúne os **ports e recompila
 
 - **Para jogar:** [Início rápido](#início-rápido) · [Jogos suportados](#jogos-suportados) · [O que o Relaunch faz](#o-que-o-relaunch-faz) · [Atualizações](#atualizações) · [Onde ficam seus dados](#onde-ficam-seus-dados)
 - **Para contribuir:** [Criar um manifesto](#criar-um-manifesto) · [Desenvolvimento](#desenvolvimento) · [Publicar uma versão do launcher](#publicar-uma-versão-do-launcher) · [Qualidade e segurança](#qualidade-e-segurança) · [Contribuir](#contribuir)
-- [Créditos](#créditos)
+- [Créditos](#créditos) · [Licença](#licença)
 
 ## Início rápido
 
@@ -430,6 +430,8 @@ Cada PR e cada push na `main` passam por verificações automáticas.
 | Sugerir uma melhoria          | Abra a issue [Ideia ou melhoria](https://github.com/Silvamenu/Relaunch/issues/new/choose).                                             |
 | Reportar uma vulnerabilidade  | Em privado, como explica o [SECURITY.md](SECURITY.md). **Nunca** em issue pública.                                                     |
 
+- O código segue os princípios descritos no [CONTRIBUTING.md](CONTRIBUTING.md#princípios-do-código): segurança primeiro, KISS, YAGNI e DRY.
+- Participar do projeto significa seguir o [Código de Conduta](CODE_OF_CONDUCT.md).
 - Commits no padrão [Conventional Commits](https://www.conventionalcommits.org/pt-br/), em português. Use `npm run format` para corrigir a formatação.
 - Mudanças visíveis para quem usa o app entram no `CHANGELOG.md`, na seção **Não lançado**.
 - Textos novos da interface entram em `src/renderer/src/i18n/pt-BR.ts` **e** `src/renderer/src/i18n/en.ts`.
@@ -440,3 +442,7 @@ Cada PR e cada push na `main` passam por verificações automáticas.
 Os jogos e projetos listados pertencem aos seus respectivos autores e comunidades. O Relaunch é um launcher independente e não é afiliado a nenhum deles.
 
 As fontes Geist e Geist Mono são distribuídas sob a SIL Open Font License.
+
+## Licença
+
+O código do Relaunch é distribuído sob a [licença MIT](LICENSE). A licença cobre só o launcher: os jogos, ports e arquivos que ele abre seguem as licenças e os direitos de seus próprios autores.
