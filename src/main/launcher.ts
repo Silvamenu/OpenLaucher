@@ -27,12 +27,7 @@ export class GameLauncher {
 
   async launch(entry: GameEntry, manifest: Manifest, exeRel: string | null): Promise<void> {
     if (this.running.has(entry.id)) throw new AppError('ALREADY_RUNNING')
-    try {
-      const stat = await fs.stat(entry.path)
-      if (!stat.isDirectory()) throw new Error('not a dir')
-    } catch {
-      throw new AppError('FOLDER_NOT_FOUND', entry.path, { path: entry.path })
-    }
+    // A pasta do jogo já foi conferida por quem chama (LibraryService.launch).
     if (!exeRel) throw new AppError('EXE_NOT_FOUND', '', { path: entry.path })
     const exe = path.join(entry.path, exeRel)
 

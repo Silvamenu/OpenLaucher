@@ -30,7 +30,7 @@ function Row({ title, hint, children }: { title: ReactNode; hint?: ReactNode; ch
 }
 
 export function SettingsPage() {
-  const { settings, updateSettings, items, setItems, manifests, setManifests, info, appUpdate, toast, openDevlog } = useAppState()
+  const { settings, updateSettings, items, manifests, setManifests, info, appUpdate, toast, openDevlog } = useAppState()
   const { t, locale } = useI18n()
   const [name, setName] = useState(settings?.userName ?? '')
   const [token, setToken] = useState('')
@@ -61,7 +61,7 @@ export function SettingsPage() {
   const rescan = async () => {
     setRescanning(true)
     try {
-      setItems(await window.api.library.rescan())
+      await window.api.library.rescan()
       setManifests(await window.api.manifests.list())
       toast('success', t('settings.rescanned'))
     } catch (err) {

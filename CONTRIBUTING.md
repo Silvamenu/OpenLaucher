@@ -18,7 +18,7 @@ npm run check   # tipos + lint + formatação + testes
 npm run format  # corrige a formatação (Prettier)
 ```
 
-O CI roda as mesmas verificações no Linux e no Windows, além de `npm audit` e das varreduras de segurança. Um PR só entra na `main` com tudo verde e a revisão de [@Silvamenu](https://github.com/Silvamenu) (veja `.github/CODEOWNERS`).
+O CI roda essas verificações e o build (os testes também no Windows), além de `npm audit`, CodeQL e das varreduras de segurança. Um PR só entra na `main` com tudo verde; o `.github/CODEOWNERS` pede a revisão de [@Silvamenu](https://github.com/Silvamenu).
 
 ## Princípios do código
 

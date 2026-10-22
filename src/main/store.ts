@@ -51,10 +51,6 @@ export class AppStore {
     })
   }
 
-  get path(): string {
-    return this.store.path
-  }
-
   // Configurações -----------------------------------------------------------
 
   getSettings(): Settings {

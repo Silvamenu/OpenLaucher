@@ -1,6 +1,6 @@
 name: Suporte a um novo jogo
 description: Peça um manifesto para um port/recompilação que ainda não é suportado
-labels: ['manifesto']
+labels: ['enhancement']
 body:
   - type: markdown
     attributes:

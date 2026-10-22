@@ -63,7 +63,8 @@ export function toReleaseInfo(raw: RawRelease): ReleaseInfo {
 export class GitHubClient {
   constructor(private readonly opts: GitHubClientOptions) {}
 
-  private async getJson<T>(path: string): Promise<{ data: T | null; status: number }> {
+  /** GET na API; null quando o recurso não existe (404). */
+  private async getJson<T>(path: string): Promise<T | null> {
     const url = `${API}${path}`
     const cached = this.opts.cache.get(url)
     const headers: Record<string, string> = {
@@ -83,25 +84,19 @@ export class GitHubClient {
     }
     this.reportRateLimit(res, !!token)
 
-    if (res.status === 304 && cached) return { data: cached.data as T, status: 304 }
-    if (res.status === 404) return { data: null, status: 404 }
+    if (res.status === 304 && cached) return cached.data as T
+    if (res.status === 404) return null
     if (res.status === 401) throw new AppError('GITHUB_ERROR', 'Token do GitHub inválido ou expirado', { status: 401 })
-    if (res.status === 403 || res.status === 429) {
-      const remaining = res.headers.get('x-ratelimit-remaining')
-      if (remaining === '0' || res.status === 429) {
-        const reset = Number(res.headers.get('x-ratelimit-reset')) * 1000
-        throw new AppError('RATE_LIMITED', 'Limite de requisições do GitHub atingido', {
-          resetAt: reset ? new Date(reset).toISOString() : ''
-        })
-      }
-      throw new AppError('GITHUB_ERROR', `HTTP ${res.status}`, { status: res.status })
+    if (res.status === 429 || (res.status === 403 && res.headers.get('x-ratelimit-remaining') === '0')) {
+      const reset = Number(res.headers.get('x-ratelimit-reset')) * 1000
+      throw new AppError('RATE_LIMITED', 'Limite de requisições do GitHub atingido', { resetAt: reset ? new Date(reset).toISOString() : '' })
     }
     if (!res.ok) throw new AppError('GITHUB_ERROR', `HTTP ${res.status}`, { status: res.status })
 
     const data = (await res.json()) as T
     const etag = res.headers.get('etag')
     if (etag) this.opts.cache.set(url, { etag, data, savedAt: new Date().toISOString() })
-    return { data, status: res.status }
+    return data
   }
 
   private reportRateLimit(res: Response, authenticated: boolean): void {
@@ -115,7 +110,7 @@ export class GitHubClient {
 
   /** Lista releases publicados (sem rascunhos), do mais novo para o mais antigo. */
   async listReleases(repo: string, perPage = 15): Promise<ReleaseInfo[]> {
-    const { data } = await this.getJson<RawRelease[]>(`/repos/${repo}/releases?per_page=${perPage}`)
+    const data = await this.getJson<RawRelease[]>(`/repos/${repo}/releases?per_page=${perPage}`)
     if (!data) return []
     return data
       .filter((r) => !r.draft)
@@ -130,7 +125,7 @@ export class GitHubClient {
    */
   async getLatestRelease(repo: string, includePrereleases: boolean, accept?: (release: ReleaseInfo) => boolean): Promise<ReleaseInfo | null> {
     if (!includePrereleases) {
-      const { data } = await this.getJson<RawRelease>(`/repos/${repo}/releases/latest`)
+      const data = await this.getJson<RawRelease>(`/repos/${repo}/releases/latest`)
       const latest = data ? toReleaseInfo(data) : null
       if (latest && (!accept || accept(latest))) return latest
       if (!latest) return null

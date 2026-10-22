@@ -23,7 +23,7 @@ function Row({ item, children, onOpen }: { item: LibraryItem; children: React.Re
 }
 
 export function DownloadsPage() {
-  const { items, progress, history, navigate, toast, setItems } = useAppState()
+  const { items, progress, history, navigate, toast } = useAppState()
   const { t, locale } = useI18n()
   const [checking, setChecking] = useState(false)
   const active = items.filter((i) => i.busy)
@@ -33,8 +33,8 @@ export function DownloadsPage() {
   const check = async () => {
     setChecking(true)
     try {
+      // A lista nova chega pelo evento library:changed; aqui só interessa o erro.
       const list = await window.api.updates.check()
-      setItems(list)
       const error = list.map((i) => i.update.error).find(Boolean)
       if (error) toast('error', errorMessage(error, t))
     } catch (err) {

@@ -34,7 +34,6 @@ interface AppStateValue {
   setQuery: (query: string) => void
   route: Route
   navigate: (route: Route) => void
-  setItems: (items: LibraryItem[]) => void
   updateSettings: (patch: SettingsPatch) => Promise<void>
   setManifests: (report: ManifestsReport) => void
   toasts: Toast[]
@@ -159,7 +158,6 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       setQuery,
       route,
       navigate,
-      setItems,
       updateSettings,
       setManifests,
       toasts,

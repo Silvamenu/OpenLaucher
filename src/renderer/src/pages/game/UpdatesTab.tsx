@@ -9,7 +9,7 @@ import { errorMessage, formatBytes, formatDate, formatProgressDetail, formatRate
 import { useAppState } from '../../state/AppState'
 
 export function UpdatesTab({ item }: { item: LibraryItem }) {
-  const { progress, toast, info, setItems } = useAppState()
+  const { progress, toast, info } = useAppState()
   const { t, locale } = useI18n()
   const id = item.entry.id
   const manifest = item.manifest
@@ -45,8 +45,8 @@ export function UpdatesTab({ item }: { item: LibraryItem }) {
   const check = async () => {
     setChecking(true)
     try {
+      // A lista nova chega pelo evento library:changed; aqui só interessa o erro.
       const list = await window.api.updates.check(id)
-      setItems(list)
       const error = list.find((i) => i.entry.id === id)?.update.error
       if (error) toast('error', errorMessage(error, t))
     } catch (err) {
@@ -80,7 +80,7 @@ export function UpdatesTab({ item }: { item: LibraryItem }) {
   const setInstalled = async (tag: string | null, publishedAt: string | null) => {
     try {
       await window.api.library.update(id, { installedVersion: tag, installedPublishedAt: publishedAt })
-      setItems(await window.api.updates.check(id))
+      await window.api.updates.check(id)
     } catch (err) {
       toast('error', errorMessage(err, t))
     }

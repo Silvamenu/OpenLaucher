@@ -10,7 +10,7 @@ import { useAppState } from '../state/AppState'
 type Filter = 'all' | 'ready' | 'setup' | 'updates'
 
 export function LibraryPage() {
-  const { items, navigate, toast, setItems, query } = useAppState()
+  const { items, navigate, toast, query } = useAppState()
   const { t } = useI18n()
   const [filter, setFilter] = useState<Filter>('all')
   const [checking, setChecking] = useState(false)
@@ -36,8 +36,8 @@ export function LibraryPage() {
   const checkUpdates = async () => {
     setChecking(true)
     try {
+      // A lista nova chega pelo evento library:changed; aqui só interessa o erro.
       const list = await window.api.updates.check()
-      setItems(list)
       const error = list.map((i) => i.update.error).find(Boolean)
       if (error) toast('error', errorMessage(error, t))
     } catch (err) {

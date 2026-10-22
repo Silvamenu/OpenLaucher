@@ -3,9 +3,7 @@
   "productName": "Relaunch",
   "version": "0.1.0",
   "description": "Launcher unificado para ports e recompilações de jogos feitas por fãs.",
-  "author": {
-    "name": "Relaunch contributors"
-  },
+  "author": "Silvamenu",
   "license": "MIT",
   "repository": {
     "type": "git",
