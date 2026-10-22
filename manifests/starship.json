@@ -1,0 +1,101 @@
+{
+  "id": "starship",
+  "name": "Starship",
+  "originalGame": "Star Fox 64",
+  "description": "Port para PC de Star Fox 64 baseado na decompilação do jogo, com widescreen, alta taxa de quadros e mods.",
+  "repoUrl": "https://github.com/HarbourMasters/Starship",
+  "accentColor": "#2f6fb5",
+  "executables": {
+    "win32": [
+      "Starship.exe"
+    ],
+    "linux": [
+      "starship.appimage"
+    ]
+  },
+  "detectFiles": [
+    "Starship.exe",
+    "starship.appimage",
+    "starship.o2r",
+    "starship.otr"
+  ],
+  "requirements": [
+    {
+      "id": "port-data",
+      "type": "file",
+      "label": "Arquivo de dados do port (starship.o2r)",
+      "patterns": [
+        "starship.o2r",
+        "starship.otr"
+      ],
+      "helpText": "Vem junto com o download oficial do port. Se estiver faltando, reinstale ou atualize o jogo."
+    },
+    {
+      "id": "rom",
+      "type": "userFile",
+      "label": "Sua ROM de Star Fox 64",
+      "optional": true,
+      "extensions": [
+        "z64"
+      ],
+      "validation": {
+        "sha1": [
+          {
+            "sha1": "d8b1088520f7c5f81433292a9258c1184afa1457",
+            "label": "US 1.0"
+          },
+          {
+            "sha1": "09f0d105f476b00efa5303a3ebc42e60a7753b7a",
+            "label": "US 1.1"
+          }
+        ]
+      },
+      "copyToGameDir": true,
+      "helpText": "Opcional: o próprio jogo pede a ROM na primeira execução. Se você copiar a ROM para a pasta do jogo, ele a encontra sozinho. A verificação por SHA-1 vale para ROMs no formato .z64."
+    },
+    {
+      "id": "rom-assets",
+      "type": "firstRun",
+      "label": "Gerar os assets a partir da sua ROM (sf64.o2r)",
+      "doneWhen": [
+        "sf64.o2r",
+        "sf64.otr"
+      ],
+      "helpText": "Abra o jogo uma vez: ele pergunta se deseja gerar os arquivos e pede para você escolher sua ROM. A extração leva alguns minutos e acontece só na primeira vez (e após atualizações de versão maior). Para vozes JP/EU, extraia também a ROM correspondente quando o jogo perguntar (os arquivos vão para mods/)."
+    }
+  ],
+  "configFiles": [
+    {
+      "path": "starship.cfg.json",
+      "format": "json",
+      "label": "Configurações (starship.cfg.json)",
+      "editable": true
+    },
+    {
+      "path": "imgui.ini",
+      "format": "ini",
+      "label": "Layout das janelas (imgui.ini)",
+      "editable": true
+    }
+  ],
+  "launchArgs": [],
+  "updates": {
+    "source": "github-releases",
+    "repo": "HarbourMasters/Starship",
+    "assetPatterns": {
+      "win32": "*Windows*.zip",
+      "linux": "*Linux*.zip"
+    },
+    "includePrereleases": false,
+    "preserve": [
+      "sf64.o2r",
+      "sf64.otr",
+      "mods/**",
+      "default.sav",
+      "starship.cfg.json",
+      "imgui.ini",
+      "logs/**",
+      "*.z64"
+    ]
+  }
+}
