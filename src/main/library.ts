@@ -12,7 +12,7 @@ import type { GameLauncher } from './launcher'
 import { evaluateRequirements, validateUserFile } from './requirements'
 import { listBackups, toBackupInfo } from './updateCore'
 
-const COVER_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.webp', '.gif']
+export const COVER_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.webp', '.gif']
 
 export class LibraryService {
   private readonly busy = new Set<string>()
@@ -25,7 +25,8 @@ export class LibraryService {
     this.launcher = launcher
   }
 
-  private requireEntry(id: string): GameEntry {
+  /** Entrada da biblioteca ou erro NOT_FOUND. */
+  requireEntry(id: string): GameEntry {
     const entry = this.ctx.store.getEntry(id)
     if (!entry) throw new AppError('NOT_FOUND', `Jogo ${id} não encontrado`)
     return entry

@@ -51,10 +51,6 @@ export class AppStore {
     })
   }
 
-  get path(): string {
-    return this.store.path
-  }
-
   // Configurações -----------------------------------------------------------
 
   getSettings(): Settings {
@@ -112,14 +108,6 @@ export class AppStore {
     if (index >= 0) list[index] = entry
     else list.push(entry)
     this.store.set('library', list)
-  }
-
-  patchEntry(id: string, patch: Partial<GameEntry>): GameEntry | undefined {
-    const entry = this.getEntry(id)
-    if (!entry) return undefined
-    const next = { ...entry, ...patch }
-    this.saveEntry(next)
-    return next
   }
 
   removeEntry(id: string): void {

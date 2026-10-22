@@ -12,7 +12,7 @@ import { mainText } from './i18n'
 import { GitHubClient } from './github'
 import type { LibraryService } from './library'
 import { isAnyRunning } from './processes'
-import { listBackups, rollbackFromBackup, runUpdateFlow } from './updateCore'
+import { listBackups, rollbackFromBackup, runUpdateFlow, UNKNOWN_VERSION } from './updateCore'
 
 export const CHECK_INTERVAL_MS = 3 * 60 * 60 * 1000
 const FIRST_CHECK_DELAY_MS = 5_000
@@ -104,8 +104,8 @@ export class GameUpdateService {
         if (latest) {
           state.latest = latest
           state.assetName = pickAsset(latest.assets, assetPatternsFor(updates, this.ctx.platform))?.name ?? null
-          state.available = isNewerRelease(latest, { tag: entry.installedVersion ?? '', publishedAt: entry.installedPublishedAt })
-          if (!entry.installedVersion) state.available = false
+          // Sem versão instalada conhecida não há como comparar: nada é oferecido.
+          state.available = !!entry.installedVersion && isNewerRelease(latest, { tag: entry.installedVersion, publishedAt: entry.installedPublishedAt })
           if (state.available && previous.notifiedTag !== latest.tag) {
             state.notifiedTag = latest.tag
             if (!entry.autoUpdate) this.notify(entry, this.text().updateAvailable(latest.tag))
@@ -163,8 +163,7 @@ export class GameUpdateService {
   }
 
   async start(entryId: string, opts: { automatic?: boolean } = {}): Promise<void> {
-    let entry = this.ctx.store.getEntry(entryId)
-    if (!entry) throw new AppError('NOT_FOUND')
+    let entry = this.library.requireEntry(entryId)
     const manifest = this.ctx.getManifest(entry.manifestId)
     const updates = githubUpdatesOf(manifest)
     if (!manifest || !updates) throw new AppError('UPDATES_DISABLED')
@@ -178,8 +177,7 @@ export class GameUpdateService {
     const release = state.latest
     if (!release) throw new AppError('NO_RELEASE')
     // A consulta acima é assíncrona: relê a entrada (a pasta pode ter mudado) e marca como ocupado antes de usar.
-    entry = this.ctx.store.getEntry(entryId)
-    if (!entry) throw new AppError('NOT_FOUND')
+    entry = this.library.requireEntry(entryId)
     if (this.library.isBusy(entryId)) throw new AppError('BUSY')
 
     const controller = new AbortController()
@@ -234,8 +232,7 @@ export class GameUpdateService {
   }
 
   async rollback(entryId: string): Promise<void> {
-    const entry = this.ctx.store.getEntry(entryId)
-    if (!entry) throw new AppError('NOT_FOUND')
+    const entry = this.library.requireEntry(entryId)
     const manifest = this.ctx.getManifest(entry.manifestId)
     if (!manifest) throw new AppError('NOT_FOUND')
     if (this.library.isBusy(entryId)) throw new AppError('BUSY')
@@ -251,7 +248,7 @@ export class GameUpdateService {
     try {
       this.progress({ ...base, stage: 'restoring' })
       await rollbackFromBackup(entry.path, backup, preserve)
-      const version = backup.meta.version === 'desconhecida' ? null : backup.meta.version
+      const version = backup.meta.version === UNKNOWN_VERSION ? null : backup.meta.version
       this.ctx.store.saveEntry({ ...entry, installedVersion: version, installedPublishedAt: null })
       await fs.rm(backup.dir, { recursive: true, force: true })
       const state = this.ctx.store.getUpdateState(entryId)

@@ -9,7 +9,7 @@ import yauzl from 'yauzl'
 import yazl from 'yazl'
 import { AppError } from '../shared/errors'
 import { toPosix } from '../shared/patterns'
-import { isInside, walkFiles } from './fsutil'
+import { isInside, isSameOrInside, walkFiles } from './fsutil'
 
 export type ArchiveKind = 'zip' | '7z' | 'tar' | 'raw'
 
@@ -40,7 +40,7 @@ export async function ensureSafeTarget(realRoot: string, target: string, label: 
   const parent = path.dirname(target)
   await fs.mkdir(parent, { recursive: true })
   const realParent = await fs.realpath(parent)
-  if (realParent !== realRoot && !isInside(realRoot, realParent)) throw new AppError('EXTRACT_FAILED', `Caminho inseguro: ${label}`)
+  if (!isSameOrInside(realRoot, realParent)) throw new AppError('EXTRACT_FAILED', `Caminho inseguro: ${label}`)
   const stat = await fs.lstat(target).catch(() => null)
   if (stat && !stat.isFile()) throw new AppError('EXTRACT_FAILED', `Caminho inseguro: ${label}`)
 }
@@ -74,15 +74,13 @@ export interface ExtractOptions {
   /** Retorne false para pular uma entrada (caminho relativo com "/"). */
   filter?: (rel: string) => boolean
   signal?: AbortSignal
-  onEntry?: (rel: string) => void
 }
 
-/** Extrai um zip com proteção contra caminhos fora do destino. Retorna os arquivos extraídos. */
-export async function extractZip(file: string, dest: string, options: ExtractOptions = {}): Promise<string[]> {
+/** Extrai um zip com proteção contra caminhos fora do destino. */
+export async function extractZip(file: string, dest: string, options: ExtractOptions = {}): Promise<void> {
   await fs.mkdir(dest, { recursive: true })
   const realDest = await fs.realpath(dest)
   const zip = await openZip(file)
-  const written: string[] = []
   const count = extractionBudget()
   await new Promise<void>((resolve, reject) => {
     const fail = (err: unknown) => {
@@ -107,8 +105,6 @@ export async function extractZip(file: string, dest: string, options: ExtractOpt
           // Mantém o bit de execução de arquivos criados em Unix (ex.: AppImage).
           const mode = (entry.externalFileAttributes >>> 16) & 0o777
           if (mode && process.platform !== 'win32') await fs.chmod(target, mode | 0o600)
-          written.push(rel)
-          options.onEntry?.(rel)
         }
         zip.readEntry()
       } catch (err) {
@@ -117,7 +113,6 @@ export async function extractZip(file: string, dest: string, options: ExtractOpt
     })
     zip.readEntry()
   })
-  return written
 }
 
 export async function listZip(file: string): Promise<string[]> {
@@ -138,13 +133,11 @@ export async function listZip(file: string): Promise<string[]> {
 export interface CreateZipOptions {
   onProgress?: (doneBytes: number, totalBytes: number) => void
   signal?: AbortSignal
-  /** Arquivos (relativos) a ignorar. */
-  exclude?: (rel: string) => boolean
 }
 
-/** Compacta uma pasta inteira em `outFile` (compressão rápida). Retorna o número de arquivos. */
-export async function createZipFromDir(srcDir: string, outFile: string, options: CreateZipOptions = {}): Promise<number> {
-  const files = (await walkFiles(srcDir)).filter((f) => !options.exclude?.(f.rel))
+/** Compacta uma pasta inteira em `outFile` (compressão rápida). */
+export async function createZipFromDir(srcDir: string, outFile: string, options: CreateZipOptions = {}): Promise<void> {
+  const files = await walkFiles(srcDir)
   const total = files.reduce((sum, f) => sum + f.size, 0)
   await fs.mkdir(path.dirname(outFile), { recursive: true })
   const zip = new yazl.ZipFile()
@@ -170,7 +163,6 @@ export async function createZipFromDir(srcDir: string, outFile: string, options:
   }
   zip.end()
   await done
-  return files.length
 }
 
 // ---------------------------------------------------------------------------

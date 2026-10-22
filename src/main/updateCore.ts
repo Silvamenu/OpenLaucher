@@ -14,10 +14,12 @@ import {
 } from '../shared/patterns'
 import type { BackupInfo, ReleaseAsset, ReleaseInfo, UpdateStage } from '../shared/types'
 import { archiveKindOf, createZipFromDir, ensureSafeTarget, extractPackage, extractZip, listZip } from './archive'
-import { hashFile, isInside, pathExists, sanitizeFileName, walkFiles } from './fsutil'
+import { hashFile, isInside, isSameOrInside, pathExists, sanitizeFileName, walkFiles } from './fsutil'
 
 export const USER_AGENT = 'Relaunch'
 export const BACKUPS_TO_KEEP = 2
+/** Versão gravada no backup quando a instalada não é conhecida. */
+export const UNKNOWN_VERSION = 'desconhecida'
 
 // ---------------------------------------------------------------------------
 // Download
@@ -152,7 +154,7 @@ export async function createBackup(opts: {
   signal?: AbortSignal
   onProgress?: (done: number, total: number) => void
 }): Promise<StoredBackup> {
-  const version = opts.version ?? 'desconhecida'
+  const version = opts.version ?? UNKNOWN_VERSION
   const base = path.join(opts.backupsDir, sanitizeFileName(version))
   let dir = base
   for (let i = 2; await pathExists(dir); i++) dir = `${base}-${i}`
@@ -171,9 +173,9 @@ export async function createBackup(opts: {
     createdAt: new Date().toISOString(),
     addedFiles: []
   }
-  await fs.writeFile(path.join(dir, BACKUP_META), JSON.stringify(meta, null, 2))
-  const size = (await fs.stat(zip)).size
-  return { dir, zip, meta, size }
+  const backup: StoredBackup = { dir, zip, meta, size: (await fs.stat(zip)).size }
+  await writeBackupMeta(backup)
+  return backup
 }
 
 export async function writeBackupMeta(backup: StoredBackup): Promise<void> {
@@ -274,7 +276,7 @@ async function removeFiles(gameDir: string, rels: string[]): Promise<void> {
     if (!isInside(gameDir, file)) continue
     // Nunca apaga através de um link que aponte para fora da pasta do jogo.
     const realParent = await fs.realpath(path.dirname(file)).catch(() => null)
-    if (!realParent || (realParent !== realGame && !isInside(realGame, realParent))) continue
+    if (!realParent || !isSameOrInside(realGame, realParent)) continue
     await fs.rm(file, { force: true })
     for (let dir = path.dirname(file); isInside(gameDir, dir); dir = path.dirname(dir)) dirs.add(dir)
   }

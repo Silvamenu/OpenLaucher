@@ -9,9 +9,7 @@ import type { AppContext } from './context'
 import type { DevlogTracker } from './devlogState'
 import type { GameUpdateService } from './gameUpdates'
 import { mainText } from './i18n'
-import type { LibraryService } from './library'
-import { isInside } from './fsutil'
-import { listBackups, toBackupInfo } from './updateCore'
+import { COVER_EXTENSIONS, type LibraryService } from './library'
 
 export interface Services {
   ctx: AppContext
@@ -53,8 +51,7 @@ export function registerIpc(s: Services): void {
   }
 
   const entryOrThrow = (id: string) => {
-    const entry = ctx.store.getEntry(id)
-    if (!entry) throw new AppError('NOT_FOUND')
+    const entry = library.requireEntry(id)
     const manifest = ctx.getManifest(entry.manifestId)
     if (!manifest) throw new AppError('NOT_FOUND', entry.manifestId)
     return { entry, manifest }
@@ -73,12 +70,10 @@ export function registerIpc(s: Services): void {
     if (!/^https:\/\//i.test(target)) throw new AppError('UNTRUSTED_URL', target)
     await shell.openExternal(target)
   })
+  // Só as pastas que a interface oferece: abrir um arquivo qualquer executaria programas.
   handle('app:openPath', async (p) => {
     const target = path.resolve(str(p, 'path'))
-    const allowed =
-      target === path.resolve(ctx.paths.userData) ||
-      isInside(ctx.paths.userData, target) ||
-      ctx.store.getEntries().some((e) => target === path.resolve(e.path) || isInside(e.path, target))
+    const allowed = [ctx.paths.userData, ctx.paths.userManifests].some((dir) => path.resolve(dir) === target)
     if (!allowed) throw new AppError('PERMISSION_DENIED', target)
     const error = await shell.openPath(target)
     if (error) throw new AppError('NOT_FOUND', error, { path: target })
@@ -86,11 +81,6 @@ export function registerIpc(s: Services): void {
 
   // Manifestos --------------------------------------------------------------
   handle('manifests:list', () => ctx.manifestsReport)
-  handle('manifests:reload', async () => {
-    const report = await ctx.reloadManifests()
-    await library.broadcast()
-    return report
-  })
 
   // Biblioteca --------------------------------------------------------------
   handle('library:list', () => library.list())
@@ -146,7 +136,7 @@ export function registerIpc(s: Services): void {
     const file = await openDialog({
       title: text().pickCover,
       properties: ['openFile'],
-      filters: [{ name: text().images, extensions: ['png', 'jpg', 'jpeg', 'webp', 'gif'] }]
+      filters: [{ name: text().images, extensions: COVER_EXTENSIONS.map((ext) => ext.slice(1)) }]
     })
     return file ? library.setCover(str(id), file) : library.item(entryOrThrow(str(id)).entry)
   })
@@ -192,10 +182,6 @@ export function registerIpc(s: Services): void {
   handle('updates:start', (id) => updates.start(str(id)))
   handle('updates:cancel', (id) => updates.cancel(str(id)))
   handle('updates:rollback', (id) => updates.rollback(str(id)))
-  handle('updates:backups', async (id) => {
-    const { entry } = entryOrThrow(str(id))
-    return (await listBackups(library.backupsDirFor(entry), entry.id)).map(toBackupInfo)
-  })
   handle('updates:rateLimit', () => ctx.store.getRateLimit())
 
   // Configurações -----------------------------------------------------------

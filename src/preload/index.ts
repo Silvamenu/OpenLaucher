@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron'
-import type { ApiEventName, ApiEvents, RecompApi } from '../shared/ipc'
+import type { ApiEventName, ApiEvents, RelaunchApi } from '../shared/ipc'
 import type { AppErrorShape, IpcResult } from '../shared/types'
 
 /**
@@ -16,15 +16,14 @@ async function call<T>(channel: string, ...args: unknown[]): Promise<T> {
   return result.data
 }
 
-const api: RecompApi = {
+const api: RelaunchApi = {
   app: {
     info: () => call('app:info'),
     openExternal: (url) => call('app:openExternal', url),
     openPath: (p) => call('app:openPath', p)
   },
   manifests: {
-    list: () => call('manifests:list'),
-    reload: () => call('manifests:reload')
+    list: () => call('manifests:list')
   },
   library: {
     list: () => call('library:list'),
@@ -57,7 +56,6 @@ const api: RecompApi = {
     start: (id) => call('updates:start', id),
     cancel: (id) => call('updates:cancel', id),
     rollback: (id) => call('updates:rollback', id),
-    backups: (id) => call('updates:backups', id),
     rateLimit: () => call('updates:rateLimit')
   },
   settings: {

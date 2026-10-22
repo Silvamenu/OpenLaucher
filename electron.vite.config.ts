@@ -3,6 +3,7 @@ import { defineConfig } from 'electron-vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import type { Plugin } from 'vite'
+import { COVER_SCHEME } from './src/shared/ipc'
 
 /** CSP restritiva só no build (em dev o Vite precisa de scripts inline para o HMR). */
 function contentSecurityPolicy(): Plugin {
@@ -10,7 +11,7 @@ function contentSecurityPolicy(): Plugin {
     "default-src 'self'",
     "script-src 'self'",
     "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' data: rl-cover: https:",
+    `img-src 'self' data: ${COVER_SCHEME}: https:`,
     "font-src 'self' data:",
     "connect-src 'self'",
     "object-src 'none'",

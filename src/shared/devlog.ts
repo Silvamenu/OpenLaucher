@@ -16,10 +16,6 @@ export function decideDevlog(currentVersion: string, lastSeenVersion: string | n
   return { show: false, markSeen: true }
 }
 
-export function shouldShowDevlog(currentVersion: string, lastSeenVersion: string | null | undefined): boolean {
-  return decideDevlog(currentVersion, lastSeenVersion).show
-}
-
 // ---------------------------------------------------------------------------
 // CHANGELOG.md
 // ---------------------------------------------------------------------------

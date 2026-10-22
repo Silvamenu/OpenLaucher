@@ -39,8 +39,7 @@ export class DevlogTracker {
     return {
       version: this.currentVersion,
       date: entry?.date ?? stored?.date ?? null,
-      sections: groupReleaseNotes(raw),
-      raw
+      sections: groupReleaseNotes(raw)
     }
   }
 }

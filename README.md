@@ -22,7 +22,7 @@ O Relaunch é um launcher para Windows e Linux que reúne os **ports e recompila
 
 - **Para jogar:** [Início rápido](#início-rápido) · [Jogos suportados](#jogos-suportados) · [O que o Relaunch faz](#o-que-o-relaunch-faz) · [Atualizações](#atualizações) · [Onde ficam seus dados](#onde-ficam-seus-dados)
 - **Para contribuir:** [Criar um manifesto](#criar-um-manifesto) · [Desenvolvimento](#desenvolvimento) · [Publicar uma versão do launcher](#publicar-uma-versão-do-launcher) · [Qualidade e segurança](#qualidade-e-segurança) · [Contribuir](#contribuir)
-- [Créditos](#créditos)
+- [Créditos](#créditos) · [Licença](#licença)
 
 ## Início rápido
 
@@ -389,7 +389,7 @@ Os apps instalados checam os releases ao abrir e a cada 3 horas, baixam em segun
 | `src/main/`         | Processo principal do Electron: store (electron-store) e IPC, detecção e requisitos, launcher, cliente GitHub com ETag, atualização, backup e rollback (`updateCore.ts`), extração (`archive.ts`), electron-updater. |
 | `src/preload/`      | Ponte segura (`contextIsolation` + `sandbox`) que expõe `window.api`.                                                                                                                                                |
 | `src/renderer/`     | Interface React + Tailwind. Os textos ficam em `src/renderer/src/i18n/` (`pt-BR.ts` e `en.ts`).                                                                                                                      |
-| `tests/`            | Testes Vitest: parser de manifestos, detecção, escolha de asset, versões, preserve/backup/rollback com zip falso, fluxo de atualização, devlog uma vez por versão, cliente GitHub, editor de configs.                |
+| `tests/`            | Testes (Vitest) da lógica de `src/shared/`, da detecção, do cliente GitHub, da extração, do fluxo de atualização e da migração de dados.                                                                             |
 | `scripts/`          | Geração do ícone e das notas de release.                                                                                                                                                                             |
 | `build/`            | Ícone usado no empacotamento.                                                                                                                                                                                        |
 | `docs/screenshots/` | Capturas de tela usadas neste README.                                                                                                                                                                                |
@@ -402,18 +402,18 @@ Os apps instalados checam os releases ao abrir e a cada 3 horas, baixam em segun
 
 Cada PR e cada push na `main` passam por verificações automáticas.
 
-| O quê                                                                      | Onde                                                  | Quando                                 |
-| -------------------------------------------------------------------------- | ----------------------------------------------------- | -------------------------------------- |
-| Tipos, lint (ESLint), formatação (Prettier) e build                        | [`ci.yml`](.github/workflows/ci.yml), no Linux        | Todo PR e todo push na `main`          |
-| Testes (Vitest)                                                            | [`ci.yml`](.github/workflows/ci.yml), Linux e Windows | Todo PR e todo push na `main`          |
-| `npm audit`: barra vulnerabilidades altas e críticas no que vai para o app | [`ci.yml`](.github/workflows/ci.yml)                  | Todo PR e todo push na `main`          |
-| Segredos no código e no histórico (gitleaks)                               | [`security.yml`](.github/workflows/security.yml)      | Todo PR, push na `main` e toda segunda |
-| Problemas de segurança nos workflows (zizmor)                              | [`security.yml`](.github/workflows/security.yml)      | Todo PR, push na `main` e toda segunda |
-| Dependências novas com vulnerabilidade alta ou crítica (dependency review) | [`security.yml`](.github/workflows/security.yml)      | Todo PR                                |
-| Análise estática do código e dos workflows (CodeQL)                        | [`codeql.yml`](.github/workflows/codeql.yml)          | Todo PR, push na `main` e toda segunda |
-| Dependências npm e GitHub Actions, em PRs agrupados                        | [Dependabot](.github/dependabot.yml)                  | Toda segunda, com cooldown de 7 dias   |
-| Revisão de [@Silvamenu](https://github.com/Silvamenu) em toda mudança      | [`CODEOWNERS`](.github/CODEOWNERS)                    | Todo PR                                |
-| Modelos de issue (bug, ideia, novo jogo) e checklist de PR                 | [`.github/`](.github)                                 | Ao abrir issue ou PR                   |
+| O quê                                                                       | Onde                                                  | Quando                                 |
+| --------------------------------------------------------------------------- | ----------------------------------------------------- | -------------------------------------- |
+| Tipos, lint (ESLint), formatação (Prettier) e build                         | [`ci.yml`](.github/workflows/ci.yml), no Linux        | Todo PR e todo push na `main`          |
+| Testes (Vitest)                                                             | [`ci.yml`](.github/workflows/ci.yml), Linux e Windows | Todo PR e todo push na `main`          |
+| `npm audit`: barra vulnerabilidades altas e críticas no que vai para o app  | [`ci.yml`](.github/workflows/ci.yml)                  | Todo PR e todo push na `main`          |
+| Segredos no código e no histórico (gitleaks)                                | [`security.yml`](.github/workflows/security.yml)      | Todo PR, push na `main` e toda segunda |
+| Problemas de segurança nos workflows (zizmor)                               | [`security.yml`](.github/workflows/security.yml)      | Todo PR, push na `main` e toda segunda |
+| Dependências novas com vulnerabilidade alta ou crítica (dependency review)  | [`security.yml`](.github/workflows/security.yml)      | Todo PR                                |
+| Análise estática do código e dos workflows (CodeQL)                         | [`codeql.yml`](.github/workflows/codeql.yml)          | Todo PR, push na `main` e toda segunda |
+| Dependências npm e GitHub Actions, em PRs agrupados                         | [Dependabot](.github/dependabot.yml)                  | Toda segunda, com cooldown de 7 dias   |
+| Revisão de [@Silvamenu](https://github.com/Silvamenu) solicitada em todo PR | [`CODEOWNERS`](.github/CODEOWNERS)                    | Todo PR                                |
+| Modelos de issue (bug, ideia, novo jogo) e checklist de PR                  | [`.github/`](.github)                                 | Ao abrir issue ou PR                   |
 
 - A `main` é protegida: toda mudança entra por PR, com essas verificações passando, e o histórico não pode ser reescrito.
 - As Actions são fixadas por SHA (com a versão em comentário) e cada workflow tem as permissões mínimas.
@@ -430,6 +430,8 @@ Cada PR e cada push na `main` passam por verificações automáticas.
 | Sugerir uma melhoria          | Abra a issue [Ideia ou melhoria](https://github.com/Silvamenu/Relaunch/issues/new/choose).                                             |
 | Reportar uma vulnerabilidade  | Em privado, como explica o [SECURITY.md](SECURITY.md). **Nunca** em issue pública.                                                     |
 
+- O código segue os princípios descritos no [CONTRIBUTING.md](CONTRIBUTING.md#princípios-do-código): segurança primeiro, KISS, YAGNI e DRY.
+- Participar do projeto significa seguir o [Código de Conduta](CODE_OF_CONDUCT.md).
 - Commits no padrão [Conventional Commits](https://www.conventionalcommits.org/pt-br/), em português. Use `npm run format` para corrigir a formatação.
 - Mudanças visíveis para quem usa o app entram no `CHANGELOG.md`, na seção **Não lançado**.
 - Textos novos da interface entram em `src/renderer/src/i18n/pt-BR.ts` **e** `src/renderer/src/i18n/en.ts`.
@@ -440,3 +442,7 @@ Cada PR e cada push na `main` passam por verificações automáticas.
 Os jogos e projetos listados pertencem aos seus respectivos autores e comunidades. O Relaunch é um launcher independente e não é afiliado a nenhum deles.
 
 As fontes Geist e Geist Mono são distribuídas sob a SIL Open Font License.
+
+## Licença
+
+O código do Relaunch é distribuído sob a [licença MIT](LICENSE). A licença cobre só o launcher: os jogos, ports e arquivos que ele abre seguem as licenças e os direitos de seus próprios autores.

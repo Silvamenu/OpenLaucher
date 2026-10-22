@@ -1,8 +1,8 @@
-import type { RecompApi } from '../shared/ipc'
+import type { RelaunchApi } from '../shared/ipc'
 
 declare global {
   interface Window {
-    api: RecompApi
+    api: RelaunchApi
   }
 }
 

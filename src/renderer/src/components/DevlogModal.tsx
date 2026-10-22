@@ -23,10 +23,9 @@ const sectionTone: Record<NoteSectionKind, string> = {
 
 /** Popup "Novidades da vX.Y.Z" exibido na primeira abertura após atualizar o launcher. */
 export function DevlogModal() {
-  const { devlog, closeDevlog } = useAppState()
+  const { devlog: view, closeDevlog } = useAppState()
   const { t, locale } = useI18n()
-  if (!devlog) return null
-  const { view } = devlog
+  if (!view) return null
   return (
     <Modal onClose={closeDevlog} labelledBy="devlog-title" className="max-w-[560px]">
       <header className="flex items-start gap-3.5 px-6 pt-6 pb-5">

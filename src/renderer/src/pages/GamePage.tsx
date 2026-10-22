@@ -3,11 +3,11 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { collectTodos, executablesFor, launchArgsFor } from '../../../shared/manifest'
 import type { LibraryItem, RequirementsReport } from '../../../shared/types'
 import { GameCover, coverGradient, coverUrl, hueOfItem } from '../components/GameArt'
-import { GearIcon } from '../components/icons'
+import { NavIcon } from '../components/icons'
 import { statusTone, useStatusLabel } from '../components/Status'
 import { Button, Card, Chip, ConfirmModal, Dot, PromptModal } from '../components/ui'
 import { useI18n } from '../i18n'
-import { errorMessage, formatDate, formatPlaytime, formatRelative } from '../lib/format'
+import { errorMessage, formatDate, formatPlaytime, formatRelative, isApiError } from '../lib/format'
 import { useAppState, type GameTab } from '../state/AppState'
 import { ChecklistTab } from './game/ChecklistTab'
 import { ConfigsTab } from './game/ConfigsTab'
@@ -160,8 +160,8 @@ export function GamePage({ id, tab }: { id: string; tab?: GameTab }) {
         await window.api.updates.start(id)
         toast('success', t('upd.updated', { name: item.name, version: item.update.latest?.tag ?? '' }))
       } catch (err) {
-        if ((err as { code?: string }).code === 'GAME_RUNNING') showSection('updates')
-        if ((err as { code?: string }).code !== 'CANCELLED') throw err
+        if (isApiError(err, 'GAME_RUNNING')) showSection('updates')
+        if (!isApiError(err, 'CANCELLED')) throw err
       }
     })
 
@@ -257,7 +257,7 @@ export function GamePage({ id, tab }: { id: string; tab?: GameTab }) {
             </Button>
           )}
           <div className="relative" ref={menuRef}>
-            <Button size="lg" icon={<GearIcon />} aria-label={t('game.more')} title={t('game.more')} onClick={() => setMenu((m) => !m)} />
+            <Button size="lg" icon={<NavIcon name="gear" />} aria-label={t('game.more')} title={t('game.more')} onClick={() => setMenu((m) => !m)} />
             {menu && (
               <div className="animate-pop-in absolute left-0 z-30 mt-2 w-64 rounded-xl border border-control-line bg-control p-1.5 shadow-[0_20px_50px_var(--shadow)]">
                 <MenuItem icon={<SlidersHorizontal size={15} />} onClick={() => (setMenu(false), showSection('configs'))}>

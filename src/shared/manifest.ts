@@ -132,28 +132,19 @@ export const manifestSchema = z.object({
   _todo: todoSchema
 })
 
-export type ManifestInput = z.input<typeof manifestSchema>
 type ParsedManifest = z.output<typeof manifestSchema>
 type ParsedRequirement = z.output<typeof requirementSchema>
 
 /** Requisito com id garantido (gerado a partir da posição quando ausente). */
 export type Requirement = ParsedRequirement & { id: string }
-export type FileRequirement = Extract<Requirement, { type: 'file' }>
 export type UserFileRequirement = Extract<Requirement, { type: 'userFile' }>
-export type FirstRunRequirement = Extract<Requirement, { type: 'firstRun' }>
 export type ConfigFileSpec = z.output<typeof configFileSchema>
 export type GithubUpdates = z.output<typeof githubUpdates>
-export type UpdatesSpec = ParsedManifest['updates']
 
 export interface Manifest extends Omit<ParsedManifest, 'requirements'> {
   requirements: Requirement[]
   /** De onde o manifesto foi carregado (embutido no app ou pasta do usuário). */
   origin?: 'builtin' | 'user'
-}
-
-export interface ManifestError {
-  file: string
-  message: string
 }
 
 export type ManifestParseResult = { ok: true; manifest: Manifest } | { ok: false; error: string }
@@ -199,12 +190,6 @@ export function parseManifestText(text: string): ManifestParseResult {
     return { ok: false, error: `JSON inválido: ${(err as Error).message}` }
   }
   return parseManifest(data)
-}
-
-export function forPlatform<T>(value: T | Partial<Record<Platform, T>> | undefined, platform: Platform): T | undefined {
-  if (value === undefined) return undefined
-  if (Array.isArray(value) || typeof value !== 'object' || value === null) return value as T
-  return (value as Partial<Record<Platform, T>>)[platform]
 }
 
 export function executablesFor(manifest: Manifest, platform: Platform): string[] {

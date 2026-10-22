@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { DevlogTracker, type DevlogStorage } from '../src/main/devlogState'
-import { decideDevlog, findChangelogEntry, groupReleaseNotes, parseChangelog, shouldShowDevlog } from '../src/shared/devlog'
+import { decideDevlog, findChangelogEntry, groupReleaseNotes, parseChangelog } from '../src/shared/devlog'
 
 const CHANGELOG = `# Changelog
 
@@ -47,13 +47,13 @@ describe('decisão de exibir o devlog', () => {
   })
 
   it('exibe depois de uma atualização', () => {
-    expect(shouldShowDevlog('0.2.0', '0.1.0')).toBe(true)
-    expect(shouldShowDevlog('1.0.0', '0.9.9')).toBe(true)
+    expect(decideDevlog('0.2.0', '0.1.0').show).toBe(true)
+    expect(decideDevlog('1.0.0', '0.9.9').show).toBe(true)
   })
 
   it('não exibe na mesma versão nem em downgrade', () => {
-    expect(shouldShowDevlog('0.2.0', '0.2.0')).toBe(false)
-    expect(shouldShowDevlog('v0.2.0', '0.2.0')).toBe(false)
+    expect(decideDevlog('0.2.0', '0.2.0').show).toBe(false)
+    expect(decideDevlog('v0.2.0', '0.2.0').show).toBe(false)
     expect(decideDevlog('0.1.0', '0.2.0')).toEqual({ show: false, markSeen: true })
   })
 })

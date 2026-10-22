@@ -7,14 +7,6 @@ O conteúdo de cada versão é usado como nota do release no GitHub (`npm run re
 
 ## [Não lançado]
 
-### Melhorias
-
-- O projeto agora se chama **Relaunch**, com logo e ícone novos. Quem já usava o app com o nome antigo (RecompHub) mantém biblioteca, configurações e backups: os dados são levados para a pasta nova na primeira abertura. No Linux, pode ser preciso colar de novo o token do GitHub em **Configurações**.
-
-### Correções
-
-- O limite de tamanho e de quantidade de arquivos na extração das atualizações agora vale também para pacotes `.7z`, como já valia para `.zip` e `.tar`.
-
 ## [0.1.0] - 2026-10-22
 
 ### Novidades
@@ -38,7 +30,4 @@ O conteúdo de cada versão é usado como nota do release no GitHub (`npm run re
 ### Melhorias
 
 - Token pessoal do GitHub (opcional) guardado cifrado, para aumentar o limite de consultas.
-
-### Correções
-
-- Primeira versão pública: nenhuma correção ainda.
+- Atualizações protegidas: só baixam do repositório declarado no manifesto, via HTTPS, conferem o tamanho e, quando o release publica, o SHA-256, e limitam o tamanho e a quantidade de arquivos extraídos (`.zip`, `.tar` e `.7z`).

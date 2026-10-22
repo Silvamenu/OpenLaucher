@@ -2,7 +2,7 @@
 # Windows é a prioridade (NSIS); Linux gera AppImage.
 appId: io.github.silvamenu.relaunch
 productName: Relaunch
-copyright: Relaunch contributors
+copyright: Copyright (c) 2026 Silvamenu
 
 directories:
   buildResources: build
@@ -22,6 +22,13 @@ files:
 # O binário do 7-Zip precisa ficar fora do .asar para poder ser executado.
 asarUnpack:
   - node_modules/7zip-bin/**
+
+# Endurece o executável empacotado: o app não usa o Electron como Node, NODE_OPTIONS nem --inspect.
+electronFuses:
+  runAsNode: false
+  enableNodeOptionsEnvironmentVariable: false
+  enableNodeCliInspectArguments: false
+  onlyLoadAppFromAsar: true
 
 # Manifestos e CHANGELOG ficam em resources/ (lidos em tempo de execução).
 extraResources:

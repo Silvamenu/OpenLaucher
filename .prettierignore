@@ -1,7 +1,3 @@
-out/
-dist/
-build/
-coverage/
-node_modules/
+# Além do .gitignore, que o Prettier já lê.
 package-lock.json
 CHANGELOG.md

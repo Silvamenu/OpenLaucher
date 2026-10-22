@@ -63,5 +63,6 @@ jobs:
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version-file: .nvmrc
-      # Bloqueia vulnerabilidades altas/críticas no que vai para o app instalado.
-      - run: npm audit --omit=dev --audit-level=high
+      # Bloqueia vulnerabilidades altas/críticas em todas as dependências: o Electron e as bibliotecas
+      # da interface (React, react-markdown) são devDependencies, mas vão para o app instalado.
+      - run: npm audit --audit-level=high

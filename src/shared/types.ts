@@ -1,8 +1,6 @@
 import type { Manifest, Platform } from './manifest'
 import type { NoteSection } from './devlog'
 
-export type { Manifest, Platform }
-
 // ---------------------------------------------------------------------------
 // Configurações do app
 // ---------------------------------------------------------------------------
@@ -83,7 +81,6 @@ export interface ReleaseAsset {
   name: string
   size: number
   url: string
-  contentType?: string
   digest?: string | null
 }
 
@@ -189,7 +186,6 @@ export interface DevlogView {
   version: string
   date: string | null
   sections: NoteSection[]
-  raw: string
 }
 
 export interface AppInfo {

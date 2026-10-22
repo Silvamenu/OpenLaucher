@@ -1,16 +1,10 @@
-import { spawn, type ChildProcess } from 'node:child_process'
+import { spawn } from 'node:child_process'
 import { constants as fsConstants, promises as fs } from 'node:fs'
 import path from 'node:path'
 import { AppError } from '../shared/errors'
 import { launchArgsFor, launchEnvFor, type Manifest, type Platform } from '../shared/manifest'
 import type { GameEntry } from '../shared/types'
 import { expandVariables } from './pathVars'
-
-interface RunningGame {
-  child: ChildProcess
-  startedAt: number
-  exeName: string
-}
 
 export interface LaunchCallbacks {
   onStart: (entryId: string) => void
@@ -20,7 +14,7 @@ export interface LaunchCallbacks {
 
 /** Inicia os jogos com `cwd` na pasta do jogo e mede o tempo jogado. */
 export class GameLauncher {
-  private readonly running = new Map<string, RunningGame>()
+  private readonly running = new Set<string>()
 
   constructor(
     private readonly platform: Platform,
@@ -31,18 +25,9 @@ export class GameLauncher {
     return this.running.has(entryId)
   }
 
-  runningExeNames(): string[] {
-    return [...this.running.values()].map((r) => r.exeName)
-  }
-
   async launch(entry: GameEntry, manifest: Manifest, exeRel: string | null): Promise<void> {
     if (this.running.has(entry.id)) throw new AppError('ALREADY_RUNNING')
-    try {
-      const stat = await fs.stat(entry.path)
-      if (!stat.isDirectory()) throw new Error('not a dir')
-    } catch {
-      throw new AppError('FOLDER_NOT_FOUND', entry.path, { path: entry.path })
-    }
+    // A pasta do jogo já foi conferida por quem chama (LibraryService.launch).
     if (!exeRel) throw new AppError('EXE_NOT_FOUND', '', { path: entry.path })
     const exe = path.join(entry.path, exeRel)
 
@@ -79,7 +64,7 @@ export class GameLauncher {
     })
 
     const startedAt = Date.now()
-    this.running.set(entry.id, { child, startedAt, exeName: path.basename(exeRel) })
+    this.running.add(entry.id)
     this.callbacks.onStart(entry.id)
     child.once('exit', () => {
       this.running.delete(entry.id)
