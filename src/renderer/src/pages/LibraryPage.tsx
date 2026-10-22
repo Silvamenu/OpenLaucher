@@ -2,6 +2,7 @@ import { Plus, RefreshCw, ShieldCheck } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { GameCard } from '../components/GameCard'
 import { LogoMark } from '../components/brand'
+import { GlossaryText } from '../components/Glossary'
 import { Button, Chip, Page, PageHeader } from '../components/ui'
 import { useI18n } from '../i18n'
 import { errorMessage } from '../lib/format'
@@ -52,13 +53,15 @@ export function LibraryPage() {
       <div className="flex min-h-full flex-col items-center justify-center px-6 py-16 text-center">
         <LogoMark size={48} />
         <h1 className="mt-6 text-[24px] font-semibold tracking-[-0.025em]">{t('library.empty.title')}</h1>
-        <p className="mt-2 max-w-md text-[13.5px] leading-relaxed text-subtle">{t('library.empty.body')}</p>
+        <p className="mt-2 max-w-md text-[13.5px] leading-relaxed text-subtle">
+          <GlossaryText>{t('library.empty.body')}</GlossaryText>
+        </p>
         <Button variant="primary" className="mt-7" icon={<Plus size={16} />} onClick={() => navigate({ page: 'add' })}>
           {t('nav.add')}
         </Button>
         <p className="mt-10 flex items-center justify-center gap-1.5 text-[11.5px] text-faint">
           <ShieldCheck size={13} className="shrink-0" />
-          {t('legal.short')}
+          <GlossaryText>{t('legal.short')}</GlossaryText>
         </p>
       </div>
     )

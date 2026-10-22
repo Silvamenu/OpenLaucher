@@ -2,6 +2,7 @@ import { RefreshCw } from 'lucide-react'
 import { useState } from 'react'
 import type { LibraryItem } from '../../../shared/types'
 import { GameTile } from '../components/GameArt'
+import { GlossaryText } from '../components/Glossary'
 import { Button, Dot, Page, PageHeader, ProgressBar, SectionLabel } from '../components/ui'
 import { useI18n } from '../i18n'
 import { errorMessage, formatProgressDetail, formatRelative, isApiError } from '../lib/format'
@@ -60,7 +61,7 @@ export function DownloadsPage() {
     <Page narrow>
       <PageHeader
         title={t('downloads.title')}
-        subtitle={t('downloads.subtitle')}
+        subtitle={<GlossaryText>{t('downloads.subtitle')}</GlossaryText>}
         actions={
           <Button icon={<RefreshCw size={14} className={checking ? 'animate-spin' : ''} />} disabled={checking} onClick={check}>
             {checking ? t('library.checking') : t('library.checkUpdates')}

@@ -36,6 +36,33 @@ export const en: Record<TranslationKey, string> = {
     "Ports come straight from each project's official repository. ROMs and copyrighted assets are never downloaded: Relaunch only uses files you already own.",
   'legal.short': 'Relaunch never downloads ROMs, it only uses the ones you own.',
 
+  'glossary.rom.title': 'ROM',
+  'glossary.rom.text':
+    'A copy of the original game, made from the cartridge and saved as a single file (for example, .z64). The port extracts the game\'s content from it, such as graphics, sounds and text. Relaunch never provides ROMs: use a copy of your own cartridge.\nHow to use it: in the game\'s "{setupTab}" tab, click "{selectFile}" and choose your ROM; Relaunch checks that it is the right version. Then open the game once and follow what it asks.',
+  'glossary.assets.title': 'Assets',
+  'glossary.assets.text':
+    "The game's content: graphics, sounds, music and text. Ports don't include any of it: the first time you open the game, it extracts the assets from your ROM and keeps them on your computer.",
+  'glossary.o2r.title': '.o2r file',
+  'glossary.o2r.text':
+    "A data package used by the port. One comes with the port's download; the other, holding the game's assets, is created from your ROM on the first run and stays only on your computer.",
+  'glossary.port.title': 'Port',
+  'glossary.port.text':
+    "A fan-made version of the game, rebuilt to run natively on PC without an emulator. It only brings the program: the game's content comes from your ROM.",
+  'glossary.sha1.title': 'SHA-1',
+  'glossary.sha1.text':
+    "A kind of fingerprint of the file: if a single byte changes, it changes too. Relaunch compares your ROM's fingerprint with those of the versions the game accepts to know if it is the right one.",
+  'glossary.romFormats.title': '.z64, .n64 and .v64',
+  'glossary.romFormats.text':
+    'Nintendo 64 ROM formats: the same game with its bytes in a different order. .z64 is the most common, and the one Relaunch can check by SHA-1.',
+  'glossary.release.title': 'Release',
+  'glossary.release.text':
+    "A version published by the project on GitHub, with files ready to download. Relaunch only downloads from each project's official repository.",
+  'glossary.manifest.title': 'Manifest',
+  'glossary.manifest.text':
+    'A sheet that teaches Relaunch how to handle a project: where to download it, which files the game needs and how to open it. Manifests ship with the app, and you can add your own in the manifests folder.',
+  'glossary.decomp.title': 'Decompilation',
+  'glossary.decomp.text': "The game's source code, rebuilt by fans from the original. It's what makes it possible to remake the game to run on PC.",
+
   'add.title': 'Add game',
   'add.subtitle':
     'Point to the folder of a port you already installed or download one from the list below. The app detects which project it is and checks what is missing.',

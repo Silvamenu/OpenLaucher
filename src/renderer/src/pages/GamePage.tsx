@@ -3,6 +3,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { collectTodos, executablesFor, launchArgsFor } from '../../../shared/manifestUtils'
 import type { LibraryItem, RequirementsReport } from '../../../shared/types'
 import { GameCover, coverGradient, coverUrl, hueOfItem } from '../components/GameArt'
+import { GlossaryText } from '../components/Glossary'
 import { NavIcon } from '../components/icons'
 import { statusTone, useStatusLabel } from '../components/Status'
 import { Button, Card, Chip, ConfirmModal, Dot, PromptModal } from '../components/ui'
@@ -64,11 +65,17 @@ function AboutTab({ item }: { item: LibraryItem }) {
   ]
   return (
     <div className="max-w-[760px]">
-      {m.description && <p className="mb-6 text-[13.5px] leading-relaxed text-fg-3">{m.description}</p>}
+      {m.description && (
+        <p className="mb-6 text-[13.5px] leading-relaxed text-fg-3">
+          <GlossaryText>{m.description}</GlossaryText>
+        </p>
+      )}
       <Card className="divide-y divide-line overflow-hidden">
         {rows.map(([label, value]) => (
           <div key={label} className="grid gap-1 px-[18px] py-3 text-[13.5px] sm:grid-cols-[200px_1fr]">
-            <div className="text-faint">{label}</div>
+            <div className="text-faint">
+              <GlossaryText>{label}</GlossaryText>
+            </div>
             <div className="min-w-0 break-words">{value}</div>
           </div>
         ))}

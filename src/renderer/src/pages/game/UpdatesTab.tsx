@@ -2,6 +2,7 @@ import { ChevronDown, RefreshCw } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { assetPatternsFor } from '../../../../shared/manifestUtils'
 import type { LibraryItem, RateLimitInfo, ReleaseInfo } from '../../../../shared/types'
+import { GlossaryText } from '../../components/Glossary'
 import { Markdown } from '../../components/Markdown'
 import { Button, Card, ConfirmModal, Dot, ProgressBar, SectionLabel, Toggle } from '../../components/ui'
 import { useI18n } from '../../i18n'
@@ -198,7 +199,7 @@ export function UpdatesTab({ item }: { item: LibraryItem }) {
       {latest && state.assetName === null && (
         <p className="flex items-start gap-2.5 rounded-xl border border-line px-4 py-3 text-[13px] text-fg-3">
           <Dot tone="warn" className="mt-1.5" />
-          {t('upd.noAsset', { patterns: patterns.join(', ') || '—' })}
+          <GlossaryText>{t('upd.noAsset', { patterns: patterns.join(', ') || '—' })}</GlossaryText>
         </p>
       )}
 
@@ -268,7 +269,9 @@ export function UpdatesTab({ item }: { item: LibraryItem }) {
               </span>
             ))}
           </div>
-          <p className="mt-3 text-[11.5px] text-faint">{t('upd.source', { repo: updates.repo })}</p>
+          <p className="mt-3 text-[11.5px] text-faint">
+            <GlossaryText>{t('upd.source', { repo: updates.repo })}</GlossaryText>
+          </p>
           {rateLimit && <p className="mt-1 text-[11.5px] text-faint">{formatRateLimit(rateLimit, t, locale)}</p>}
         </div>
       </div>

@@ -31,7 +31,7 @@ O Relaunch é um launcher para Windows e Linux que reúne os **ports e recompila
 1. **Instale o Relaunch.** Baixe o `Relaunch-Setup-<versão>.exe` na página de [Releases](https://github.com/Silvamenu/Relaunch/releases) e execute. O instalador deixa escolher a pasta e cria atalhos na área de trabalho e no menu Iniciar.
 2. **Crie seu perfil.** Na tela **Quem está jogando?**, escolha um nome e uma cor; o PIN de 4 dígitos é opcional. Tudo fica só neste computador.
 3. **Adicione o jogo.** Em **Adicionar jogo**, clique em **Baixar** ao lado do projeto para instalar a versão mais recente, direto do repositório oficial, numa pasta que você escolhe. Se o port já está instalado, use **Escolher pasta…** e aponte a pasta dele: o app reconhece o projeto sozinho.
-4. **Siga o checklist** da aba **Configuração**: por exemplo, selecionar a sua ROM ou abrir o jogo uma vez para gerar os assets.
+4. **Siga o checklist** da aba **Configuração**: por exemplo, selecionar a sua ROM ou abrir o jogo uma vez para gerar os assets. Não sabe o que é uma ROM? Passe o mouse sobre os termos sublinhados com pontinhos para ver uma explicação.
 5. **Clique em Jogar.**
 
 O instalador não é assinado digitalmente, então o Windows SmartScreen pode avisar na primeira execução (**Mais informações → Executar assim mesmo**).
@@ -76,20 +76,20 @@ Falta algum? Cada jogo é um arquivo JSON, sem mexer no código: veja [Criar um 
 
 ## O que o Relaunch faz
 
-| Área                        | O que faz                                                                                                                                                                                                    |
-| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Biblioteca**              | Grade com o status de cada jogo (**Pronto**, **Falta configurar**, **Pasta não encontrada**), filtros e busca rápida com `Ctrl+K`.                                                                           |
-| **Perfis**                  | Tela **Quem está jogando?** ao abrir: perfis locais com cor e PIN opcional, que podem ir para outro computador num arquivo `.relaunch`. Nada vai para a internet.                                            |
-| **Adicionar jogo**          | **Baixar** instala o port direto do repositório oficial. Ou você escolhe a pasta de um port já instalado e o app detecta o projeto pelos arquivos dela (inclusive numa subpasta).                            |
-| **Página do jogo**          | Abas **Configuração**, **Arquivos de config**, **Atualizações** e **Sobre**. Pelo menu do jogo: renomear, escolher uma capa, trocar a pasta ou remover da biblioteca (os arquivos do jogo não são apagados). |
-| **Checklist**               | Requisitos com ✓/✗ e ações: selecionar a sua ROM (validada por tamanho ou SHA-1), copiá-la para a pasta do jogo, abrir a pasta, abrir o jogo pela primeira vez e ver instruções.                             |
-| **Editor de configs**       | Arquivos JSON, INI e texto, editáveis em formulário ou como texto. Valida antes de salvar, faz backup automático e permite restaurar.                                                                        |
-| **Jogar**                   | Abre o executável com a pasta do jogo como diretório de trabalho, mais os argumentos e variáveis de ambiente do manifesto. Registra o último acesso e o tempo jogado.                                        |
-| **Capas**                   | Capa gerada com a cor do manifesto, ou uma imagem escolhida por você.                                                                                                                                        |
-| **Atualizações dos jogos**  | Busca versões novas nos GitHub Releases de cada projeto, faz backup, preserva saves e volta sozinho se algo falhar. Veja [como funciona](#atualizações-dos-jogos).                                           |
-| **Downloads**               | Atualizações em andamento, disponíveis e concluídas na sessão. O progresso também aparece na barra lateral.                                                                                                  |
-| **Atualização do launcher** | Baixa a versão nova do Relaunch em segundo plano e avisa com um botão azul na barra lateral. Depois, o popup **Novidades** mostra o que mudou.                                                               |
-| **Configurações**           | Tema escuro, claro ou do sistema; idioma (PT-BR padrão, EN); perfil; token do GitHub; notificações; atualização automática por jogo; pastas de manifestos e de dados; reescanear pastas.                     |
+| Área                        | O que faz                                                                                                                                                                                                                                    |
+| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Biblioteca**              | Grade com o status de cada jogo (**Pronto**, **Falta configurar**, **Pasta não encontrada**), filtros e busca rápida com `Ctrl+K`.                                                                                                           |
+| **Perfis**                  | Tela **Quem está jogando?** ao abrir: perfis locais com cor e PIN opcional, que podem ir para outro computador num arquivo `.relaunch`. Nada vai para a internet.                                                                            |
+| **Adicionar jogo**          | **Baixar** instala o port direto do repositório oficial. Ou você escolhe a pasta de um port já instalado e o app detecta o projeto pelos arquivos dela (inclusive numa subpasta).                                                            |
+| **Página do jogo**          | Abas **Configuração**, **Arquivos de config**, **Atualizações** e **Sobre**. Pelo menu do jogo: renomear, escolher uma capa, trocar a pasta ou remover da biblioteca (os arquivos do jogo não são apagados).                                 |
+| **Checklist**               | Requisitos com ✓/✗ e ações: selecionar a sua ROM (validada por tamanho ou SHA-1), copiá-la para a pasta do jogo, abrir a pasta, abrir o jogo pela primeira vez e ver instruções. Termos como ROM e SHA-1 têm uma dica que explica o que são. |
+| **Editor de configs**       | Arquivos JSON, INI e texto, editáveis em formulário ou como texto. Valida antes de salvar, faz backup automático e permite restaurar.                                                                                                        |
+| **Jogar**                   | Abre o executável com a pasta do jogo como diretório de trabalho, mais os argumentos e variáveis de ambiente do manifesto. Registra o último acesso e o tempo jogado.                                                                        |
+| **Capas**                   | Capa gerada com a cor do manifesto, ou uma imagem escolhida por você.                                                                                                                                                                        |
+| **Atualizações dos jogos**  | Busca versões novas nos GitHub Releases de cada projeto, faz backup, preserva saves e volta sozinho se algo falhar. Veja [como funciona](#atualizações-dos-jogos).                                                                           |
+| **Downloads**               | Atualizações em andamento, disponíveis e concluídas na sessão. O progresso também aparece na barra lateral.                                                                                                                                  |
+| **Atualização do launcher** | Baixa a versão nova do Relaunch em segundo plano e avisa com um botão azul na barra lateral. Depois, o popup **Novidades** mostra o que mudou.                                                                                               |
+| **Configurações**           | Tema escuro, claro ou do sistema; idioma (PT-BR padrão, EN); perfil; token do GitHub; notificações; atualização automática por jogo; pastas de manifestos e de dados; reescanear pastas.                                                     |
 
 ![Página do Ship of Harkinian com os botões Jogar e Atualizar para 9.3.1, a versão instalada, o último jogo e o tempo jogado](docs/screenshots/jogo.png)
 
