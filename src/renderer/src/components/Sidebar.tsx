@@ -4,7 +4,8 @@ import { useI18n } from '../i18n'
 import { initials } from '../lib/format'
 import { useAppState, type Route } from '../state/AppState'
 import { GameTile } from './GameArt'
-import { NavIcon, LogoMark } from './icons'
+import { Logo } from './brand'
+import { NavIcon } from './icons'
 import { statusTone, useStatusLabel } from './Status'
 import { Dot, Kbd, ProgressBar, ProgressRing, Tooltip } from './ui'
 
@@ -146,8 +147,7 @@ export function Sidebar() {
   return (
     <aside className="flex h-full w-64 shrink-0 flex-col px-3.5 pt-3.5 pb-3 max-lg:w-56">
       <div className="flex items-center gap-2.5 px-1.5 pt-1 pb-[18px]">
-        <LogoMark />
-        <span className="text-[15px] font-semibold tracking-[-0.01em]">{t('app.name')}</span>
+        <Logo height={24} title={t('app.name')} />
         {info && <span className="ml-auto rounded-md border border-line px-1.5 py-0.5 font-mono text-[10.5px] text-faint">v{info.version}</span>}
       </div>
 

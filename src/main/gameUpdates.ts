@@ -149,7 +149,7 @@ export class GameUpdateService {
   private notify(entry: GameEntry, body: string): void {
     if (!this.ctx.store.getSettings().notifications || !Notification.isSupported()) return
     const manifest = this.ctx.getManifest(entry.manifestId)
-    const notification = new Notification({ title: entry.customName || manifest?.name || 'RecompHub', body })
+    const notification = new Notification({ title: entry.customName || manifest?.name || 'Relaunch', body })
     notification.on('click', () => {
       const win = this.ctx.window
       if (win) {

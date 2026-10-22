@@ -27,8 +27,8 @@ body:
   - type: input
     id: version
     attributes:
-      label: Versão do RecompHub
-      description: Configurações → Sobre o RecompHub.
+      label: Versão do Relaunch
+      description: Configurações → Sobre o Relaunch.
       placeholder: 0.1.0
     validations:
       required: true

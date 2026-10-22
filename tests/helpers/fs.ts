@@ -4,7 +4,7 @@ import path from 'node:path'
 import { pipeline } from 'node:stream/promises'
 import yazl from 'yazl'
 
-export async function tempDir(prefix = 'recomphub-test-'): Promise<string> {
+export async function tempDir(prefix = 'relaunch-test-'): Promise<string> {
   return fs.mkdtemp(path.join(os.tmpdir(), prefix))
 }
 

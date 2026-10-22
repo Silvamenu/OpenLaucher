@@ -66,7 +66,7 @@ export function monogram(name: string): string {
 }
 
 export function coverUrl(item: LibraryItem): string | null {
-  return item.entry.coverVersion ? `rh-cover://cover/${item.entry.id}?v=${item.entry.coverVersion}` : null
+  return item.entry.coverVersion ? `rl-cover://cover/${item.entry.id}?v=${item.entry.coverVersion}` : null
 }
 
 /** Capa: imagem escolhida pelo usuário, ou gradiente listrado com ícone do .exe / monograma. */

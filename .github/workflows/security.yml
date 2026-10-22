@@ -1,6 +1,7 @@
-# Varreduras de segurança gratuitas (repositório privado não tem CodeQL/push protection sem GHAS):
+# Varreduras de segurança (a análise do CodeQL fica em codeql.yml):
 # - gitleaks: segredos no código e no histórico
 # - zizmor: problemas de segurança nos próprios workflows do GitHub Actions
+# - dependency review: em PRs, barra dependências novas com vulnerabilidade alta ou crítica
 name: Segurança
 
 on:
@@ -49,3 +50,16 @@ jobs:
       - uses: zizmorcore/zizmor-action@f9597c869b2e67095f9b527070297a13a6efe928 # v0.7.0
         with:
           advanced-security: false
+
+  dependency-review:
+    name: Revisão de dependências
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          fail-on-severity: high
+          comment-summary-in-pr: never

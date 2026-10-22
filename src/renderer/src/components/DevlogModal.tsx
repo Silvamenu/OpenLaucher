@@ -3,7 +3,7 @@ import type { NoteSectionKind } from '../../../shared/devlog'
 import { useI18n } from '../i18n'
 import { formatDate } from '../lib/format'
 import { useAppState } from '../state/AppState'
-import { LogoMark } from './icons'
+import { LogoMark } from './brand'
 import { Markdown } from './Markdown'
 import { Button, Modal, ModalFooter } from './ui'
 

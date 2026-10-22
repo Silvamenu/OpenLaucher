@@ -1,6 +1,7 @@
 import { safeStorage } from 'electron'
 import Store from 'electron-store'
 import type { HttpCacheEntry } from './github'
+import { STORE_NAME } from './legacyData'
 import type { GameEntry, GameUpdateState, RateLimitInfo, Settings, SettingsView } from '../shared/types'
 
 interface StoredToken {
@@ -37,7 +38,7 @@ export class AppStore {
 
   constructor() {
     this.store = new Store<Schema>({
-      name: 'recomphub',
+      name: STORE_NAME,
       defaults: {
         settings: DEFAULT_SETTINGS,
         library: [],

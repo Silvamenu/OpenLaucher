@@ -1,4 +1,4 @@
-# RecompHub — instruções para o Claude
+# Relaunch — instruções para o Claude
 
 Launcher desktop (Electron + Vite + React + TypeScript + Tailwind) para ports e recompilações de jogos feitas por fãs. Interface em PT-BR (padrão) e EN.
 

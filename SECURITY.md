@@ -2,16 +2,16 @@
 
 ## Versões com suporte
 
-Só a versão mais recente do RecompHub recebe correções de segurança. O launcher se atualiza sozinho; mantenha a atualização automática ligada.
+Só a versão mais recente do Relaunch recebe correções de segurança. O launcher se atualiza sozinho; mantenha a atualização automática ligada.
 
 ## Como reportar uma vulnerabilidade
 
 **Não abra uma issue pública.** Reporte em privado para [@Silvamenu](https://github.com/Silvamenu):
 
-- pela aba **Security → Report a vulnerability** do repositório, quando ela estiver disponível; ou
+- pelo [relato privado de vulnerabilidades](https://github.com/Silvamenu/Relaunch/security/advisories/new) (aba **Security → Report a vulnerability**), o caminho preferido; ou
 - por mensagem privada no GitHub.
 
-Inclua o que for possível: versão do RecompHub, sistema operacional, passos para reproduzir e o impacto esperado. Você recebe uma resposta em até 7 dias.
+Inclua o que for possível: versão do Relaunch, sistema operacional, passos para reproduzir e o impacto esperado. Você recebe uma resposta em até 7 dias.
 
 ## O que nos interessa
 
@@ -26,6 +26,6 @@ Inclua o que for possível: versão do RecompHub, sistema operacional, passos pa
 - Interface isolada do sistema: `contextIsolation`, `sandbox` e `nodeIntegration: false`, com uma API mínima exposta pelo preload e validação dos parâmetros no processo principal.
 - CSP restritiva no build de produção; links externos só abrem no navegador e só via HTTPS.
 - Downloads apenas de `https://github.com/<repo do manifesto>/releases/download/…`, com redirecionamento restrito à CDN do GitHub, conferência de tamanho e de SHA-256 quando o release publica o hash.
-- Extração protegida contra caminhos fora do destino, backup antes de atualizar e restauração automática em caso de falha.
+- Extração e atualização protegidas contra caminhos fora do destino e links simbólicos, com limite de tamanho; manifestos não aceitam caminhos absolutos ou `..`. Backup antes de atualizar e restauração automática em caso de falha.
 - Token do GitHub cifrado com o cofre do sistema (DPAPI no Windows) e nunca devolvido à interface.
-- No repositório: dependências atualizadas pelo Dependabot, `npm audit` no CI, varredura de segredos (gitleaks) e de workflows (zizmor), Actions fixadas por SHA e permissões mínimas nos workflows.
+- No repositório: `main` protegida (só via PR, com as verificações passando), CodeQL, revisão de dependências nos PRs, dependências atualizadas pelo Dependabot, `npm audit` no CI, varredura de segredos (gitleaks) e de workflows (zizmor), Actions fixadas por SHA e permissões mínimas nos workflows.
