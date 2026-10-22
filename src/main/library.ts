@@ -7,7 +7,7 @@ import type { EntryPatch } from '../shared/ipc'
 import type { DetectionCandidate, GameEntry, LibraryItem, RequirementsReport } from '../shared/types'
 import type { AppContext } from './context'
 import { detectGame } from './detect'
-import { isDirectory, isFile, pathExists } from './fsutil'
+import { isDirectory, isFile, isInside, pathExists } from './fsutil'
 import type { GameLauncher } from './launcher'
 import { evaluateRequirements, validateUserFile } from './requirements'
 import { listBackups, toBackupInfo } from './updateCore'
@@ -17,6 +17,8 @@ export const COVER_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.webp', '.gif']
 export class LibraryService {
   private readonly busy = new Set<string>()
   private readonly iconCache = new Map<string, string | null>()
+  /** Executável achado na última avaliação de cada jogo: o ícone não precisa varrer a pasta de novo. */
+  private readonly executables = new Map<string, string | null>()
   private launcher!: GameLauncher
 
   constructor(private readonly ctx: AppContext) {}
@@ -55,7 +57,9 @@ export class LibraryService {
     if (!manifest) {
       return { entryId: id, status: 'unknownManifest', folderExists: await isDirectory(entry.path), executable: null, items: [] }
     }
-    return evaluateRequirements(manifest, entry, this.ctx.platform)
+    const report = await evaluateRequirements(manifest, entry, this.ctx.platform)
+    this.executables.set(id, report.executable)
+    return report
   }
 
   async item(entry: GameEntry): Promise<LibraryItem> {
@@ -114,10 +118,17 @@ export class LibraryService {
   }
 
   async remove(id: string): Promise<void> {
-    this.requireEntry(id)
+    const entry = this.requireEntry(id)
     if (this.isRunning(id) || this.busy.has(id)) throw new AppError('BUSY')
     this.ctx.store.removeEntry(id)
+    this.executables.delete(id)
     await this.removeCoverFiles(id)
+    // Backups que o app fez deste jogo ficariam órfãos: readicionado, o jogo ganha outro id. Os arquivos do jogo ficam.
+    for (const backup of await listBackups(this.backupsDirFor(entry), id)) {
+      await fs.rm(backup.dir, { recursive: true, force: true }).catch(() => undefined)
+    }
+    const configBackups = path.join(this.ctx.paths.configBackups, id)
+    if (isInside(this.ctx.paths.configBackups, configBackups)) await fs.rm(configBackups, { recursive: true, force: true }).catch(() => undefined)
     await this.broadcast()
   }
 
@@ -209,9 +220,9 @@ export class LibraryService {
   async icon(id: string): Promise<string | null> {
     if (this.ctx.platform !== 'win32') return null
     const entry = this.requireEntry(id)
-    const report = await this.requirements(id)
-    if (!report.executable) return null
-    const exe = path.join(entry.path, report.executable)
+    const executable = this.executables.has(id) ? this.executables.get(id) : (await this.requirements(id)).executable
+    if (!executable) return null
+    const exe = path.join(entry.path, executable)
     if (this.iconCache.has(exe)) return this.iconCache.get(exe) ?? null
     let url: string | null
     try {

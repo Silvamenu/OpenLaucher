@@ -3,7 +3,8 @@ import { promises as fs } from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { AppError, toErrorShape } from '../shared/errors'
-import { assetPatternsFor, executablesFor, type GithubUpdates, type Manifest } from '../shared/manifest'
+import type { GithubUpdates, Manifest } from '../shared/manifest'
+import { assetPatternsFor, executablesFor } from '../shared/manifestUtils'
 import { pickAsset } from '../shared/patterns'
 import type { GameEntry, GameUpdateState, LibraryItem, ReleaseInfo, UpdateProgress } from '../shared/types'
 import { isNewerRelease } from '../shared/version'
@@ -15,7 +16,7 @@ import { isAnyRunning } from './processes'
 import { listBackups, rollbackFromBackup, runUpdateFlow, UNKNOWN_VERSION } from './updateCore'
 
 export const CHECK_INTERVAL_MS = 3 * 60 * 60 * 1000
-const FIRST_CHECK_DELAY_MS = 5_000
+export const FIRST_CHECK_DELAY_MS = 5_000
 
 const electronFetch = ((input: string | URL | Request, init?: RequestInit) => net.fetch(input instanceof URL ? input.toString() : input, init)) as typeof fetch
 
@@ -27,6 +28,8 @@ function githubUpdatesOf(manifest: Manifest | null): GithubUpdates | null {
 export class GameUpdateService {
   private readonly client: GitHubClient
   private readonly controllers = new Map<string, AbortController>()
+  /** Atualizações e restaurações em andamento: ao fechar, o app espera a limpeza delas. */
+  private readonly running = new Set<Promise<unknown>>()
   private timer: NodeJS.Timeout | null = null
   private checking: Promise<LibraryItem[]> | null = null
 
@@ -50,6 +53,23 @@ export class GameUpdateService {
   stopScheduler(): void {
     if (this.timer) clearInterval(this.timer)
     for (const controller of this.controllers.values()) controller.abort()
+  }
+
+  get active(): boolean {
+    return this.running.size > 0
+  }
+
+  /** Cancela o que está em andamento e espera desfazer/limpar, com limite para o app não ficar preso. */
+  async shutdown(timeoutMs = 30_000): Promise<void> {
+    this.stopScheduler()
+    await Promise.race([Promise.allSettled(this.running), new Promise((resolve) => setTimeout(resolve, timeoutMs))])
+  }
+
+  private track<T>(task: Promise<T>): Promise<T> {
+    this.running.add(task)
+    const done = () => this.running.delete(task)
+    task.then(done, done)
+    return task
   }
 
   private async scheduledCheck(): Promise<void> {
@@ -162,7 +182,11 @@ export class GameUpdateService {
     notification.show()
   }
 
-  async start(entryId: string, opts: { automatic?: boolean } = {}): Promise<void> {
+  start(entryId: string, opts: { automatic?: boolean } = {}): Promise<void> {
+    return this.track(this.runStart(entryId, opts))
+  }
+
+  private async runStart(entryId: string, opts: { automatic?: boolean }): Promise<void> {
     let entry = this.library.requireEntry(entryId)
     const manifest = this.ctx.getManifest(entry.manifestId)
     const updates = githubUpdatesOf(manifest)
@@ -231,7 +255,11 @@ export class GameUpdateService {
     this.controllers.get(entryId)?.abort()
   }
 
-  async rollback(entryId: string): Promise<void> {
+  rollback(entryId: string): Promise<void> {
+    return this.track(this.runRollback(entryId))
+  }
+
+  private async runRollback(entryId: string): Promise<void> {
     const entry = this.library.requireEntry(entryId)
     const manifest = this.ctx.getManifest(entry.manifestId)
     if (!manifest) throw new AppError('NOT_FOUND')

@@ -21,13 +21,16 @@ O conteúdo de cada versão é usado como nota do release no GitHub (`npm run re
 - Atualização dos jogos pelos GitHub Releases. O app:
   - verifica ao abrir e a cada 3 horas (usando ETag);
   - avisa com badge e notificação;
-  - faz backup antes de atualizar e preserva saves, configs e arquivos gerados da ROM;
+  - faz backup dos arquivos que a atualização vai substituir e preserva saves, configs e arquivos gerados da ROM;
   - restaura a versão anterior automaticamente se algo falhar.
-- Botão **Voltar para versão anterior** usando o último backup.
+- Botão **Voltar para versão anterior** usando o último backup: desfaz só o que a atualização trocou.
 - Atualização do próprio launcher em segundo plano, com o botão azul na barra lateral, e este popup de novidades.
 - Tema claro e escuro, interface em português (Brasil) e inglês.
 
 ### Melhorias
 
-- Token pessoal do GitHub (opcional) guardado cifrado, para aumentar o limite de consultas.
+- Token pessoal do GitHub (opcional), cifrado com o cofre do sistema quando disponível, para aumentar o limite de consultas.
 - Atualizações protegidas: só baixam do repositório declarado no manifesto, via HTTPS, conferem o tamanho e, quando o release publica, o SHA-256, e limitam o tamanho e a quantidade de arquivos extraídos (`.zip`, `.tar` e `.7z`).
+- Abertura rápida: a validação das ROMs fica guardada entre uma abertura e outra e a busca por atualizações começa depois que a biblioteca aparece.
+- Ao remover um jogo da biblioteca, os backups que o app fez dele também são apagados (os arquivos do jogo continuam onde estão).
+- Fechar o app no meio de uma atualização cancela e desfaz o que já tinha sido trocado antes de sair.

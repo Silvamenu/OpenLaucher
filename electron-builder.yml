@@ -23,12 +23,14 @@ files:
 asarUnpack:
   - node_modules/7zip-bin/**
 
-# Endurece o executável empacotado: o app não usa o Electron como Node, NODE_OPTIONS nem --inspect.
+# Endurece o executável empacotado: o app não usa o Electron como Node, NODE_OPTIONS nem --inspect,
+# e a interface vem de app:// (file:// não precisa dos privilégios extras).
 electronFuses:
   runAsNode: false
   enableNodeOptionsEnvironmentVariable: false
   enableNodeCliInspectArguments: false
   onlyLoadAppFromAsar: true
+  grantFileProtocolExtraPrivileges: false
 
 # Manifestos e CHANGELOG ficam em resources/ (lidos em tempo de execução).
 extraResources:
@@ -64,8 +66,9 @@ linux:
 
 # Atualização do próprio launcher: electron-updater lê os GitHub Releases deste repositório.
 # As notas de cada release vêm de build/release-notes.md (gerado do CHANGELOG.md por `npm run release-notes`).
+# O release nasce como rascunho: só chega aos usuários depois de conferido e publicado manualmente.
 publish:
   provider: github
   owner: Silvamenu
   repo: Relaunch
-  releaseType: release
+  releaseType: draft

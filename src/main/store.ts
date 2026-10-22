@@ -13,9 +13,10 @@ interface Schema {
   settings: Settings
   library: GameEntry[]
   updateState: Record<string, GameUpdateState>
-  httpCache: Record<string, HttpCacheEntry>
   githubToken: StoredToken | null
   rateLimit: RateLimitInfo | null
+  /** SHA-1 dos arquivos do usuário (ROMs), por caminho|tamanho|data de modificação. */
+  fileHashes: Record<string, string>
   app: {
     lastSeenVersion?: string
     releaseNotes: Record<string, { notes: string; date: string | null }>
@@ -31,25 +32,32 @@ export const DEFAULT_SETTINGS: Settings = {
 }
 
 const HTTP_CACHE_LIMIT = 60
+const FILE_HASH_LIMIT = 50
 
-/** Persistência local em JSON (electron-store) com acesso tipado. */
+/**
+ * Persistência local em JSON (electron-store) com acesso tipado.
+ * Com `cache`, o arquivo é lido uma vez e os valores devolvidos vêm congelados: copie antes de alterar.
+ */
 export class AppStore {
-  private readonly store: Store<Schema>
-
-  constructor() {
-    this.store = new Store<Schema>({
-      name: STORE_NAME,
-      defaults: {
-        settings: DEFAULT_SETTINGS,
-        library: [],
-        updateState: {},
-        httpCache: {},
-        githubToken: null,
-        rateLimit: null,
-        app: { releaseNotes: {} }
-      }
-    })
-  }
+  private readonly store = new Store<Schema>({
+    name: STORE_NAME,
+    cache: true,
+    defaults: {
+      settings: DEFAULT_SETTINGS,
+      library: [],
+      updateState: {},
+      githubToken: null,
+      rateLimit: null,
+      fileHashes: {},
+      app: { releaseNotes: {} }
+    }
+  })
+  /** Respostas da API do GitHub (grandes) em arquivo próprio: as outras escritas não precisam regravá-las. */
+  private readonly http = new Store<{ entries: Record<string, HttpCacheEntry> }>({
+    name: 'http-cache',
+    cache: true,
+    defaults: { entries: {} }
+  })
 
   // Configurações -----------------------------------------------------------
 
@@ -103,7 +111,7 @@ export class AppStore {
   }
 
   saveEntry(entry: GameEntry): void {
-    const list = this.getEntries()
+    const list = [...this.getEntries()]
     const index = list.findIndex((e) => e.id === entry.id)
     if (index >= 0) list[index] = entry
     else list.push(entry)
@@ -115,7 +123,7 @@ export class AppStore {
       'library',
       this.getEntries().filter((e) => e.id !== id)
     )
-    const states = this.store.get('updateState')
+    const states = { ...this.store.get('updateState') }
     delete states[id]
     this.store.set('updateState', states)
   }
@@ -134,12 +142,26 @@ export class AppStore {
 
   httpCache() {
     return {
-      get: (url: string) => this.store.get('httpCache')[url],
+      get: (url: string) => this.http.get('entries')[url],
       set: (url: string, entry: HttpCacheEntry) => {
-        const cache = { ...this.store.get('httpCache'), [url]: entry }
+        const cache = { ...this.http.get('entries'), [url]: entry }
         const keys = Object.keys(cache).sort((a, b) => cache[a].savedAt.localeCompare(cache[b].savedAt))
         while (keys.length > HTTP_CACHE_LIMIT) delete cache[keys.shift()!]
-        this.store.set('httpCache', cache)
+        this.http.set('entries', cache)
+      }
+    }
+  }
+
+  // SHA-1 de arquivos do usuário -----------------------------------------------
+
+  fileHashCache() {
+    return {
+      get: (key: string) => this.store.get('fileHashes')[key],
+      set: (key: string, hash: string) => {
+        // Chaves novas entram no fim: as mais antigas saem primeiro.
+        const hashes = { ...this.store.get('fileHashes'), [key]: hash }
+        for (const old of Object.keys(hashes).slice(0, -FILE_HASH_LIMIT)) delete hashes[old]
+        this.store.set('fileHashes', hashes)
       }
     }
   }

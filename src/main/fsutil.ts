@@ -33,7 +33,6 @@ export interface WalkedFile {
   /** Caminho relativo com "/" */
   rel: string
   abs: string
-  size: number
 }
 
 /** Lista arquivos recursivamente (sem seguir links simbólicos). */
@@ -52,8 +51,7 @@ export async function walkFiles(root: string, maxDepth = Infinity): Promise<Walk
       if (entry.isDirectory()) {
         if (depth < maxDepth) await visit(abs, depth + 1)
       } else if (entry.isFile()) {
-        const stat = await fs.stat(abs)
-        out.push({ rel: toPosix(path.relative(root, abs)), abs, size: stat.size })
+        out.push({ rel: toPosix(path.relative(root, abs)), abs })
       }
     }
   }

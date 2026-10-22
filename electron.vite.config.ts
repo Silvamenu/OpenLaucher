@@ -5,16 +5,17 @@ import tailwindcss from '@tailwindcss/vite'
 import type { Plugin } from 'vite'
 import { COVER_SCHEME } from './src/shared/ipc'
 
-/** CSP restritiva só no build (em dev o Vite precisa de scripts inline para o HMR). */
+/**
+ * CSP restritiva só no build (em dev o Vite precisa de scripts inline para o HMR).
+ * Nega tudo por padrão (fetch, iframes, workers...); imagens remotas só do GitHub (notas de release).
+ */
 function contentSecurityPolicy(): Plugin {
   const policy = [
-    "default-src 'self'",
+    "default-src 'none'",
     "script-src 'self'",
     "style-src 'self' 'unsafe-inline'",
-    `img-src 'self' data: ${COVER_SCHEME}: https:`,
+    `img-src 'self' data: ${COVER_SCHEME}: https://github.com https://*.githubusercontent.com`,
     "font-src 'self' data:",
-    "connect-src 'self'",
-    "object-src 'none'",
     "base-uri 'none'",
     "form-action 'none'"
   ].join('; ')
@@ -28,8 +29,10 @@ function contentSecurityPolicy(): Plugin {
 export default defineConfig({
   main: {
     build: {
-      // electron-store e conf são ESM-only: empacotamos no bundle do processo principal (CJS).
-      externalizeDeps: { exclude: ['electron-store', 'conf'] },
+      // Dependências JS puras entram no bundle: carregar node_modules na abertura custa ~100 ms.
+      // (electron-store e conf também são ESM-only.) Ficam de fora o 7zip-bin (binário em disco)
+      // e o electron-updater (carregado só quando preciso).
+      externalizeDeps: { exclude: ['electron-store', 'conf', 'zod', 'picomatch', 'tar', 'yauzl', 'yazl'] },
       rollupOptions: {
         input: { index: resolve(__dirname, 'src/main/index.ts') }
       }

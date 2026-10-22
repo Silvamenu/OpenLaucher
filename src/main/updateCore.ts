@@ -1,7 +1,8 @@
 import { createWriteStream, promises as fs } from 'node:fs'
 import path from 'node:path'
 import { AppError } from '../shared/errors'
-import { assetPatternsFor, type GithubUpdates, type Platform } from '../shared/manifest'
+import type { GithubUpdates, Platform } from '../shared/manifest'
+import { assetPatternsFor } from '../shared/manifestUtils'
 import {
   checksumCandidates,
   createPreserveMatcher,
@@ -17,6 +18,8 @@ import { archiveKindOf, createZipFromDir, ensureSafeTarget, extractPackage, extr
 import { hashFile, isInside, isSameOrInside, pathExists, sanitizeFileName, walkFiles } from './fsutil'
 
 export const USER_AGENT = 'Relaunch'
+/** Limite das consultas pequenas (API, checksums): uma conexão travada não pode prender a verificação. */
+export const REQUEST_TIMEOUT_MS = 30_000
 export const BACKUPS_TO_KEEP = 2
 /** Versão gravada no backup quando a instalada não é conhecida. */
 export const UNKNOWN_VERSION = 'desconhecida'
@@ -109,7 +112,12 @@ export async function resolveExpectedSha256(
   for (const candidate of checksumCandidates(release.assets, asset.name)) {
     if (!isAllowedAssetUrl(candidate.url, repo)) continue
     try {
-      const res = await fetchImpl(candidate.url, { redirect: 'follow', signal, headers: { 'User-Agent': USER_AGENT } })
+      const timeout = AbortSignal.timeout(REQUEST_TIMEOUT_MS)
+      const res = await fetchImpl(candidate.url, {
+        redirect: 'follow',
+        signal: signal ? AbortSignal.any([signal, timeout]) : timeout,
+        headers: { 'User-Agent': USER_AGENT }
+      })
       if (!res.ok || (res.url && !isAllowedRedirectHost(res.url))) continue
       const hash = parseChecksumFile(await res.text(), asset.name)
       if (hash) return hash
@@ -153,6 +161,8 @@ export async function createBackup(opts: {
   version: string | null
   signal?: AbortSignal
   onProgress?: (done: number, total: number) => void
+  /** Só guarda os arquivos aceitos (caminho relativo com "/"). */
+  filter?: (rel: string) => boolean
 }): Promise<StoredBackup> {
   const version = opts.version ?? UNKNOWN_VERSION
   const base = path.join(opts.backupsDir, sanitizeFileName(version))
@@ -161,7 +171,7 @@ export async function createBackup(opts: {
   await fs.mkdir(dir, { recursive: true })
   const zip = path.join(dir, BACKUP_ZIP)
   try {
-    await createZipFromDir(opts.gameDir, zip, { signal: opts.signal, onProgress: opts.onProgress })
+    await createZipFromDir(opts.gameDir, zip, { signal: opts.signal, onProgress: opts.onProgress, filter: opts.filter })
   } catch (err) {
     await fs.rm(dir, { recursive: true, force: true })
     throw err
@@ -259,7 +269,7 @@ export async function applyUpdate(opts: ApplyOptions, journal: ApplyJournal): Pr
       await opts.beforeWrite?.(file.rel)
       await fs.copyFile(file.abs, target)
       const mode = (await fs.stat(file.abs)).mode
-      if (process.platform !== 'win32') await fs.chmod(target, mode & 0o777)
+      if (process.platform !== 'win32') await fs.chmod(target, mode & 0o755)
     }
     done++
     opts.onProgress?.(done, files.length)
@@ -347,6 +357,17 @@ export interface UpdateFlowResult {
   backup: StoredBackup
 }
 
+/** Repassa no máximo um progresso a cada `ms` (e sempre o final): uma mensagem por arquivo travaria a interface. */
+function throttleProgress(fn: (done: number, total: number) => void, ms = 150): (done: number, total: number) => void {
+  let last = 0
+  return (done, total) => {
+    const now = Date.now()
+    if (done < total && now - last < ms) return
+    last = now
+    fn(done, total)
+  }
+}
+
 export async function runUpdateFlow(params: UpdateFlowParams, deps: UpdateFlowDeps): Promise<UpdateFlowResult> {
   const { release, updates } = params
   deps.onStage('checking')
@@ -391,8 +412,9 @@ export async function runUpdateFlow(params: UpdateFlowParams, deps: UpdateFlowDe
     if (deps.signal.aborted) throw new AppError('CANCELLED')
     if (await deps.isGameRunning()) throw new AppError('GAME_RUNNING')
 
-    // 3. Backup
+    // 3. Backup só do que o pacote pode sobrescrever: o resto da pasta (ROMs, mods, saves) não é tocado.
     deps.onStage('backup', { progress: 0 })
+    const incoming = new Set((await walkFiles(sourceDir)).map((f) => f.rel.toLowerCase()))
     const backup = await createBackup({
       gameDir: params.gameDir,
       backupsDir: deps.backupsDir,
@@ -400,7 +422,8 @@ export async function runUpdateFlow(params: UpdateFlowParams, deps: UpdateFlowDe
       manifestId: params.manifestId,
       version: params.installedVersion,
       signal: deps.signal,
-      onProgress: (done, total) => deps.onStage('backup', { progress: total ? done / total : undefined })
+      filter: (rel) => incoming.has(rel.toLowerCase()),
+      onProgress: throttleProgress((done, total) => deps.onStage('backup', { progress: total ? done / total : undefined }))
     })
 
     // 4. Cópia respeitando preserve; 6. restauração automática em caso de falha
@@ -414,7 +437,7 @@ export async function runUpdateFlow(params: UpdateFlowParams, deps: UpdateFlowDe
           preserve: updates.preserve,
           signal: deps.signal,
           beforeWrite: deps.beforeWrite,
-          onProgress: (done, total) => deps.onStage('applying', { progress: done / total })
+          onProgress: throttleProgress((done, total) => deps.onStage('applying', { progress: done / total }))
         },
         journal
       )

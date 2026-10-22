@@ -1,5 +1,6 @@
 import { app } from 'electron'
-import { autoUpdater, type UpdateInfo } from 'electron-updater'
+import { createRequire } from 'node:module'
+import type { AppUpdater as Updater, UpdateInfo } from 'electron-updater'
 import type { AppUpdateState } from '../shared/types'
 import type { AppContext } from './context'
 import { CHECK_INTERVAL_MS } from './gameUpdates'
@@ -34,9 +35,11 @@ function notesOf(info: UpdateInfo): string {
  * Baixa em segundo plano; instala ao clicar no botão da sidebar ou ao fechar o app.
  */
 export class AppUpdater {
-  private state: AppUpdateState = { status: 'idle' }
-  private timer: NodeJS.Timeout | null = null
   private readonly fake = !app.isPackaged && process.env.RELAUNCH_FAKE_UPDATE === '1'
+  // Sem o app empacotado (e sem a simulação) não há atualização do launcher.
+  private state: AppUpdateState = { status: app.isPackaged || this.fake ? 'idle' : 'disabled' }
+  private timer: NodeJS.Timeout | null = null
+  private updater: Updater | null = null
 
   constructor(private readonly ctx: AppContext) {}
 
@@ -49,15 +52,11 @@ export class AppUpdater {
     this.ctx.emit('appUpdate:state', next)
   }
 
-  start(): void {
-    if (this.fake) {
-      setTimeout(() => this.simulate(), 3000)
-      return
-    }
-    if (!app.isPackaged) {
-      this.setState({ status: 'disabled' })
-      return
-    }
+  /** Carregado só quando preciso: o electron-updater custa ~50 ms se carregado na abertura do app. */
+  private load(): Updater {
+    if (this.updater) return this.updater
+    // require, não import(): o autoUpdater (CJS) é um getter que o import() não expõe como export nomeado.
+    const { autoUpdater } = createRequire(import.meta.url)('electron-updater') as { autoUpdater: Updater }
     autoUpdater.autoDownload = true
     autoUpdater.autoInstallOnAppQuit = true
     autoUpdater.logger = { info: console.log, warn: console.warn, error: console.error, debug: () => undefined }
@@ -77,7 +76,16 @@ export class AppUpdater {
       // Mantém o botão se o download já terminou; senão some.
       if (this.state.status !== 'downloaded') this.setState({ status: 'error', error: err?.message ?? String(err) })
     })
+    this.updater = autoUpdater
+    return autoUpdater
+  }
 
+  start(): void {
+    if (this.fake) {
+      setTimeout(() => this.simulate(), 3000)
+      return
+    }
+    if (!app.isPackaged) return
     void this.check()
     this.timer = setInterval(() => void this.check(), CHECK_INTERVAL_MS)
   }
@@ -90,7 +98,7 @@ export class AppUpdater {
     if (this.fake || !app.isPackaged) return this.state
     if (this.state.status === 'downloading' || this.state.status === 'downloaded') return this.state
     try {
-      await autoUpdater.checkForUpdates()
+      await this.load().checkForUpdates()
     } catch (err) {
       this.setState({ status: 'error', error: (err as Error).message })
     }
@@ -105,7 +113,7 @@ export class AppUpdater {
       return
     }
     // isSilent=false (mostra o instalador NSIS), isForceRunAfter=true (reabre o app)
-    setImmediate(() => autoUpdater.quitAndInstall(false, true))
+    setImmediate(() => this.updater?.quitAndInstall(false, true))
   }
 
   /** RELAUNCH_FAKE_UPDATE=1 em desenvolvimento: simula o ciclo para testar a interface. */

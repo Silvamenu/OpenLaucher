@@ -99,7 +99,7 @@ Falta algum? Cada jogo é um arquivo JSON, sem mexer no código: veja [Criar um 
 - O app consulta os GitHub Releases de cada projeto **ao abrir e a cada 3 horas** (dá para desligar em **Configurações**). Quando há versão nova, aparecem um badge e uma notificação do sistema.
 - Para atualizar, use **Atualizar para…** na página do jogo, a aba **Atualizações** ou a página **Downloads**. Com **Atualizar automaticamente** ligado no jogo, as versões novas são instaladas sozinhas quando o jogo não está aberto.
 - Saves, configurações, mods e arquivos gerados da sua ROM **não são sobrescritos** (lista `preserve` do manifesto).
-- Antes de atualizar, o app faz um backup. Se algo falhar, ele restaura tudo sozinho. O botão **Voltar para a versão anterior** desfaz uma atualização concluída.
+- Antes de atualizar, o app faz um backup dos arquivos que o pacote vai substituir. Se algo falhar, ele restaura tudo sozinho. O botão **Voltar para a versão anterior** desfaz uma atualização concluída. Ao remover um jogo da biblioteca, os backups dele também são apagados.
 - A versão instalada é a tag do release. Em jogos adicionados manualmente ela começa como "Desconhecida": informe a versão na aba **Atualizações** ou clique em **Já tenho a mais recente**.
 - Projetos sem binários publicados (como o Super Mario 64 PC Port) mostram só o link do repositório.
 
@@ -114,7 +114,7 @@ Falta algum? Cada jogo é um arquivo JSON, sem mexer no código: veja [Criar um 
 | 4   | Integridade                   | Confere o tamanho e o SHA-256, vindo do campo `digest` da API ou de um arquivo de checksums do release, quando existir.                                                    |
 | 5   | Extração                      | Extrai zip, 7z ou tar (`.tar.gz`, `.tgz`, `.tar.bz2`). Uma pasta raiz única vira a raiz; um pacote dentro de outro (ex.: um `.tar.gz` dentro do `.zip`) também é extraído. |
 | 6   | Jogo aberto                   | Se o jogo estiver rodando, o app pede para fechar.                                                                                                                         |
-| 7   | Backup                        | Cria `backups/<id>/<versão>/backup.zip` nos dados do app e mantém os 2 mais recentes.                                                                                      |
+| 7   | Backup                        | Guarda em `backups/<id>/<versão>/backup.zip`, nos dados do app, os arquivos que o pacote vai substituir, e mantém os 2 mais recentes.                                      |
 | 8   | Cópia                         | Copia os arquivos novos por cima, pulando o que casar com `preserve`. Cada arquivo é registrado antes de ser escrito.                                                      |
 | 9   | Falha                         | Se algo der errado, os arquivos novos são removidos e os alterados voltam do backup automaticamente.                                                                       |
 | 10  | Voltar para a versão anterior | Restaura o último backup sem sobrescrever saves e configs, e remove os arquivos que a atualização tinha adicionado.                                                        |
@@ -332,7 +332,7 @@ Electron + electron-vite + React + TypeScript + Tailwind CSS. Requisitos: Node.j
 | `npm run dist:linux`    | Gera um AppImage para Linux em `dist/`.                                          |
 | `npm run dist:dir`      | Empacota sem instalador (útil para testar).                                      |
 | `npm run release-notes` | Extrai do `CHANGELOG.md` as notas da versão atual para `build/release-notes.md`. |
-| `npm run release`       | Gera o instalador e publica no GitHub Releases (precisa de `GH_TOKEN`).          |
+| `npm run release`       | Gera o instalador e o envia a um release em rascunho (precisa de `GH_TOKEN`).    |
 | `npm run icon`          | Regenera `build/icon.png`.                                                       |
 
 `dist`, `dist:linux` e `release` geram as notas a partir do `CHANGELOG.md` e falham se não houver uma seção para a `version` do `package.json`.
@@ -362,15 +362,18 @@ Electron + electron-vite + React + TypeScript + Tailwind CSS. Requisitos: Node.j
 As notas de cada release vêm do `CHANGELOG.md`, a mesma fonte do popup de novidades do app.
 
 1. No `CHANGELOG.md`, adicione uma seção `## [x.y.z] - AAAA-MM-DD` com as subseções `### Novidades`, `### Melhorias` e `### Correções`.
-2. Atualize `version` no `package.json`.
-3. Crie e envie a tag:
+2. Atualize `version` no `package.json`. Faça os passos 1 e 2 num PR.
+3. Depois do merge, crie e envie a tag a partir da `main`:
 
    ```bash
+   git switch main && git pull
    git tag vx.y.z
    git push origin vx.y.z
    ```
 
-O workflow [`release.yml`](.github/workflows/release.yml) roda os testes, confere se a tag bate com a `version` do `package.json` e roda `npm run release`, que gera as notas a partir do `CHANGELOG.md` e publica o instalador e o `latest.yml` no GitHub Releases. Para publicar manualmente, use `GH_TOKEN=<token> npm run release`.
+4. Quando o workflow terminar, abra o rascunho em [Releases](https://github.com/Silvamenu/Relaunch/releases), confira o instalador e as notas e clique em **Publish release**.
+
+O workflow [`release.yml`](.github/workflows/release.yml) confere se a tag aponta para um commit da `main` e bate com a `version` do `package.json`, roda os testes e roda `npm run release`, que gera as notas a partir do `CHANGELOG.md` e envia o instalador e o `latest.yml` para um release em **rascunho**. Nada chega aos apps instalados antes do passo 4. Para gerar o rascunho fora do CI, use `GH_TOKEN=<token> npm run release`.
 
 Os apps instalados checam os releases ao abrir e a cada 3 horas, baixam em segundo plano e instalam quando você clica no botão azul ou ao fechar o app.
 

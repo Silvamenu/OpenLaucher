@@ -1,6 +1,6 @@
 import { ChevronDown, RefreshCw } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { assetPatternsFor } from '../../../../shared/manifest'
+import { assetPatternsFor } from '../../../../shared/manifestUtils'
 import type { LibraryItem, RateLimitInfo, ReleaseInfo } from '../../../../shared/types'
 import { Markdown } from '../../components/Markdown'
 import { Button, Card, ConfirmModal, Dot, ProgressBar, SectionLabel, Toggle } from '../../components/ui'

@@ -19,12 +19,17 @@ function perPlatform<T extends z.ZodType>(item: T) {
 const nonEmpty = z.string().trim().min(1)
 const stringList = z.array(nonEmpty)
 
-/** Caminho relativo à pasta do jogo: sem raiz, letra de unidade ou segmentos "..". */
+/**
+ * Caminho relativo à pasta do jogo (ou iniciado por uma {variável}): sem raiz, letra de unidade
+ * ou segmentos "..". Sem barra inicial, caminhos de rede (\\servidor\pasta, \\?\UNC\...) também ficam de fora.
+ */
 export function isSafeRelativePath(value: string): boolean {
   const posix = value.replace(/\\/g, '/')
   return !/^(\/|[A-Za-z]:)/.test(posix) && !posix.split('/').includes('..')
 }
-const relativePath = nonEmpty.refine(isSafeRelativePath, { message: 'use um caminho relativo à pasta do jogo, sem ".."' })
+const relativePath = nonEmpty.refine(isSafeRelativePath, {
+  message: 'use um caminho relativo à pasta do jogo (ou iniciado por {variável}), sem ".."'
+})
 const relativePathList = z.array(relativePath)
 const httpsUrl = z.url({ protocol: /^https$/ })
 
@@ -54,7 +59,7 @@ const fileRequirement = z.object({
    * Caminhos/globs relativos à pasta do jogo (basta um existir). Também aceita caminhos
    * absolutos com variáveis, ex.: "{localAppData}/Jogo/arquivo.bin".
    */
-  patterns: stringList.min(1)
+  patterns: relativePathList.min(1)
 })
 
 const userFileRequirement = z.object({
@@ -76,12 +81,12 @@ const firstRunRequirement = z.object({
   ...baseRequirement,
   type: z.literal('firstRun'),
   /** Se informado, o requisito é cumprido quando algum destes arquivos existir. */
-  doneWhen: stringList.optional()
+  doneWhen: relativePathList.optional()
 })
 
 export const requirementSchema = z.discriminatedUnion('type', [fileRequirement, userFileRequirement, firstRunRequirement])
 
-const pathCandidates = z.union([nonEmpty, stringList.min(1)])
+const pathCandidates = z.union([relativePath, relativePathList.min(1)])
 
 export const configFileSchema = z.object({
   /**
@@ -190,46 +195,4 @@ export function parseManifestText(text: string): ManifestParseResult {
     return { ok: false, error: `JSON inválido: ${(err as Error).message}` }
   }
   return parseManifest(data)
-}
-
-export function executablesFor(manifest: Manifest, platform: Platform): string[] {
-  return manifest.executables[platform] ?? []
-}
-
-export function launchArgsFor(manifest: Manifest, platform: Platform): string[] {
-  const args = manifest.launchArgs
-  if (Array.isArray(args)) return args
-  return args[platform] ?? []
-}
-
-export function launchEnvFor(manifest: Manifest, platform: Platform): Record<string, string> {
-  return manifest.launchEnv[platform] ?? {}
-}
-
-/** Caminhos candidatos de um arquivo de config para a plataforma. */
-export function configPathCandidates(spec: ConfigFileSpec, platform: Platform): string[] {
-  const value = typeof spec.path === 'string' || Array.isArray(spec.path) ? spec.path : spec.path[platform]
-  if (!value) return []
-  return Array.isArray(value) ? value : [value]
-}
-
-export function assetPatternsFor(updates: GithubUpdates, platform: Platform): string[] {
-  const value = updates.assetPatterns[platform]
-  if (!value) return []
-  return Array.isArray(value) ? value : [value]
-}
-
-export function todosOf(value: { _todo?: string | string[] } | undefined): string[] {
-  if (!value?._todo) return []
-  return Array.isArray(value._todo) ? value._todo : [value._todo]
-}
-
-/** Junta todas as pendências "_todo" do manifesto (raiz, requisitos, configs e updates). */
-export function collectTodos(manifest: Manifest): string[] {
-  return [
-    ...todosOf(manifest),
-    ...manifest.requirements.flatMap((r) => todosOf(r)),
-    ...manifest.configFiles.flatMap((c) => todosOf(c)),
-    ...todosOf(manifest.updates)
-  ]
 }
