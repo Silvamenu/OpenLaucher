@@ -239,6 +239,15 @@ describe('formatos de pacote', () => {
     expect(await readTree(root)).toEqual({ 'jogo.exe': 'bin', 'data/a.txt': 'a' })
   })
 
+  it('aplica o teto de extração à listagem de pacotes .7z', async () => {
+    const { check7zListing, MAX_EXTRACTED_BYTES, MAX_EXTRACTED_ENTRIES } = await import('../src/main/archive')
+    const entry = (name: string, size: number) => `Path = ${name}\nSize = ${size}\nPacked Size = 1\n`
+    expect(() => check7zListing([entry('Jogo', 0), entry('Jogo/jogo.exe', 1024)].join('\n'))).not.toThrow()
+    expect(() => check7zListing(entry('bomba.bin', MAX_EXTRACTED_BYTES + 1))).toThrow(/grande demais/)
+    const muitos = Array.from({ length: MAX_EXTRACTED_ENTRIES + 1 }, (_, i) => entry(`f${i}`, 0)).join('\n')
+    expect(() => check7zListing(muitos)).toThrow(/grande demais/)
+  })
+
   it('recusa formatos desconhecidos', async () => {
     const work = await tempDir('work-')
     const file = path.join(work, 'pacote.rar')

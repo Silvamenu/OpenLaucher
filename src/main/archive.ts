@@ -229,16 +229,44 @@ async function executable7z(): Promise<string> {
   }
 }
 
+/**
+ * Aplica o teto de extração à listagem técnica do 7-Zip (`7za l -slt -ba`).
+ * Cada entrada começa com "Path = ..." e traz o tamanho descompactado em "Size = ...".
+ */
+export function check7zListing(listing: string): void {
+  const count = extractionBudget()
+  let size = 0
+  let inEntry = false
+  for (const line of listing.split(/\r?\n/)) {
+    if (line.startsWith('Path = ')) {
+      if (inEntry) count(size)
+      inEntry = true
+      size = 0
+    } else if (line.startsWith('Size = ')) {
+      size = Number(line.slice('Size = '.length)) || 0
+    }
+  }
+  if (inEntry) count(size)
+}
+
+function run7z(bin: string, args: string[], signal?: AbortSignal): Promise<string> {
+  return new Promise<string>((resolve, reject) => {
+    const child = spawn(bin, args, { stdio: ['ignore', 'pipe', 'pipe'], signal })
+    let stdout = ''
+    let stderr = ''
+    child.stdout?.on('data', (d) => (stdout += String(d)))
+    child.stderr?.on('data', (d) => (stderr += String(d)))
+    child.on('error', reject)
+    child.on('close', (code) => (code === 0 ? resolve(stdout) : reject(new AppError('EXTRACT_FAILED', stderr.trim() || `7za saiu com código ${code}`))))
+  })
+}
+
 async function extract7z(file: string, dest: string, signal?: AbortSignal): Promise<void> {
   await fs.mkdir(dest, { recursive: true })
   const bin = await executable7z()
-  await new Promise<void>((resolve, reject) => {
-    const child = spawn(bin, ['x', '-t7z', '-y', '-bd', `-o${dest}`, file], { stdio: ['ignore', 'ignore', 'pipe'], signal })
-    let stderr = ''
-    child.stderr?.on('data', (d) => (stderr += String(d)))
-    child.on('error', reject)
-    child.on('close', (code) => (code === 0 ? resolve() : reject(new AppError('EXTRACT_FAILED', stderr.trim() || `7za saiu com código ${code}`))))
-  })
+  // Confere o tamanho e a quantidade de arquivos antes de extrair, como no ZIP e no TAR.
+  check7zListing(await run7z(bin, ['l', '-t7z', '-slt', '-ba', file], signal))
+  await run7z(bin, ['x', '-t7z', '-y', '-bd', `-o${dest}`, file], signal)
 }
 
 export interface ExtractPackageOptions {
