@@ -13,6 +13,8 @@ export interface LegacyMigration {
   moved: string[]
   /** Itens que não puderam ser movidos agora (ex.: arquivo em uso); a próxima abertura tenta de novo. */
   failed: { name: string; error: unknown }[]
+  /** Quando a própria biblioteca não pôde ser movida: pasta a usar nesta sessão, para não abrir com a biblioteca vazia. */
+  fallbackUserData?: string
 }
 
 /**
@@ -34,7 +36,10 @@ export function migrateLegacyUserData(appData: string, userData: string): Legacy
       result.failed.push({ name, error })
     }
   }
-  if (existsSync(path.join(legacy, LEGACY_STORE))) move(LEGACY_STORE, path.join(userData, `${STORE_NAME}.json`))
+  if (existsSync(path.join(legacy, LEGACY_STORE))) {
+    move(LEGACY_STORE, path.join(userData, `${STORE_NAME}.json`))
+    if (result.failed.length > 0) return { ...result, fallbackUserData: legacy }
+  }
   for (const name of readdirSync(legacy)) {
     // Travas de instância única do Chromium pertencem à pasta antiga.
     if (name === LEGACY_STORE || name.startsWith('Singleton')) continue

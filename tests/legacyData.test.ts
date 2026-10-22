@@ -56,6 +56,22 @@ describe('migração da pasta de dados do RecompHub', () => {
     expect(await readTree(legacy)).toEqual({ 'recomphub.json': 'antigo', 'covers/a.png': 'antiga' })
   })
 
+  it.skipIf(process.platform === 'win32')('se a biblioteca não puder ser movida, indica a pasta antiga para esta sessão', async () => {
+    const { appData, userData, legacy } = await setup({ 'recomphub.json': 'antigo', 'covers/a.png': 'a' })
+    // Pasta nova somente leitura: o rename da biblioteca falha.
+    await fs.mkdir(userData, { recursive: true })
+    await fs.chmod(userData, 0o500)
+    try {
+      const result = migrateLegacyUserData(appData, userData)
+      if (process.getuid?.() === 0) return // root ignora permissões; nada a verificar
+      expect(result.fallbackUserData).toBe(legacy)
+      expect(result.failed.map((f) => f.name)).toEqual(['recomphub.json'])
+      expect(await readTree(legacy)).toEqual({ 'recomphub.json': 'antigo', 'covers/a.png': 'a' })
+    } finally {
+      await fs.chmod(userData, 0o700)
+    }
+  })
+
   it('sem pasta antiga, não faz nada', async () => {
     const appData = await tempDir('appdata-')
     expect(migrateLegacyUserData(appData, path.join(appData, 'Relaunch'))).toEqual({ moved: [], failed: [] })
