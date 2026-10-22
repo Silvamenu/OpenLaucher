@@ -163,6 +163,6 @@ describe('extração do pacote', () => {
     const root = await extractPackage(file, dest, { rawTargetName: '../../evil/game.appimage' })
     expect(root).toBe(dest)
     expect(await fs.readdir(dest)).toEqual(['game.appimage'])
-    expect(await fs.readdir(work)).toEqual(['Game.AppImage', 'extracted'])
+    expect((await fs.readdir(work)).sort()).toEqual(['Game.AppImage', 'extracted'].sort())
   })
 })
