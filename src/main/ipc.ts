@@ -1,5 +1,4 @@
 import { app, dialog, ipcMain, shell, type OpenDialogOptions, type SaveDialogOptions } from 'electron'
-import { promises as fs } from 'node:fs'
 import path from 'node:path'
 import { AppError, toErrorShape } from '../shared/errors'
 import type { EntryPatch } from '../shared/ipc'
@@ -9,7 +8,7 @@ import type { AppUpdater } from './appUpdater'
 import { listConfigBackups, readConfigFile, restoreConfigBackup, saveConfigFile } from './configFiles'
 import type { AppContext } from './context'
 import type { DevlogTracker } from './devlogState'
-import { sanitizeFileName, writeFileAtomic } from './fsutil'
+import { readSmallTextFile, sanitizeFileName, writeFileAtomic } from './fsutil'
 import type { GameUpdateService } from './gameUpdates'
 import { mainText } from './i18n'
 import { COVER_EXTENSIONS, type LibraryService } from './library'
@@ -184,8 +183,9 @@ export function registerIpc(s: Services): void {
   handle('profiles:import', async () => {
     const file = await openDialog({ title: text().importProfile, properties: ['openFile'], filters: profileFilters() })
     if (!file) return null
-    if ((await fs.stat(file)).size > PROFILE_FILE_MAX_BYTES) throw new AppError('INVALID_FILE')
-    return profiles.importFile(await fs.readFile(file, 'utf8'))
+    const content = await readSmallTextFile(file, PROFILE_FILE_MAX_BYTES)
+    if (content === null) throw new AppError('INVALID_FILE')
+    return profiles.importFile(content)
   })
   handle('profiles:export', async () => {
     const { name, content } = profiles.exportCurrent()
