@@ -1,0 +1,166 @@
+{
+  "id": "soh",
+  "name": "Ship of Harkinian",
+  "originalGame": "The Legend of Zelda: Ocarina of Time",
+  "description": "Port para PC de Ocarina of Time baseado na decompilação do jogo, com melhorias, randomizer e suporte a mods.",
+  "repoUrl": "https://github.com/HarbourMasters/Shipwright",
+  "website": "https://www.shipofharkinian.com",
+  "accentColor": "#3f8f4a",
+  "executables": {
+    "win32": ["soh.exe"],
+    "linux": ["soh.appimage"]
+  },
+  "detectFiles": ["soh.exe", "soh.appimage", "soh.o2r", "soh.otr"],
+  "requirements": [
+    {
+      "id": "port-data",
+      "type": "file",
+      "label": "Arquivo de dados do port (soh.o2r)",
+      "patterns": ["soh.o2r", "soh.otr"],
+      "helpText": "Vem junto com o download oficial do port. Se estiver faltando, reinstale ou atualize o jogo."
+    },
+    {
+      "id": "rom",
+      "type": "userFile",
+      "label": "Sua ROM de Ocarina of Time",
+      "optional": true,
+      "extensions": ["z64", "n64", "v64"],
+      "validation": {
+        "sha1": [
+          {
+            "sha1": "328a1f1beba30ce5e178f031662019eb32c5f3b5",
+            "label": "PAL 1.0"
+          },
+          {
+            "sha1": "cfbb98d392e4a9d39da8285d10cbef3974c2f012",
+            "label": "PAL 1.1"
+          },
+          {
+            "sha1": "0227d7c0074f2d0ac935631990da8ec5914597b4",
+            "label": "PAL GC"
+          },
+          {
+            "sha1": "f46239439f59a2a594ef83cf68ef65043b1bffe2",
+            "label": "PAL MQ"
+          },
+          {
+            "sha1": "cee6bc3c2a634b41728f2af8da54d9bf8cc14099",
+            "label": "PAL GC (Debug)"
+          },
+          {
+            "sha1": "079b855b943d6ad8bd1eb026c0ed169ecbdac7da",
+            "label": "PAL MQ (Debug)"
+          },
+          {
+            "sha1": "50bebedad9e0f10746a52b07239e47fa6c284d03",
+            "label": "PAL MQ (Debug)"
+          },
+          {
+            "sha1": "cfecfdc58d650e71a200c81f033de4e6d617a9f6",
+            "label": "PAL MQ (Debug)"
+          },
+          {
+            "sha1": "ad69c91157f6705e8ab06c79fe08aad47bb57ba7",
+            "label": "NTSC 1.0 (US)"
+          },
+          {
+            "sha1": "d3ecb253776cd847a5aa63d859d8c89a2f37b364",
+            "label": "NTSC 1.1 (US)"
+          },
+          {
+            "sha1": "41b3bdc48d98c48529219919015a1af22f5057c2",
+            "label": "NTSC 1.2 (US)"
+          },
+          {
+            "sha1": "c892bbda3993e66bd0d56a10ecd30b1ee612210f",
+            "label": "NTSC 1.0 (JP)"
+          },
+          {
+            "sha1": "dbfc81f655187dc6fefd93fa6798face770d579d",
+            "label": "NTSC 1.1 (JP)"
+          },
+          {
+            "sha1": "fa5f5942b27480d60243c2d52c0e93e26b9e6b86",
+            "label": "NTSC 1.2 (JP)"
+          },
+          {
+            "sha1": "b82710ba2bd3b4c6ee8aa1a7e9acf787dfc72e9b",
+            "label": "NTSC GC (US)"
+          },
+          {
+            "sha1": "8b5d13aac69bfbf989861cfdc50b1d840945fc1d",
+            "label": "NTSC MQ (US)"
+          },
+          {
+            "sha1": "0769c84615422d60f16925cd859593cdfa597f84",
+            "label": "NTSC GC (JP)"
+          },
+          {
+            "sha1": "2ce2d1a9f0534c9cd9fa04ea5317b80da21e5e73",
+            "label": "NTSC GC (JP) (Collector's Edition)"
+          },
+          {
+            "sha1": "dd14e143c4275861fe93ea79d0c02e36ae8c6c2f",
+            "label": "NTSC MQ (JP)"
+          }
+        ]
+      },
+      "copyToGameDir": true,
+      "helpText": "Opcional: o próprio jogo pede a ROM na primeira execução. Se você copiar a ROM para a pasta do jogo, ele a encontra sozinho. A verificação por SHA-1 vale para ROMs no formato .z64."
+    },
+    {
+      "id": "rom-assets",
+      "type": "firstRun",
+      "label": "Gerar os assets a partir da sua ROM (oot.o2r)",
+      "doneWhen": ["oot.o2r", "oot-mq.o2r", "oot.otr", "oot-mq.otr"],
+      "helpText": "Abra o jogo uma vez: ele pergunta se deseja gerar os arquivos e pede para você escolher sua ROM. A extração leva alguns minutos e acontece só na primeira vez (e após atualizações de versão maior)."
+    }
+  ],
+  "configFiles": [
+    {
+      "path": "shipofharkinian.json",
+      "format": "json",
+      "label": "Configurações (shipofharkinian.json)",
+      "editable": true
+    },
+    {
+      "path": "imgui.ini",
+      "format": "ini",
+      "label": "Layout das janelas (imgui.ini)",
+      "editable": true
+    }
+  ],
+  "launchArgs": [],
+  "updates": {
+    "source": "github-releases",
+    "repo": "HarbourMasters/Shipwright",
+    "assetPatterns": {
+      "win32": "*Win64*.zip",
+      "linux": ["*.appimage", "*Linux*.zip"]
+    },
+    "includePrereleases": false,
+    "preserve": [
+      "oot.o2r",
+      "oot-mq.o2r",
+      "oot.otr",
+      "oot-mq.otr",
+      "Save/**",
+      "shipofharkinian.json",
+      "imgui.ini",
+      "mods/**",
+      "logs/**",
+      "*.z64",
+      "*.n64",
+      "*.v64"
+    ]
+  },
+  "launchEnv": {
+    "linux": {
+      "SHIP_HOME": "{gameDir}"
+    }
+  },
+  "_todo": [
+    "Build para macOS não mapeada (só Windows e Linux).",
+    "Releases comemorativos sem binários (ex.: let-it-snow-2024) são ignorados automaticamente por não terem asset da plataforma."
+  ]
+}
