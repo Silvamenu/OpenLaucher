@@ -4,6 +4,7 @@ import type { Manifest } from '../../../shared/manifest'
 import { installableOn } from '../../../shared/manifestUtils'
 import type { DetectionCandidate } from '../../../shared/types'
 import { hueOf, monogram, tileColor } from '../components/GameArt'
+import { GlossaryText } from '../components/Glossary'
 import { Button, Card, Page, PageHeader, SectionLabel } from '../components/ui'
 import { useI18n } from '../i18n'
 import { errorMessage } from '../lib/format'
@@ -142,7 +143,7 @@ export function AddGamePage() {
 
   return (
     <Page narrow>
-      <PageHeader title={t('add.title')} subtitle={t('add.subtitle')} />
+      <PageHeader title={t('add.title')} subtitle={<GlossaryText>{t('add.subtitle')}</GlossaryText>} />
 
       <Card className="overflow-hidden">
         <div className="flex flex-wrap items-center gap-3 p-4">
@@ -225,7 +226,7 @@ export function AddGamePage() {
 
       <p className="mt-8 flex items-start gap-2 text-[12px] text-faint">
         <ShieldCheck size={14} className="mt-px shrink-0" />
-        {t('legal.note')}
+        <GlossaryText>{t('legal.note')}</GlossaryText>
       </p>
     </Page>
   )

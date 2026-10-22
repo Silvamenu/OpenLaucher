@@ -1,6 +1,7 @@
 import { ChevronDown, CircleCheck, CircleDashed, CircleX, ShieldCheck } from 'lucide-react'
 import { useState } from 'react'
 import type { LibraryItem, RequirementStatus, RequirementsReport } from '../../../../shared/types'
+import { GlossaryText } from '../../components/Glossary'
 import { Markdown } from '../../components/Markdown'
 import { Button, Card, Dot } from '../../components/ui'
 import { useI18n, type TFunction } from '../../i18n'
@@ -81,11 +82,11 @@ export function ChecklistTab({
                 <Icon size={18} strokeWidth={1.8} className={`shrink-0 ${color}`} aria-label={req.ok ? '✓' : '✗'} />
                 <div className="min-w-[220px] flex-1">
                   <div className="flex flex-wrap items-center gap-2 text-[13.5px]">
-                    <span>{label}</span>
+                    <GlossaryText>{label}</GlossaryText>
                     {req.optional && <span className="rounded-md border border-line px-1.5 font-mono text-[10.5px] text-faint">{t('req.optional')}</span>}
                   </div>
                   <div className={`selectable mt-0.5 truncate text-[12px] ${req.ok || req.optional ? 'text-subtle' : 'text-bad'}`} title={req.found}>
-                    {detailText(req, t)}
+                    <GlossaryText>{detailText(req, t)}</GlossaryText>
                     {req.type === 'userFile' && req.found && req.detail !== 'missingFile' ? ` — ${req.found}` : ''}
                   </div>
                 </div>
@@ -150,7 +151,7 @@ export function ChecklistTab({
               </div>
               {req.helpText && open[req.id] && (
                 <div className="animate-fade-in mt-3 ml-[30px] rounded-[10px] border border-line bg-field px-4 py-3">
-                  <Markdown>{req.helpText}</Markdown>
+                  <Markdown glossary>{req.helpText}</Markdown>
                 </div>
               )}
             </div>
@@ -160,7 +161,7 @@ export function ChecklistTab({
 
       <p className="flex items-start gap-2 text-[12px] text-faint">
         <ShieldCheck size={14} className="mt-px shrink-0" />
-        {t('legal.note')}
+        <GlossaryText>{t('legal.note')}</GlossaryText>
       </p>
     </div>
   )

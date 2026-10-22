@@ -2,6 +2,7 @@ import { Lock, RefreshCw, ShieldCheck } from 'lucide-react'
 import { useEffect, useState, type ReactNode } from 'react'
 import { PIN_PATTERN, PROFILE_COLORS, PROFILE_NAME_MAX } from '../../../shared/profile'
 import type { ProfilePatch, ProfileView, RateLimitInfo, ThemeSetting } from '../../../shared/types'
+import { GlossaryText } from '../components/Glossary'
 import { ProfileAvatar } from '../components/ProfileAvatar'
 import { Button, Chip, ConfirmModal, Dot, Page, PageHeader, Pill, SectionLabel, Toggle } from '../components/ui'
 import { useI18n } from '../i18n'
@@ -335,7 +336,7 @@ export function SettingsPage() {
       </Section>
 
       <Section title={t('settings.library')}>
-        <Row title={t('settings.rescan')} hint={t('settings.rescanHint')}>
+        <Row title={t('settings.rescan')} hint={<GlossaryText>{t('settings.rescanHint')}</GlossaryText>}>
           <Button icon={<RefreshCw size={14} className={rescanning ? 'animate-spin' : ''} />} disabled={rescanning} onClick={rescan}>
             {t('settings.rescan')}
           </Button>
@@ -392,7 +393,7 @@ export function SettingsPage() {
 
       <p className="flex items-start gap-2 text-[12px] text-faint">
         <ShieldCheck size={14} className="mt-px shrink-0" />
-        {t('legal.note')}
+        <GlossaryText>{t('legal.note')}</GlossaryText>
       </p>
     </Page>
   )

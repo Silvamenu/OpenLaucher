@@ -35,6 +35,32 @@ export const ptBR = {
     'Os ports vêm direto do repositório oficial de cada projeto. ROMs e assets com direitos autorais nunca são baixados: o Relaunch só usa os arquivos que você já possui.',
   'legal.short': 'O Relaunch nunca baixa ROMs: só usa as que você já tem.',
 
+  'glossary.rom.title': 'ROM',
+  'glossary.rom.text':
+    'Cópia do jogo original, feita a partir do cartucho e salva em um único arquivo (por exemplo, .z64). É dela que o port extrai o conteúdo do jogo, como gráficos, sons e textos. O Relaunch nunca fornece ROMs: use a cópia do seu próprio cartucho.\nComo usar: na aba "{setupTab}" do jogo, clique em "{selectFile}" e escolha a sua ROM; o Relaunch confere se é a versão certa. Depois, abra o jogo uma vez e siga o que ele pedir.',
+  'glossary.assets.title': 'Assets',
+  'glossary.assets.text':
+    'O conteúdo do jogo: gráficos, sons, músicas e textos. Os ports não trazem nada disso: na primeira vez que você abre o jogo, ele extrai os assets da sua ROM e os guarda no seu computador.',
+  'glossary.o2r.title': 'Arquivo .o2r',
+  'glossary.o2r.text':
+    'Pacote de dados usado pelo port. Um deles vem no download do port; o outro, com os assets do jogo, é criado a partir da sua ROM na primeira execução e fica só no seu computador.',
+  'glossary.port.title': 'Port',
+  'glossary.port.text': 'Versão do jogo refeita por fãs para rodar direto no PC, sem emulador. Traz só o programa: o conteúdo do jogo vem da sua ROM.',
+  'glossary.sha1.title': 'SHA-1',
+  'glossary.sha1.text':
+    'Uma espécie de impressão digital do arquivo: se um único byte muda, ela muda também. O Relaunch compara a da sua ROM com as das versões que o jogo aceita para saber se é a certa.',
+  'glossary.romFormats.title': '.z64, .n64 e .v64',
+  'glossary.romFormats.text':
+    'Formatos de ROM do Nintendo 64: o mesmo jogo, com os bytes em ordem diferente. O .z64 é o mais comum e é nele que o Relaunch consegue conferir o SHA-1.',
+  'glossary.release.title': 'Release',
+  'glossary.release.text':
+    'Uma versão publicada pelo projeto no GitHub, com os arquivos prontos para baixar. O Relaunch só baixa do repositório oficial de cada projeto.',
+  'glossary.manifest.title': 'Manifesto',
+  'glossary.manifest.text':
+    'Ficha que ensina o Relaunch a lidar com um projeto: de onde baixá-lo, quais arquivos o jogo precisa e como abri-lo. Os manifestos vêm com o app, e você pode adicionar os seus na pasta de manifestos.',
+  'glossary.decomp.title': 'Decompilação',
+  'glossary.decomp.text': 'Código-fonte do jogo reconstruído por fãs a partir do original. É o que permite refazer o jogo para rodar no PC.',
+
   'add.title': 'Adicionar jogo',
   'add.subtitle': 'Aponte a pasta de um port já instalado ou baixe um da lista abaixo. O app detecta qual projeto é e verifica o que falta.',
   'add.noFolder': 'Nenhuma pasta selecionada ainda.',
