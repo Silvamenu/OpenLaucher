@@ -23,9 +23,10 @@ Inclua o que for possível: versão do Relaunch, sistema operacional, passos par
 
 ## Como o app se protege
 
-- Interface isolada do sistema: `contextIsolation`, `sandbox` e `nodeIntegration: false`, com uma API mínima exposta pelo preload e validação dos parâmetros no processo principal.
-- CSP restritiva no build de produção; links externos só abrem no navegador e só via HTTPS.
+- Interface isolada do sistema: `contextIsolation`, `sandbox` e `nodeIntegration: false`, servida por um protocolo próprio (`app://`, sem os privilégios de `file://`), com uma API mínima exposta pelo preload e validação dos parâmetros no processo principal. Pastas de jogo só entram pelo diálogo de escolha do sistema.
+- CSP restritiva no build de produção (nega tudo por padrão; imagens remotas só do GitHub) e permissões do navegador (câmera, notificações etc.) negadas; links externos só abrem no navegador e só via HTTPS.
 - Downloads apenas de `https://github.com/<repo do manifesto>/releases/download/…`, com redirecionamento restrito à CDN do GitHub, conferência de tamanho e de SHA-256 quando o release publica o hash.
 - Extração e atualização protegidas contra caminhos fora do destino e links simbólicos, com limite de tamanho; manifestos não aceitam caminhos absolutos ou `..`. Backup antes de atualizar e restauração automática em caso de falha.
-- Token do GitHub cifrado com o cofre do sistema (DPAPI no Windows) e nunca devolvido à interface.
+- Token do GitHub cifrado com o cofre do sistema quando disponível (DPAPI no Windows; no Linux sem chaveiro fica em texto puro na pasta de dados) e nunca devolvido à interface.
+- Releases do launcher são criados como rascunho, só a partir de commits da `main`, e publicados manualmente depois de conferidos.
 - No repositório: `main` protegida (só via PR, com as verificações passando), CodeQL, revisão de dependências nos PRs, dependências atualizadas pelo Dependabot, `npm audit` no CI, varredura de segredos (gitleaks) e de workflows (zizmor), Actions fixadas por SHA e permissões mínimas nos workflows.

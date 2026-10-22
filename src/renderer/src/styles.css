@@ -193,7 +193,7 @@
   }
 }
 
-/* Botão de atualização do launcher: entrada discreta (fade + leve pulso) */
+/* Botão de atualização do launcher: entrada discreta (fade + 3 pulsos; pulsar sem parar redesenharia a tela o tempo todo) */
 @keyframes update-in {
   from {
     opacity: 0;
@@ -218,7 +218,7 @@
 .update-button {
   animation:
     update-in 420ms cubic-bezier(0.2, 0.9, 0.3, 1.2) both,
-    update-pulse 2.6s ease-out 600ms infinite;
+    update-pulse 2.6s ease-out 600ms 3;
 }
 
 @keyframes fade-in {

@@ -1,6 +1,6 @@
 import { AppError } from '../shared/errors'
 import type { RateLimitInfo, ReleaseAsset, ReleaseInfo } from '../shared/types'
-import { USER_AGENT } from './updateCore'
+import { REQUEST_TIMEOUT_MS, USER_AGENT } from './updateCore'
 
 const API = 'https://api.github.com'
 
@@ -78,7 +78,7 @@ export class GitHubClient {
 
     let res: Response
     try {
-      res = await this.opts.fetchImpl(url, { headers, redirect: 'follow' })
+      res = await this.opts.fetchImpl(url, { headers, redirect: 'follow', signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) })
     } catch (err) {
       throw new AppError('NETWORK', (err as Error).message)
     }
@@ -93,7 +93,9 @@ export class GitHubClient {
     }
     if (!res.ok) throw new AppError('GITHUB_ERROR', `HTTP ${res.status}`, { status: res.status })
 
-    const data = (await res.json()) as T
+    const data = (await res.json().catch((err: Error) => {
+      throw new AppError('NETWORK', err.message)
+    })) as T
     const etag = res.headers.get('etag')
     if (etag) this.opts.cache.set(url, { etag, data, savedAt: new Date().toISOString() })
     return data

@@ -2,7 +2,8 @@ import { promises as fs } from 'node:fs'
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { loadManifests } from '../src/main/manifests'
-import { assetPatternsFor, collectTodos, configPathCandidates, executablesFor, launchArgsFor, parseManifest, parseManifestText } from '../src/shared/manifest'
+import { parseManifest, parseManifestText } from '../src/shared/manifest'
+import { assetPatternsFor, collectTodos, configPathCandidates, executablesFor, launchArgsFor } from '../src/shared/manifestUtils'
 import { tempDir } from './helpers/fs'
 
 const minimal = {
@@ -58,7 +59,13 @@ describe('parser de manifestos', () => {
       [{ ...minimal, executables: { win32: ['../../Startup/x.exe'] } }, 'executables'],
       [{ ...minimal, executables: { win32: ['C:\\Windows\\x.exe'] } }, 'executables'],
       [{ ...minimal, detectFiles: ['/etc/passwd'] }, 'detectFiles'],
-      [{ ...minimal, updates: { source: 'github-releases', repo: 'a/b', assetPatterns: { win32: '*.zip' }, preserve: ['..\\x'] } }, 'preserve']
+      [{ ...minimal, updates: { source: 'github-releases', repo: 'a/b', assetPatterns: { win32: '*.zip' }, preserve: ['..\\x'] } }, 'preserve'],
+      // Caminhos de rede (vazariam o hash NTLM no Windows), absolutos ou com "..", mesmo com variáveis.
+      [{ ...minimal, configFiles: [{ path: '\\\\host\\share\\a.ini', format: 'ini' }] }, 'configFiles'],
+      [{ ...minimal, configFiles: [{ path: { win32: ['\\??\\UNC\\h\\s\\a.ini'] }, format: 'ini' }] }, 'configFiles'],
+      [{ ...minimal, configFiles: [{ path: '{home}/../x', format: 'text' }] }, 'configFiles'],
+      [{ ...minimal, requirements: [{ type: 'file', label: 'A', patterns: ['\\\\host\\share\\{gameDir}'] }] }, 'requirements'],
+      [{ ...minimal, requirements: [{ type: 'firstRun', label: 'B', doneWhen: ['/etc/passwd'] }] }, 'requirements']
     ]
     for (const [input, where] of cases) {
       const result = parseManifest(input)
@@ -90,7 +97,7 @@ describe('parser de manifestos', () => {
       ...minimal,
       executables: { win32: ['a.exe'], linux: ['a.appimage'] },
       launchArgs: { win32: ['--x'] },
-      configFiles: [{ path: { win32: ['a.json', '{appData}/a.json'], linux: 'b.json' }, format: 'json' }],
+      configFiles: [{ path: { win32: ['a.json', '{appData}/a.json'], linux: '{home}/.config/b.json' }, format: 'json' }],
       updates: { source: 'github-releases', repo: 'o/r', assetPatterns: { win32: '*win*.zip', linux: ['*.appimage', '*linux*.zip'] } }
     })
     expect(result.ok).toBe(true)
@@ -101,7 +108,7 @@ describe('parser de manifestos', () => {
     expect(launchArgsFor(m, 'win32')).toEqual(['--x'])
     expect(launchArgsFor(m, 'linux')).toEqual([])
     expect(configPathCandidates(m.configFiles[0], 'win32')).toEqual(['a.json', '{appData}/a.json'])
-    expect(configPathCandidates(m.configFiles[0], 'linux')).toEqual(['b.json'])
+    expect(configPathCandidates(m.configFiles[0], 'linux')).toEqual(['{home}/.config/b.json'])
     if (m.updates.source !== 'github-releases') throw new Error('esperado github-releases')
     expect(assetPatternsFor(m.updates, 'win32')).toEqual(['*win*.zip'])
     expect(assetPatternsFor(m.updates, 'linux')).toEqual(['*.appimage', '*linux*.zip'])

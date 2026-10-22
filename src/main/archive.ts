@@ -102,9 +102,10 @@ export async function extractZip(file: string, dest: string, options: ExtractOpt
           await ensureSafeTarget(realDest, target, rel)
           const stream = await openEntryStream(zip, entry)
           await pipeline(stream, createWriteStream(target))
-          // Mantém o bit de execução de arquivos criados em Unix (ex.: AppImage).
+          // Mantém o bit de execução de arquivos criados em Unix (ex.: AppImage), mas nunca deixa
+          // grupo/outros escreverem (zips feitos no WSL ou com links simbólicos vêm 777).
           const mode = (entry.externalFileAttributes >>> 16) & 0o777
-          if (mode && process.platform !== 'win32') await fs.chmod(target, mode | 0o600)
+          if (mode && process.platform !== 'win32') await fs.chmod(target, (mode | 0o600) & 0o755)
         }
         zip.readEntry()
       } catch (err) {
@@ -133,29 +134,34 @@ export async function listZip(file: string): Promise<string[]> {
 export interface CreateZipOptions {
   onProgress?: (doneBytes: number, totalBytes: number) => void
   signal?: AbortSignal
+  /** Só inclui os arquivos (caminho relativo com "/") aceitos pelo filtro. */
+  filter?: (rel: string) => boolean
 }
 
-/** Compacta uma pasta inteira em `outFile` (compressão rápida). */
+/** Compacta uma pasta em `outFile` (compressão rápida). */
 export async function createZipFromDir(srcDir: string, outFile: string, options: CreateZipOptions = {}): Promise<void> {
-  const files = await walkFiles(srcDir)
-  const total = files.reduce((sum, f) => sum + f.size, 0)
+  const files = (await walkFiles(srcDir)).filter((f) => !options.filter || options.filter(f.rel))
+  const stats = await Promise.all(files.map((f) => fs.stat(f.abs)))
+  const total = stats.reduce((sum, stat) => sum + stat.size, 0)
   await fs.mkdir(path.dirname(outFile), { recursive: true })
   const zip = new yazl.ZipFile()
   const out = createWriteStream(outFile)
   const done = pipeline(zip.outputStream, out)
   let processed = 0
-  for (const file of files) {
+  for (const [i, file] of files.entries()) {
     if (options.signal?.aborted) {
       zip.end()
       await done.catch(() => undefined)
       throw new AppError('CANCELLED')
     }
-    const stat = await fs.stat(file.abs)
+    const stat = stats[i]
     // Abre cada arquivo só quando chegar a vez dele (evita EMFILE em pastas grandes).
     zip.addReadStreamLazy(file.rel, { mtime: stat.mtime, mode: stat.mode, compressionLevel: 1 }, (cb) => {
       const readStream = createReadStream(file.abs)
+      // Arquivo que sumiu ou está travado falha o zip (sem isso o erro derrubaria o processo e o zip nunca terminaria).
+      readStream.on('error', (err) => out.destroy(err))
       readStream.on('end', () => {
-        processed += file.size
+        processed += stat.size
         options.onProgress?.(processed, total)
       })
       cb(null, readStream)

@@ -193,7 +193,7 @@ export const ptBR = {
   'settings.noGames': 'Nenhum jogo na biblioteca.',
   'settings.token': 'Token pessoal do GitHub',
   'settings.tokenHint':
-    'Opcional. Sem token o GitHub permite 60 consultas por hora; com token, 5.000. Não precisa de nenhuma permissão (escopo) especial. Fica guardado cifrado neste computador.',
+    'Opcional. Sem token o GitHub permite 60 consultas por hora; com token, 5.000. Não precisa de nenhuma permissão (escopo) especial. Fica cifrado com o cofre do sistema quando ele está disponível; no Linux sem chaveiro (gnome-keyring/KWallet), fica em texto puro na pasta de dados.',
   'settings.tokenSet': 'Token configurado',
   'settings.tokenSave': 'Salvar token',
   'settings.tokenRemove': 'Remover token',

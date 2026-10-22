@@ -2,8 +2,8 @@ import { createHash } from 'node:crypto'
 import { promises as fs } from 'node:fs'
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { extractPackage } from '../src/main/archive'
-import { listBackups, runUpdateFlow, type UpdateFlowDeps } from '../src/main/updateCore'
+import { extractPackage, listZip } from '../src/main/archive'
+import { listBackups, rollbackFromBackup, runUpdateFlow, type UpdateFlowDeps } from '../src/main/updateCore'
 import type { GithubUpdates } from '../src/shared/manifest'
 import type { ReleaseInfo, UpdateStage } from '../src/shared/types'
 import { makeZip, readTree, tempDir, writeTree } from './helpers/fs'
@@ -84,6 +84,25 @@ describe('fluxo completo de atualização', () => {
     expect(backups[0].meta).toMatchObject({ version: '9.3.0', updatedTo: '9.3.1', addedFiles: ['soh.o2r'] })
     // pasta temporária removida
     expect(await fs.readdir(deps.tmpRoot)).toEqual([])
+  })
+
+  it('o backup guarda só o que o pacote substitui, e voltar desfaz só a atualização', async () => {
+    const { game, deps, params } = await setup()
+    await writeTree(game, { 'mods/pack.otr': 'MOD', 'notes.txt': 'meu' })
+    await runUpdateFlow(params, deps)
+    const [backup] = await listBackups(deps.backupsDir, 'e1')
+    // oot.o2r e o save estão no pacote, mas são preservados: entram no backup e voltam intactos.
+    expect((await listZip(backup.zip)).sort()).toEqual(['Save/file1.sav', 'oot.o2r', 'soh.exe'])
+
+    await fs.writeFile(path.join(game, 'notes.txt'), 'editado depois')
+    await rollbackFromBackup(game, backup, updates.preserve)
+    expect(await readTree(game)).toEqual({
+      'soh.exe': 'v1',
+      'oot.o2r': 'ROM',
+      'Save/file1.sav': 'SAVE',
+      'mods/pack.otr': 'MOD',
+      'notes.txt': 'editado depois'
+    })
   })
 
   it('checksum divergente aborta antes de tocar no jogo', async () => {

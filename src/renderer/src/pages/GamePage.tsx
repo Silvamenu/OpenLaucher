@@ -1,6 +1,6 @@
 import { ChevronLeft, FolderSearch, Image, ImageOff, Pencil, Play, SlidersHorizontal, Trash2 } from 'lucide-react'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { collectTodos, executablesFor, launchArgsFor } from '../../../shared/manifest'
+import { collectTodos, executablesFor, launchArgsFor } from '../../../shared/manifestUtils'
 import type { LibraryItem, RequirementsReport } from '../../../shared/types'
 import { GameCover, coverGradient, coverUrl, hueOfItem } from '../components/GameArt'
 import { NavIcon } from '../components/icons'

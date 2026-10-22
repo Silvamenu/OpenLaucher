@@ -3,7 +3,7 @@ import path from 'node:path'
 import { beforeAll, describe, expect, it } from 'vitest'
 import { detectGame } from '../src/main/detect'
 import { loadManifests } from '../src/main/manifests'
-import { evaluateRequirements } from '../src/main/requirements'
+import { evaluateRequirements, setHashCache } from '../src/main/requirements'
 import type { Manifest } from '../src/shared/manifest'
 import type { GameEntry } from '../src/shared/types'
 import { tempDir, writeTree } from './helpers/fs'
@@ -146,6 +146,29 @@ describe('checklist de requisitos', () => {
 
     const gone = await evaluateRequirements(manifest, entryFor(dir, { userFiles: { rom: path.join(dir, 'sumiu.z64') } }), 'win32')
     expect(gone.items[1].detail).toBe('missingFile')
+  })
+
+  it('usa o SHA-1 guardado no cache em vez de reler o arquivo', async () => {
+    const dir = await tempDir()
+    await writeTree(dir, { 'game.exe': '', 'rom.z64': 'rom de teste' })
+    const expected = 'a'.repeat(40)
+    const manifest: Manifest = {
+      ...manifests[0],
+      executables: { win32: ['game.exe'] },
+      requirements: [{ id: 'rom', type: 'userFile', label: 'ROM', optional: false, extensions: [], copyToGameDir: false, validation: { sha1: [expected] } }]
+    }
+    const entry = entryFor(dir, { userFiles: { rom: path.join(dir, 'rom.z64') } })
+    const cache = new Map<string, string>()
+    setHashCache(cache)
+    try {
+      expect((await evaluateRequirements(manifest, entry, 'win32')).items[1].detail).toBe('hashMismatch')
+      expect([...cache.values()]).toEqual([createHash('sha1').update('rom de teste').digest('hex')])
+      // Com o hash já guardado (mesmo caminho, tamanho e data), o arquivo não é lido de novo.
+      for (const key of cache.keys()) cache.set(key, expected)
+      expect((await evaluateRequirements(manifest, entry, 'win32')).items[1].ok).toBe(true)
+    } finally {
+      setHashCache(new Map())
+    }
   })
 
   it('firstRun sem doneWhen é cumprido após o primeiro lançamento ou marcação manual', async () => {

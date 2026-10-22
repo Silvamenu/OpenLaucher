@@ -6,13 +6,21 @@ import { COVER_SCHEME } from '../shared/ipc'
 import { AppUpdater } from './appUpdater'
 import { AppContext } from './context'
 import { DevlogTracker } from './devlogState'
-import { GameUpdateService } from './gameUpdates'
+import { FIRST_CHECK_DELAY_MS, GameUpdateService } from './gameUpdates'
 import { registerIpc } from './ipc'
 import { GameLauncher } from './launcher'
 import { migrateLegacyUserData } from './legacyData'
 import { LibraryService } from './library'
+import { setHashCache } from './requirements'
 
-protocol.registerSchemesAsPrivileged([{ scheme: COVER_SCHEME, privileges: { standard: true, secure: true, supportFetchAPI: true } }])
+const APP_SCHEME = 'app'
+const RENDERER_HOST = 'renderer'
+
+// A interface vem de app:// (não de file://): uma página file:// poderia ler qualquer arquivo local.
+protocol.registerSchemesAsPrivileged([
+  { scheme: APP_SCHEME, privileges: { standard: true, secure: true, codeCache: true } },
+  { scheme: COVER_SCHEME, privileges: { standard: true, secure: true, supportFetchAPI: true } }
+])
 
 if (process.platform === 'win32') app.setAppUserModelId('io.github.silvamenu.relaunch')
 
@@ -68,7 +76,7 @@ function createWindow(ctx: AppContext): BrowserWindow {
   if (!app.isPackaged && process.env.ELECTRON_RENDERER_URL) {
     void win.loadURL(process.env.ELECTRON_RENDERER_URL)
   } else {
-    void win.loadFile(path.join(__dirname, '../renderer/index.html'))
+    void win.loadURL(`${APP_SCHEME}://${RENDERER_HOST}/index.html`)
   }
   win.on('closed', () => {
     if (ctx.window === win) ctx.window = null
@@ -91,8 +99,18 @@ async function bootstrap(): Promise<void> {
   })
   // A interface não usa câmera, microfone, localização etc.: nega qualquer pedido de permissão do navegador.
   session.defaultSession.setPermissionRequestHandler((_webContents, _permission, callback) => callback(false))
+  session.defaultSession.setPermissionCheckHandler(() => false)
+
+  const rendererRoot = path.join(__dirname, '../renderer')
+  protocol.handle(APP_SCHEME, (request) => {
+    const url = new URL(request.url)
+    const file = path.join(rendererRoot, decodeURIComponent(url.pathname))
+    if (url.host !== RENDERER_HOST || !file.startsWith(rendererRoot + path.sep)) return new Response('not found', { status: 404 })
+    return net.fetch(pathToFileURL(file).toString())
+  })
 
   const ctx = new AppContext()
+  setHashCache(ctx.store.fileHashCache())
   await ctx.reloadManifests()
   if (ctx.manifestsReport.errors.length > 0) console.warn('[manifests]', ctx.manifestsReport.errors)
 
@@ -132,7 +150,8 @@ async function bootstrap(): Promise<void> {
   ctx.window = createWindow(ctx)
   ctx.window.webContents.once('did-finish-load', () => {
     updates.startScheduler()
-    appUpdater.start()
+    // Fora do caminho da abertura: a primeira consulta espera a interface carregar.
+    setTimeout(() => appUpdater.start(), FIRST_CHECK_DELAY_MS)
   })
 
   app.on('second-instance', () => {
@@ -144,9 +163,15 @@ async function bootstrap(): Promise<void> {
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) ctx.window = createWindow(ctx)
   })
-  app.on('before-quit', () => {
-    updates.stopScheduler()
+  // Fechar no meio de uma atualização cancela e espera a restauração/limpeza antes de sair.
+  let quitting = false
+  app.on('before-quit', (event) => {
     appUpdater.stop()
+    updates.stopScheduler()
+    if (quitting || !updates.active) return
+    event.preventDefault()
+    quitting = true
+    void updates.shutdown().finally(() => app.quit())
   })
 }
 

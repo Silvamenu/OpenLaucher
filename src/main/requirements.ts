@@ -1,11 +1,23 @@
 import { promises as fs } from 'node:fs'
 import path from 'node:path'
-import { executablesFor, type Manifest, type Platform, type UserFileRequirement } from '../shared/manifest'
+import type { Manifest, Platform, UserFileRequirement } from '../shared/manifest'
+import { executablesFor } from '../shared/manifestUtils'
 import type { GameEntry, GameStatus, RequirementStatus, RequirementsReport } from '../shared/types'
 import { hashFile, isDirectory, matchWalked, pathExists, walkFiles, type WalkedFile } from './fsutil'
 import { hasPathVariables, resolvePathTemplate } from './pathVars'
 
-const hashCache = new Map<string, string>()
+/** Onde guardar os SHA-1 já calculados (chave: caminho|tamanho|data de modificação). */
+export interface HashCache {
+  get(key: string): string | undefined
+  set(key: string, hash: string): unknown
+}
+
+let hashCache: HashCache = new Map<string, string>()
+
+/** O app usa um cache persistente: sem ele, cada abertura relê todas as ROMs para conferir o SHA-1. */
+export function setHashCache(cache: HashCache): void {
+  hashCache = cache
+}
 
 async function sha1Cached(file: string): Promise<string> {
   const stat = await fs.stat(file)

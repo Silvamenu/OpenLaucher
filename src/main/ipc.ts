@@ -88,9 +88,20 @@ export function registerIpc(s: Services): void {
     await ctx.reloadManifests()
     return library.broadcast()
   })
-  handle('library:pickFolder', () => openDialog({ title: text().pickGameFolder, properties: ['openDirectory'] }))
-  handle('library:detect', (folder) => library.detect(str(folder, 'folder')))
-  handle('library:add', (folder, manifestId) => library.add(str(folder, 'folder'), str(manifestId, 'manifestId')))
+  // Só pastas escolhidas pelo usuário no diálogo (ou a subpasta imediata que a detecção acha nelas).
+  const pickedFolders = new Set<string>()
+  const pickedFolder = (value: unknown): string => {
+    const folder = path.resolve(str(value, 'folder'))
+    if (!pickedFolders.has(folder) && !pickedFolders.has(path.dirname(folder))) throw new AppError('PERMISSION_DENIED', folder)
+    return folder
+  }
+  handle('library:pickFolder', async () => {
+    const folder = await openDialog({ title: text().pickGameFolder, properties: ['openDirectory'] })
+    if (folder) pickedFolders.add(path.resolve(folder))
+    return folder
+  })
+  handle('library:detect', (folder) => library.detect(pickedFolder(folder)))
+  handle('library:add', (folder, manifestId) => library.add(pickedFolder(folder), str(manifestId, 'manifestId')))
   handle('library:remove', (id) => library.remove(str(id)))
   handle('library:update', (id, patch) => {
     const p = (patch ?? {}) as EntryPatch

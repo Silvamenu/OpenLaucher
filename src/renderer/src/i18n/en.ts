@@ -193,7 +193,7 @@ export const en: Record<TranslationKey, string> = {
   'settings.noGames': 'No games in the library.',
   'settings.token': 'GitHub personal token',
   'settings.tokenHint':
-    'Optional. Without a token GitHub allows 60 requests per hour; with one, 5,000. No special permission (scope) is needed. It is stored encrypted on this computer.',
+    'Optional. Without a token GitHub allows 60 requests per hour; with one, 5,000. No special permission (scope) is needed. It is encrypted with the system keychain when one is available; on Linux without a keyring (gnome-keyring/KWallet) it is stored as plain text in the data folder.',
   'settings.tokenSet': 'Token configured',
   'settings.tokenSave': 'Save token',
   'settings.tokenRemove': 'Remove token',
