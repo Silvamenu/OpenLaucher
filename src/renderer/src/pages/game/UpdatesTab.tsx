@@ -147,7 +147,7 @@ export function UpdatesTab({ item }: { item: LibraryItem }) {
             {t('upd.rollback', { version: backup.version })}
           </Button>
         )}
-        {busy && p?.kind === 'update' ? (
+        {busy && p && p.kind !== 'rollback' ? (
           <Button variant="danger" onClick={() => void window.api.updates.cancel(id)}>
             {t('upd.cancel')}
           </Button>

@@ -57,13 +57,6 @@ export function formatRelative(iso: string | null | undefined, t: TFunction, loc
 }
 
 /** Iniciais para o avatar ("Ana Maria Silva" → "AS"). */
-export function initials(name: string): string {
-  const parts = name.trim().split(/\s+/).filter(Boolean)
-  if (parts.length === 0) return ''
-  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase()
-  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
-}
-
 /** Mensagem traduzida para um erro vindo da API. */
 export function errorMessage(err: unknown, t: TFunction): string {
   const e = err as Partial<AppErrorShape> & { message?: string }

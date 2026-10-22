@@ -56,9 +56,9 @@ export function LibraryPage() {
         <Button variant="primary" className="mt-7" icon={<Plus size={16} />} onClick={() => navigate({ page: 'add' })}>
           {t('nav.add')}
         </Button>
-        <p className="mt-12 flex max-w-md items-start gap-2 text-left text-[12px] text-faint">
-          <ShieldCheck size={15} className="mt-px shrink-0" />
-          {t('legal.note')}
+        <p className="mt-10 flex items-center justify-center gap-1.5 text-[11.5px] text-faint">
+          <ShieldCheck size={13} className="shrink-0" />
+          {t('legal.short')}
         </p>
       </div>
     )

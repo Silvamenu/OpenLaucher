@@ -11,6 +11,7 @@ import { registerIpc } from './ipc'
 import { GameLauncher } from './launcher'
 import { migrateLegacyUserData } from './legacyData'
 import { LibraryService } from './library'
+import { ProfileService } from './profiles'
 import { setHashCache } from './requirements'
 
 const APP_SCHEME = 'app'
@@ -122,6 +123,8 @@ async function bootstrap(): Promise<void> {
   library.attachLauncher(launcher)
   const updates = new GameUpdateService(ctx, library)
   const appUpdater = new AppUpdater(ctx)
+  const profiles = new ProfileService(ctx.store)
+  profiles.seed(ctx.store.takeLegacyUserName())
   const devlog = new DevlogTracker(
     app.getVersion(),
     {
@@ -145,7 +148,7 @@ async function bootstrap(): Promise<void> {
     return net.fetch(pathToFileURL(file).toString())
   })
 
-  registerIpc({ ctx, library, updates, appUpdater, devlog })
+  registerIpc({ ctx, library, updates, appUpdater, devlog, profiles })
 
   ctx.window = createWindow(ctx)
   ctx.window.webContents.once('did-finish-load', () => {

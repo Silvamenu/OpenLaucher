@@ -11,7 +11,9 @@ O conteúdo de cada versão é usado como nota do release no GitHub (`npm run re
 
 ### Novidades
 
+- Tela **Quem está jogando?** com perfis locais: nome, cor do avatar, PIN opcional de 4 dígitos e exportar/importar o perfil (arquivo `.relaunch`). Nada vai para a internet.
 - Biblioteca em grade com status de cada jogo: **Pronto**, **Falta configurar** ou **Pasta não encontrada**.
+- Botão **Baixar** nos projetos suportados: instala a versão mais recente, direto do repositório oficial, numa pasta que você escolhe.
 - Adição de jogos já instalados com detecção automática do projeto pela pasta (ou escolha manual).
 - Manifestos para Ship of Harkinian, 2 Ship 2 Harkinian, Zelda 64: Recompiled, Starship, SpaghettiKart e Super Mario 64 PC Port. Um jogo novo é só um arquivo `manifests/<id>.json`.
 - Checklist de configuração com ações: selecionar a sua ROM (com validação por SHA-1), abrir a pasta e abrir o jogo pela primeira vez.

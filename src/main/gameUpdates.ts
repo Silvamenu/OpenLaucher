@@ -186,7 +186,29 @@ export class GameUpdateService {
     return this.track(this.runStart(entryId, opts))
   }
 
-  private async runStart(entryId: string, opts: { automatic?: boolean }): Promise<void> {
+  /**
+   * Instala um port do zero em <parent>/<nome do jogo>. Confere o release antes de criar qualquer
+   * coisa; o download segue em segundo plano pelo mesmo fluxo validado das atualizações e, se não
+   * terminar, o cadastro e a pasta vazia são desfeitos.
+   */
+  async install(manifest: Manifest, parent: string): Promise<LibraryItem> {
+    const updates = githubUpdatesOf(manifest)
+    if (!updates) throw new AppError('UPDATES_DISABLED')
+    const latest = await this.client.getLatestRelease(updates.repo, updates.includePrereleases, this.acceptRelease(updates))
+    if (!latest) throw new AppError('NO_RELEASE')
+    const item = await this.library.prepareInstall(parent, manifest)
+    const entryId = item.entry.id
+    const assetName = pickAsset(latest.assets, assetPatternsFor(updates, this.ctx.platform))?.name ?? null
+    this.ctx.store.setUpdateState(entryId, { available: false, latest, assetName, checkedAt: new Date().toISOString() })
+    const run = this.runStart(entryId, { fresh: true }).catch(async (err) => {
+      await this.library.discardInstall(entryId)
+      throw err
+    })
+    void this.track(run).catch((err) => console.warn('[install] não concluída', err))
+    return item
+  }
+
+  private async runStart(entryId: string, opts: { automatic?: boolean; fresh?: boolean }): Promise<void> {
     let entry = this.library.requireEntry(entryId)
     const manifest = this.ctx.getManifest(entry.manifestId)
     const updates = githubUpdatesOf(manifest)
@@ -208,7 +230,7 @@ export class GameUpdateService {
     this.controllers.set(entryId, controller)
     this.library.setBusy(entryId, true)
     await this.library.broadcast()
-    const base = { entryId, kind: 'update' as const, version: release.tag }
+    const base = { entryId, name: entry.customName || manifest.name, kind: opts.fresh ? ('install' as const) : ('update' as const), version: release.tag }
     try {
       const executables = executablesFor(manifest, this.ctx.platform)
       // Só um nome de arquivo simples (sem pastas nem curingas) serve de nome para um binário solto.
@@ -228,13 +250,16 @@ export class GameUpdateService {
           fetchImpl: electronFetch,
           tmpRoot: os.tmpdir(),
           backupsDir: this.library.backupsDirFor(entry),
-          isGameRunning: () => this.isGameRunning(entry, manifest),
+          // Pasta nova: nada dela pode estar aberto (o mesmo jogo rodando de outra pasta não atrapalha).
+          isGameRunning: opts.fresh ? () => Promise.resolve(false) : () => this.isGameRunning(entry, manifest),
           signal: controller.signal,
           onStage: (stage, extra) => this.progress({ ...base, stage, ...extra })
         }
       )
-      const fresh = this.ctx.store.getEntry(entryId) ?? entry
-      this.ctx.store.saveEntry({ ...fresh, installedVersion: result.version, installedPublishedAt: result.publishedAt })
+      // Instalação nova não tem versão anterior para onde voltar: o backup (vazio) sai.
+      if (opts.fresh) await fs.rm(result.backup.dir, { recursive: true, force: true })
+      const latest = this.ctx.store.getEntry(entryId) ?? entry
+      this.ctx.store.saveEntry({ ...latest, installedVersion: result.version, installedPublishedAt: result.publishedAt })
       this.ctx.store.setUpdateState(entryId, { ...this.ctx.store.getUpdateState(entryId), available: false, error: undefined })
       if (opts.automatic) this.notify(entry, this.text().updatedTo(result.version))
     } catch (err) {
@@ -270,7 +295,7 @@ export class GameUpdateService {
     if (!backup) throw new AppError('NO_BACKUP')
 
     const preserve = githubUpdatesOf(manifest)?.preserve ?? []
-    const base = { entryId, kind: 'rollback' as const, version: backup.meta.version }
+    const base = { entryId, name: entry.customName || manifest.name, kind: 'rollback' as const, version: backup.meta.version }
     this.library.setBusy(entryId, true)
     await this.library.broadcast()
     try {

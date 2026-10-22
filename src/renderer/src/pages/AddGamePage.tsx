@@ -1,6 +1,7 @@
-import { Check, FolderOpen, LoaderCircle, ShieldCheck } from 'lucide-react'
+import { Check, Download, FolderOpen, LoaderCircle, ShieldCheck } from 'lucide-react'
 import { useState } from 'react'
 import type { Manifest } from '../../../shared/manifest'
+import { installableOn } from '../../../shared/manifestUtils'
 import type { DetectionCandidate } from '../../../shared/types'
 import { hueOf, monogram, tileColor } from '../components/GameArt'
 import { Button, Card, Page, PageHeader, SectionLabel } from '../components/ui'
@@ -46,6 +47,51 @@ function ManifestRow({
       {selected && <Check size={16} className="shrink-0 text-fg" />}
       {action}
     </Tag>
+  )
+}
+
+/** Baixar (ou abrir, se já está na biblioteca) e GitHub, ao lado de cada projeto suportado. */
+function ProjectActions({ manifest }: { manifest: Manifest }) {
+  const { items, info, navigate, toast } = useAppState()
+  const { t } = useI18n()
+  const [installing, setInstalling] = useState(false)
+  const inLibrary = items.find((i) => i.entry.manifestId === manifest.id)
+  const installable = !!info && installableOn(manifest, info.platform)
+
+  const install = async () => {
+    setInstalling(true)
+    try {
+      const item = await window.api.library.install(manifest.id)
+      if (item) navigate({ page: 'game', id: item.entry.id })
+    } catch (err) {
+      toast('error', errorMessage(err, t))
+    } finally {
+      setInstalling(false)
+    }
+  }
+
+  return (
+    <span className="flex shrink-0 items-center gap-3">
+      {inLibrary ? (
+        <Button size="sm" onClick={() => navigate({ page: 'game', id: inLibrary.entry.id })}>
+          {t('add.open')}
+        </Button>
+      ) : (
+        <Button
+          size="sm"
+          icon={<Download size={13} />}
+          loading={installing}
+          disabled={!installable}
+          title={installable ? t('add.downloadHint') : t('add.noDownload')}
+          onClick={() => void install()}
+        >
+          {t('add.download')}
+        </Button>
+      )}
+      <button type="button" className="text-[12.5px] text-link hover:underline" onClick={() => void window.api.app.openExternal(manifest.repoUrl)}>
+        GitHub
+      </button>
+    </span>
   )
 }
 
@@ -172,15 +218,7 @@ export function AddGamePage() {
         <SectionLabel>{t('add.supported')}</SectionLabel>
         <div className="divide-y divide-line overflow-hidden rounded-[14px] border border-line">
           {manifests.manifests.map((m) => (
-            <ManifestRow
-              key={m.id}
-              manifest={m}
-              action={
-                <button type="button" className="shrink-0 text-[12.5px] text-link hover:underline" onClick={() => void window.api.app.openExternal(m.repoUrl)}>
-                  GitHub
-                </button>
-              }
-            />
+            <ManifestRow key={m.id} manifest={m} action={<ProjectActions manifest={m} />} />
           ))}
         </div>
       </div>

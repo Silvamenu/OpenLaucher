@@ -32,6 +32,11 @@ export function assetPatternsFor(updates: GithubUpdates, platform: Platform): st
   return Array.isArray(value) ? value : [value]
 }
 
+/** O projeto publica binários para a plataforma (pode ser baixado e instalado pelo app). */
+export function installableOn(manifest: Manifest, platform: Platform): boolean {
+  return manifest.updates.source === 'github-releases' && assetPatternsFor(manifest.updates, platform).length > 0
+}
+
 export function todosOf(value: { _todo?: string | string[] } | undefined): string[] {
   if (!value?._todo) return []
   return Array.isArray(value._todo) ? value._todo : [value._todo]

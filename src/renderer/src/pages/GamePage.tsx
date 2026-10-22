@@ -1,4 +1,4 @@
-import { ChevronLeft, FolderSearch, Image, ImageOff, Pencil, Play, SlidersHorizontal, Trash2 } from 'lucide-react'
+import { ChevronLeft, FolderSearch, Image, ImageOff, LoaderCircle, Pencil, Play, SlidersHorizontal, Trash2 } from 'lucide-react'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { collectTodos, executablesFor, launchArgsFor } from '../../../shared/manifestUtils'
 import type { LibraryItem, RequirementsReport } from '../../../shared/types'
@@ -172,6 +172,12 @@ export function GamePage({ id, tab }: { id: string; tab?: GameTab }) {
   const canLaunch = item.status !== 'missingFolder' && item.status !== 'unknownManifest' && !item.running && !item.busy && !!report?.executable
 
   const primary = (() => {
+    if (item.busy && p?.kind === 'install')
+      return (
+        <Button variant="primary" size="lg" disabled icon={<LoaderCircle size={16} className="animate-spin" />}>
+          {`${t(`stage.${p.stage}`)}${p.progress !== undefined ? ` ${Math.round(p.progress * 100)}%` : ''}`}
+        </Button>
+      )
     if (item.running)
       return (
         <Button variant="primary" size="lg" disabled icon={<Play size={13} fill="currentColor" />}>

@@ -11,7 +11,7 @@
 
 **Seus ports favoritos, num só lugar.**
 
-O Relaunch é um launcher para Windows e Linux que reúne os **ports e recompilações de jogos feitos por fãs** que você já instalou: Ship of Harkinian, Zelda 64: Recompiled, Starship e outros. Ele mostra o que falta configurar, abre o jogo e mantém tudo atualizado a partir dos releases oficiais de cada projeto. A interface está em português (Brasil) e em inglês.
+O Relaunch é um launcher para Windows e Linux que reúne os **ports e recompilações de jogos feitos por fãs**: Ship of Harkinian, Zelda 64: Recompiled, Starship e outros. Ele baixa o port do repositório oficial (ou usa o que você já instalou), mostra o que falta configurar, abre o jogo e mantém tudo atualizado a partir dos releases oficiais de cada projeto. A interface está em português (Brasil) e em inglês.
 
 ![Biblioteca do Relaunch no tema escuro, com cinco jogos e o status de cada um](docs/screenshots/biblioteca.png)
 
@@ -29,8 +29,8 @@ O Relaunch é um launcher para Windows e Linux que reúne os **ports e recompila
 ### Para jogar
 
 1. **Instale o Relaunch.** Baixe o `Relaunch-Setup-<versão>.exe` na página de [Releases](https://github.com/Silvamenu/Relaunch/releases) e execute. O instalador deixa escolher a pasta e cria atalhos na área de trabalho e no menu Iniciar.
-2. **Tenha o port instalado.** O Relaunch trabalha com jogos que você já instalou pelo site ou repositório oficial do projeto; ele não faz a primeira instalação.
-3. **Adicione o jogo.** Clique em **Adicionar jogo → Escolher pasta…** e aponte a pasta do port. O app reconhece o projeto sozinho; confirme em **Adicionar à biblioteca**.
+2. **Crie seu perfil.** Na tela **Quem está jogando?**, escolha um nome e uma cor; o PIN de 4 dígitos é opcional. Tudo fica só neste computador.
+3. **Adicione o jogo.** Em **Adicionar jogo**, clique em **Baixar** ao lado do projeto para instalar a versão mais recente, direto do repositório oficial, numa pasta que você escolhe. Se o port já está instalado, use **Escolher pasta…** e aponte a pasta dele: o app reconhece o projeto sozinho.
 4. **Siga o checklist** da aba **Configuração**: por exemplo, selecionar a sua ROM ou abrir o jogo uma vez para gerar os assets.
 5. **Clique em Jogar.**
 
@@ -53,11 +53,11 @@ Para gerar o app instalável: `npm run dist` (instalador do Windows) ou `npm run
 
 ### Requisitos
 
-| Para                                   | Você precisa de                                                                                                         |
-| -------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| Jogar                                  | Windows 10/11 (prioridade) ou Linux, o port já instalado e os seus próprios arquivos que o port pedir (como a sua ROM). |
-| Desenvolver                            | Node.js **22.12 ou mais recente** (veja `.nvmrc`) e npm.                                                                |
-| Gerar o instalador do Windows no Linux | Wine, incluindo o de 32 bits (`wine32`).                                                                                |
+| Para                                   | Você precisa de                                                                                    |
+| -------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| Jogar                                  | Windows 10/11 (prioridade) ou Linux e os seus próprios arquivos que o port pedir (como a sua ROM). |
+| Desenvolver                            | Node.js **22.12 ou mais recente** (veja `.nvmrc`) e npm.                                           |
+| Gerar o instalador do Windows no Linux | Wine, incluindo o de 32 bits (`wine32`).                                                           |
 
 ## Jogos suportados
 
@@ -79,7 +79,8 @@ Falta algum? Cada jogo é um arquivo JSON, sem mexer no código: veja [Criar um 
 | Área                        | O que faz                                                                                                                                                                                                    |
 | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **Biblioteca**              | Grade com o status de cada jogo (**Pronto**, **Falta configurar**, **Pasta não encontrada**), filtros e busca rápida com `Ctrl+K`.                                                                           |
-| **Adicionar jogo**          | Você escolhe a pasta e o app detecta o projeto pelos arquivos dela (inclusive numa subpasta), ou deixa você escolher da lista.                                                                               |
+| **Perfis**                  | Tela **Quem está jogando?** ao abrir: perfis locais com cor e PIN opcional, que podem ir para outro computador num arquivo `.relaunch`. Nada vai para a internet.                                            |
+| **Adicionar jogo**          | **Baixar** instala o port direto do repositório oficial. Ou você escolhe a pasta de um port já instalado e o app detecta o projeto pelos arquivos dela (inclusive numa subpasta).                            |
 | **Página do jogo**          | Abas **Configuração**, **Arquivos de config**, **Atualizações** e **Sobre**. Pelo menu do jogo: renomear, escolher uma capa, trocar a pasta ou remover da biblioteca (os arquivos do jogo não são apagados). |
 | **Checklist**               | Requisitos com ✓/✗ e ações: selecionar a sua ROM (validada por tamanho ou SHA-1), copiá-la para a pasta do jogo, abrir a pasta, abrir o jogo pela primeira vez e ver instruções.                             |
 | **Editor de configs**       | Arquivos JSON, INI e texto, editáveis em formulário ou como texto. Valida antes de salvar, faz backup automático e permite restaurar.                                                                        |
@@ -88,7 +89,7 @@ Falta algum? Cada jogo é um arquivo JSON, sem mexer no código: veja [Criar um 
 | **Atualizações dos jogos**  | Busca versões novas nos GitHub Releases de cada projeto, faz backup, preserva saves e volta sozinho se algo falhar. Veja [como funciona](#atualizações-dos-jogos).                                           |
 | **Downloads**               | Atualizações em andamento, disponíveis e concluídas na sessão. O progresso também aparece na barra lateral.                                                                                                  |
 | **Atualização do launcher** | Baixa a versão nova do Relaunch em segundo plano e avisa com um botão azul na barra lateral. Depois, o popup **Novidades** mostra o que mudou.                                                               |
-| **Configurações**           | Tema escuro, claro ou do sistema; idioma (PT-BR padrão, EN); nome do perfil; token do GitHub; notificações; atualização automática por jogo; pastas de manifestos e de dados; reescanear pastas.             |
+| **Configurações**           | Tema escuro, claro ou do sistema; idioma (PT-BR padrão, EN); perfil; token do GitHub; notificações; atualização automática por jogo; pastas de manifestos e de dados; reescanear pastas.                     |
 
 ![Página do Ship of Harkinian com os botões Jogar e Atualizar para 9.3.1, a versão instalada, o último jogo e o tempo jogado](docs/screenshots/jogo.png)
 

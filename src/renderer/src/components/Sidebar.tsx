@@ -1,11 +1,12 @@
-import { ArrowDownToLine, ChevronsUpDown, Plus, Search, User } from 'lucide-react'
-import { useEffect, useRef } from 'react'
+import { ArrowDownToLine, ChevronsUpDown, Plus, Search, UserCog, Users } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
 import { useI18n } from '../i18n'
-import { initials } from '../lib/format'
+import { errorMessage } from '../lib/format'
 import { useAppState, type Route } from '../state/AppState'
 import { GameTile } from './GameArt'
 import { Logo } from './brand'
 import { NavIcon } from './icons'
+import { ProfileAvatar } from './ProfileAvatar'
 import { statusTone, useStatusLabel } from './Status'
 import { Dot, Kbd, ProgressBar, ProgressRing, Tooltip } from './ui'
 
@@ -69,24 +70,68 @@ export function AppUpdateButton() {
   )
 }
 
+/** Perfil em uso; o menu leva às configurações do perfil ou de volta para "Quem está jogando?". */
 function ProfileCard() {
-  const { settings, navigate } = useAppState()
+  const { profiles, setProfiles, navigate, toast } = useAppState()
   const { t } = useI18n()
-  const name = settings?.userName?.trim() ?? ''
-  const letters = initials(name)
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+  const profile = profiles?.current
+
+  useEffect(() => {
+    if (!open) return
+    const close = (e: MouseEvent) => {
+      if (!ref.current?.contains(e.target as Node)) setOpen(false)
+    }
+    window.addEventListener('mousedown', close)
+    return () => window.removeEventListener('mousedown', close)
+  }, [open])
+
+  if (!profile) return null
+  const switchProfile = async () => {
+    setOpen(false)
+    try {
+      setProfiles(await window.api.profiles.leave())
+    } catch (err) {
+      toast('error', errorMessage(err, t))
+    }
+  }
   return (
-    <button
-      type="button"
-      onClick={() => navigate({ page: 'settings' })}
-      className="flex w-full items-center gap-2.5 rounded-xl border border-line-soft p-2 text-left transition-colors hover:border-line"
-    >
-      <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-chip text-[12px] font-semibold text-fg">{letters || <User size={16} />}</span>
-      <span className="min-w-0 flex-1">
-        <span className="block truncate text-[13px]">{name || t('profile.anonymous')}</span>
-        <span className="block truncate text-[11.5px] text-faint">{t('profile.local')}</span>
-      </span>
-      <ChevronsUpDown size={16} className="shrink-0 text-faint" />
-    </button>
+    <div ref={ref} className="relative w-full">
+      {open && (
+        <div className="animate-pop-in absolute bottom-full left-0 z-30 mb-2 w-full rounded-xl border border-control-line bg-control p-1.5 shadow-[0_20px_50px_var(--shadow)]">
+          <button
+            type="button"
+            onClick={() => (setOpen(false), navigate({ page: 'settings' }))}
+            className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-[13px] text-fg-2 transition-colors hover:bg-hover"
+          >
+            <UserCog size={15} />
+            {t('profile.settings')}
+          </button>
+          <button
+            type="button"
+            onClick={() => void switchProfile()}
+            className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-[13px] text-fg-2 transition-colors hover:bg-hover"
+          >
+            <Users size={15} />
+            {t('login.switch')}
+          </button>
+        </div>
+      )}
+      <button
+        type="button"
+        aria-expanded={open}
+        onClick={() => setOpen((v) => !v)}
+        className="flex w-full items-center gap-2.5 rounded-xl border border-line-soft p-2 text-left transition-colors hover:border-line"
+      >
+        <ProfileAvatar profile={profile} size={32} fontSize={12} />
+        <span className="min-w-0 flex-1">
+          <span className="block truncate text-[13px]">{profile.name}</span>
+          <span className="block truncate text-[11.5px] text-faint">{t('profile.local')}</span>
+        </span>
+        <ChevronsUpDown size={16} className="shrink-0 text-faint" />
+      </button>
+    </div>
   )
 }
 
