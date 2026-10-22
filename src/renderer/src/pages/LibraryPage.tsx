@@ -1,7 +1,8 @@
-import { Gamepad2, Plus, RefreshCw, Search, ShieldCheck } from 'lucide-react'
+import { Plus, RefreshCw, ShieldCheck } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { GameCard } from '../components/GameCard'
-import { Button } from '../components/ui'
+import { LogoMark } from '../components/icons'
+import { Button, Chip, Page, PageHeader } from '../components/ui'
 import { useI18n } from '../i18n'
 import { errorMessage } from '../lib/format'
 import { useAppState } from '../state/AppState'
@@ -9,11 +10,17 @@ import { useAppState } from '../state/AppState'
 type Filter = 'all' | 'ready' | 'setup' | 'updates'
 
 export function LibraryPage() {
-  const { items, navigate, toast, setItems } = useAppState()
+  const { items, navigate, toast, setItems, query } = useAppState()
   const { t } = useI18n()
-  const [query, setQuery] = useState('')
   const [filter, setFilter] = useState<Filter>('all')
   const [checking, setChecking] = useState(false)
+
+  const counts = {
+    all: items.length,
+    ready: items.filter((i) => i.status === 'ready').length,
+    setup: items.filter((i) => i.status !== 'ready').length,
+    updates: items.filter((i) => i.update.available).length
+  }
 
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -29,9 +36,10 @@ export function LibraryPage() {
   const checkUpdates = async () => {
     setChecking(true)
     try {
-      setItems(await window.api.updates.check())
-      const errors = (await window.api.library.list()).map((i) => i.update.error).filter(Boolean)
-      if (errors[0]) toast('error', errorMessage(errors[0], t))
+      const list = await window.api.updates.check()
+      setItems(list)
+      const error = list.map((i) => i.update.error).find(Boolean)
+      if (error) toast('error', errorMessage(error, t))
     } catch (err) {
       toast('error', errorMessage(err, t))
     } finally {
@@ -42,16 +50,14 @@ export function LibraryPage() {
   if (items.length === 0) {
     return (
       <div className="flex min-h-full flex-col items-center justify-center px-6 py-16 text-center">
-        <div className="mb-5 flex h-20 w-20 items-center justify-center rounded-3xl bg-accent/12 text-accent">
-          <Gamepad2 size={40} />
-        </div>
-        <h1 className="text-2xl font-bold tracking-tight">{t('library.empty.title')}</h1>
-        <p className="mt-2 max-w-md text-sm text-muted">{t('library.empty.body')}</p>
-        <Button variant="primary" size="lg" className="mt-6" icon={<Plus size={18} />} onClick={() => navigate({ page: 'add' })}>
+        <LogoMark size={48} />
+        <h1 className="mt-6 text-[24px] font-semibold tracking-[-0.025em]">{t('library.empty.title')}</h1>
+        <p className="mt-2 max-w-md text-[13.5px] leading-relaxed text-subtle">{t('library.empty.body')}</p>
+        <Button variant="primary" className="mt-7" icon={<Plus size={16} />} onClick={() => navigate({ page: 'add' })}>
           {t('nav.add')}
         </Button>
-        <p className="mt-10 flex max-w-md items-start gap-2 text-left text-xs text-muted">
-          <ShieldCheck size={16} className="mt-px shrink-0 text-emerald-500" />
+        <p className="mt-12 flex max-w-md items-start gap-2 text-left text-[12px] text-faint">
+          <ShieldCheck size={15} className="mt-px shrink-0" />
           {t('legal.note')}
         </p>
       </div>
@@ -66,50 +72,39 @@ export function LibraryPage() {
   ]
 
   return (
-    <div className="mx-auto max-w-[1600px] px-6 py-6 lg:px-8">
-      <header className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">{t('library.title')}</h1>
-          <p className="text-sm text-muted">{items.length === 1 ? t('library.countOne') : t('library.count', { n: items.length })}</p>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <Button icon={<RefreshCw size={15} className={checking ? 'animate-spin' : ''} />} onClick={checkUpdates} disabled={checking}>
-            {checking ? t('library.checking') : t('library.checkUpdates')}
-          </Button>
-          <Button variant="primary" icon={<Plus size={16} />} onClick={() => navigate({ page: 'add' })}>
-            {t('nav.add')}
-          </Button>
-        </div>
-      </header>
+    <Page>
+      <PageHeader
+        title={t('library.title')}
+        subtitle={items.length === 1 ? t('library.countOne') : t('library.count', { n: items.length })}
+        actions={
+          <>
+            <Button icon={<RefreshCw size={14} className={checking ? 'animate-spin' : ''} />} onClick={checkUpdates} disabled={checking}>
+              {checking ? t('library.checking') : t('library.checkUpdates')}
+            </Button>
+            <Button variant="primary" icon={<Plus size={15} />} onClick={() => navigate({ page: 'add' })}>
+              {t('nav.add')}
+            </Button>
+          </>
+        }
+      />
 
-      <div className="mt-5 flex flex-wrap items-center gap-3">
-        <div className="relative w-full max-w-xs">
-          <Search size={15} className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-muted" />
-          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t('library.search')} className="input w-full pl-9" />
-        </div>
-        <div className="flex flex-wrap gap-1 rounded-lg border border-line bg-card p-1">
-          {filters.map((f) => (
-            <button
-              key={f.id}
-              type="button"
-              onClick={() => setFilter(f.id)}
-              className={`rounded-md px-3 py-1 text-xs font-medium transition ${filter === f.id ? 'bg-accent text-white' : 'text-muted hover:text-fg'}`}
-            >
-              {f.label}
-            </button>
-          ))}
-        </div>
+      <div className="mb-6 flex flex-wrap gap-1.5">
+        {filters.map((f) => (
+          <Chip key={f.id} active={filter === f.id} count={counts[f.id]} onClick={() => setFilter(f.id)}>
+            {f.label}
+          </Chip>
+        ))}
       </div>
 
       {visible.length === 0 ? (
-        <p className="mt-16 text-center text-sm text-muted">{t('library.noResults')}</p>
+        <p className="mt-16 text-center text-[13px] text-subtle">{query ? t('library.noResultsQuery', { query }) : t('library.noResults')}</p>
       ) : (
-        <div className="mt-6 grid grid-cols-[repeat(auto-fill,minmax(190px,1fr))] gap-5">
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4">
           {visible.map((item) => (
             <GameCard key={item.entry.id} item={item} />
           ))}
         </div>
       )}
-    </div>
+    </Page>
   )
 }

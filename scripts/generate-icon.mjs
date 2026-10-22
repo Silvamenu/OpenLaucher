@@ -7,7 +7,11 @@ import { fileURLToPath } from 'node:url'
 
 const SIZE = 512
 const SS = 4 // supersampling por eixo (anti-aliasing)
-const S = SIZE / 64 // o desenho usa a mesma grade 64x64 do logo.svg
+const S = SIZE / 100 // desenho numa grade 100x100
+
+// Marca do RecompHub (mesma do layout): quadrado claro arredondado com losango escuro.
+const LIGHT = [237, 237, 238]
+const DARK = [17, 17, 18]
 
 const inRoundRect = (x, y, rx, ry, w, h, r) => {
   if (x < rx || y < ry || x > rx + w || y > ry + h) return false
@@ -15,29 +19,17 @@ const inRoundRect = (x, y, rx, ry, w, h, r) => {
   const cy = Math.min(Math.max(y, ry + r), ry + h - r)
   return (x - cx) ** 2 + (y - cy) ** 2 <= r * r
 }
-const inCircle = (x, y, cx, cy, r) => (x - cx) ** 2 + (y - cy) ** 2 <= r * r
-const inTriangle = (x, y) => y >= 9 && y <= 15 && Math.abs(x - 32) <= ((y - 9) / 6) * 5
-const mix = (a, b, t) => a.map((v, i) => v + (b[i] - v) * t)
-const hex = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16))
 
-const C1 = hex('#60a5fa')
-const C2 = hex('#4f46e5')
-const WHITE = [255, 255, 255]
-const BLUE = hex('#3b82f6')
-const AMBER = hex('#f59e0b')
-
-/** Cor (RGBA) de um ponto na grade 64x64. */
+/** Cor de um ponto na grade 100x100 (null = transparente). */
 function shade(x, y) {
-  if (!inRoundRect(x, y, 2, 2, 60, 60, 16)) return null
-  let color = mix(C1, C2, Math.min(1, Math.max(0, (x + y - 4) / 120)))
-  if (inTriangle(x, y)) color = mix(color, WHITE, 0.9)
-  if (inRoundRect(x, y, 13, 20, 38, 26, 13)) {
-    color = mix(color, WHITE, 0.95)
-    if (inRoundRect(x, y, 20, 31, 10, 4, 2) || inRoundRect(x, y, 23, 28, 4, 10, 2)) color = C2
-    if (inCircle(x, y, 39, 30.5, 2.6)) color = BLUE
-    if (inCircle(x, y, 44, 35.5, 2.6)) color = AMBER
-  }
-  return color
+  if (!inRoundRect(x, y, 4, 4, 92, 92, 24)) return null
+  // losango: quadrado de 30% girado 45° em torno do centro
+  const dx = x - 50
+  const dy = y - 50
+  const u = (dx + dy) / Math.SQRT2 + 50
+  const v = (dy - dx) / Math.SQRT2 + 50
+  if (inRoundRect(u, v, 35, 35, 30, 30, 6)) return DARK
+  return LIGHT
 }
 
 const raw = Buffer.alloc((SIZE * 4 + 1) * SIZE)

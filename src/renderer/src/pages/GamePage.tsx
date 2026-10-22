@@ -1,10 +1,11 @@
-import { ArrowLeft, Clock, EllipsisVertical, ExternalLink, FolderOpen, FolderSearch, Image, ImageOff, Pencil, Play, TriangleAlert, Trash2 } from 'lucide-react'
+import { ChevronLeft, FolderSearch, Image, ImageOff, Pencil, Play, SlidersHorizontal, Trash2 } from 'lucide-react'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { collectTodos, executablesFor, launchArgsFor } from '../../../shared/manifest'
-import type { LibraryItem } from '../../../shared/types'
-import { GameArt, accentOf, artBackground } from '../components/GameArt'
-import { StatusBadge, UpdateBadge } from '../components/StatusBadge'
-import { Button, Card, ConfirmModal, PromptModal } from '../components/ui'
+import type { LibraryItem, RequirementsReport } from '../../../shared/types'
+import { GameCover, coverGradient, coverUrl, hueOfItem } from '../components/GameArt'
+import { GearIcon } from '../components/icons'
+import { statusTone, useStatusLabel } from '../components/Status'
+import { Button, Card, Chip, ConfirmModal, Dot, PromptModal } from '../components/ui'
 import { useI18n } from '../i18n'
 import { errorMessage, formatDate, formatPlaytime, formatRelative } from '../lib/format'
 import { useAppState, type GameTab } from '../state/AppState'
@@ -17,7 +18,7 @@ function MenuItem({ icon, children, onClick, danger }: { icon: ReactNode; childr
     <button
       type="button"
       onClick={onClick}
-      className={`flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-left text-sm transition hover:bg-subtle ${danger ? 'text-red-500' : ''}`}
+      className={`flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-[13px] transition-colors hover:bg-hover ${danger ? 'text-bad' : 'text-fg-2'}`}
     >
       {icon}
       {children}
@@ -31,60 +32,65 @@ function AboutTab({ item }: { item: LibraryItem }) {
   const m = item.manifest
   if (!m) return null
   const platform = info?.platform ?? 'win32'
+  const link = (url: string, label: string) => (
+    <button type="button" className="text-link hover:underline" onClick={() => void window.api.app.openExternal(url)}>
+      {label}
+    </button>
+  )
   const rows: [string, ReactNode][] = [
     [t('about.original'), m.originalGame ?? '—'],
-    [
-      t('about.repo'),
-      <button key="repo" type="button" className="inline-flex items-center gap-1 text-accent hover:underline" onClick={() => void window.api.app.openExternal(m.repoUrl)}>
-        {m.repoUrl.replace('https://github.com/', '')} <ExternalLink size={12} />
-      </button>
-    ],
-    ...(m.website
-      ? ([
-          [
-            t('about.website'),
-            <button key="site" type="button" className="inline-flex items-center gap-1 text-accent hover:underline" onClick={() => void window.api.app.openExternal(m.website!)}>
-              {m.website.replace('https://', '')} <ExternalLink size={12} />
-            </button>
-          ]
-        ] as [string, ReactNode][])
-      : []),
-    [t('about.executables'), <code key="exe" className="font-mono text-xs">{executablesFor(m, platform).join(', ') || '—'}</code>],
-    [t('about.launchArgs'), <code key="args" className="font-mono text-xs">{launchArgsFor(m, platform).join(' ') || t('about.none')}</code>],
-    [t('game.folder'), <span key="folder" className="selectable font-mono text-xs break-all">{item.entry.path}</span>],
-    [t('about.manifest'), `${m.id}.json — ${m.origin === 'user' ? t('about.manifestUser') : t('about.manifestBuiltin')}`],
+    [t('about.repo'), link(m.repoUrl, m.repoUrl.replace('https://github.com/', ''))],
+    ...(m.website ? ([[t('about.website'), link(m.website, m.website.replace('https://', ''))]] as [string, ReactNode][]) : []),
+    [t('about.executables'), <span key="exe" className="font-mono text-[12.5px]">{executablesFor(m, platform).join(', ') || '—'}</span>],
+    [t('about.launchArgs'), <span key="args" className="font-mono text-[12.5px]">{launchArgsFor(m, platform).join(' ') || t('about.none')}</span>],
+    [t('about.manifest'), <span key="m"><span className="font-mono text-[12.5px]">{m.id}.json</span> · {m.origin === 'user' ? t('about.manifestUser') : t('about.manifestBuiltin')}</span>],
     [t('about.added'), formatDate(item.entry.addedAt, locale)],
     [t('about.launches'), String(item.entry.launchCount)]
   ]
   return (
-    <Card className="p-5">
-      {m.description && <p className="mb-4 max-w-3xl text-sm leading-relaxed">{m.description}</p>}
-      <dl className="grid gap-x-6 gap-y-2.5 text-sm sm:grid-cols-[180px_1fr]">
+    <div className="max-w-[760px]">
+      {m.description && <p className="mb-6 text-[13.5px] leading-relaxed text-fg-3">{m.description}</p>}
+      <Card className="divide-y divide-line overflow-hidden">
         {rows.map(([label, value]) => (
-          <div key={label} className="contents">
-            <dt className="text-muted">{label}</dt>
-            <dd className="min-w-0">{value}</dd>
+          <div key={label} className="grid gap-1 px-[18px] py-3 text-[13.5px] sm:grid-cols-[200px_1fr]">
+            <div className="text-faint">{label}</div>
+            <div className="min-w-0 break-words">{value}</div>
           </div>
         ))}
-      </dl>
-    </Card>
+      </Card>
+    </div>
   )
 }
 
 export function GamePage({ id, tab }: { id: string; tab?: GameTab }) {
-  const { items, navigate, toast } = useAppState()
+  const { items, navigate, toast, progress } = useAppState()
   const { t, locale } = useI18n()
+  const statusLabel = useStatusLabel()
   const item = items.find((i) => i.entry.id === id)
   const [activeTab, setActiveTab] = useState<GameTab>(tab ?? 'setup')
+  const [report, setReport] = useState<RequirementsReport | null>(null)
   const [menu, setMenu] = useState(false)
   const [dialog, setDialog] = useState<'rename' | 'remove' | null>(null)
   const [launching, setLaunching] = useState(false)
   const [todosOpen, setTodosOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
+  const sectionRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (tab) setActiveTab(tab)
-  }, [tab, id])
+  }, [tab])
+
+  // Requisitos recarregados sempre que a biblioteca muda (ex.: arquivos gerados após abrir o jogo).
+  useEffect(() => {
+    let alive = true
+    void window.api.library
+      .requirements(id)
+      .then((r) => alive && setReport(r))
+      .catch(() => undefined)
+    return () => {
+      alive = false
+    }
+  }, [id, item])
 
   useEffect(() => {
     if (!menu) return
@@ -98,7 +104,7 @@ export function GamePage({ id, tab }: { id: string; tab?: GameTab }) {
   if (!item) {
     return (
       <div className="p-8">
-        <Button icon={<ArrowLeft size={16} />} onClick={() => navigate({ page: 'library' })}>
+        <Button icon={<ChevronLeft size={16} />} onClick={() => navigate({ page: 'library' })}>
           {t('game.back')}
         </Button>
       </div>
@@ -125,120 +131,178 @@ export function GamePage({ id, tab }: { id: string; tab?: GameTab }) {
     }
   }
 
+  const showSection = (next: GameTab) => {
+    setActiveTab(next)
+    setTimeout(() => sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 30)
+  }
+
+  const startUpdate = () =>
+    act(async () => {
+      try {
+        await window.api.updates.start(id)
+        toast('success', t('upd.updated', { name: item.name, version: item.update.latest?.tag ?? '' }))
+      } catch (err) {
+        if ((err as { code?: string }).code === 'GAME_RUNNING') showSection('updates')
+        if ((err as { code?: string }).code !== 'CANCELLED') throw err
+      }
+    })
+
+  const p = progress[id]
+  const pending = report?.items.find((r) => !r.ok && !r.optional)
   const todos = item.manifest ? collectTodos(item.manifest) : []
-  const canLaunch = item.status !== 'missingFolder' && item.status !== 'unknownManifest' && !item.running && !item.busy
-  const tabs: { id: GameTab; label: string; badge?: boolean }[] = [
-    { id: 'setup', label: t('game.tabs.setup'), badge: item.status === 'needsSetup' },
+  const cover = coverUrl(item)
+  const canLaunch = item.status !== 'missingFolder' && item.status !== 'unknownManifest' && !item.running && !item.busy && !!report?.executable
+
+  const primary = (() => {
+    if (item.running) return <Button variant="primary" size="lg" disabled icon={<Play size={13} fill="currentColor" />}>{t('game.running')}</Button>
+    if (item.status === 'missingFolder')
+      return (
+        <Button variant="primary" size="lg" icon={<FolderSearch size={16} />} onClick={() => act(() => window.api.library.changeFolder(id))}>
+          {t('game.missingFolder.locate')}
+        </Button>
+      )
+    if (item.status === 'needsSetup')
+      return (
+        <Button variant="primary" size="lg" icon={<SlidersHorizontal size={15} />} onClick={() => showSection('setup')}>
+          {t('game.configure')}
+        </Button>
+      )
+    return (
+      <Button variant="primary" size="lg" className="font-semibold" icon={<Play size={13} fill="currentColor" />} loading={launching} disabled={!canLaunch} onClick={launch}>
+        {t('game.play')}
+      </Button>
+    )
+  })()
+
+  const info: [string, string][] = [
+    [t('game.version'), item.entry.installedVersion ?? t('upd.unknown')],
+    [t('game.lastPlayed'), item.entry.lastPlayedAt ? formatRelative(item.entry.lastPlayedAt, t, locale) : t('game.never')],
+    [t('game.playtime'), item.entry.totalPlayTimeSec > 0 ? formatPlaytime(item.entry.totalPlayTimeSec) : '—'],
+    [t('game.status'), statusLabel(item)]
+  ]
+
+  const tabs: { id: GameTab; label: string }[] = [
+    { id: 'setup', label: t('game.tabs.setup') },
     { id: 'configs', label: t('game.tabs.configs') },
-    { id: 'updates', label: t('game.tabs.updates'), badge: item.update.available },
+    { id: 'updates', label: t('game.tabs.updates') },
     { id: 'about', label: t('game.tabs.about') }
   ]
 
   return (
     <div className="min-h-full">
-      {/* Cabeçalho */}
-      <div className="relative overflow-hidden border-b border-line">
-        <div className="absolute inset-0 opacity-60 dark:opacity-45" style={{ background: artBackground(accentOf(item)) }} />
-        <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/80 to-bg/10" />
-        <div className="relative mx-auto max-w-[1400px] px-6 pt-5 pb-6 lg:px-8">
-          <button type="button" onClick={() => navigate({ page: 'library' })} className="mb-5 inline-flex items-center gap-1.5 text-sm text-muted transition hover:text-fg">
-            <ArrowLeft size={16} /> {t('game.back')}
-          </button>
-          <div className="flex flex-wrap items-end gap-6">
-            <div className="h-36 w-28 shrink-0 overflow-hidden rounded-xl border border-white/10 shadow-2xl shadow-black/40">
-              <GameArt item={item} iconSize={56} />
-            </div>
-            <div className="min-w-0 flex-1">
-              <div className="mb-2 flex flex-wrap gap-2">
-                <StatusBadge item={item} />
-                {item.update.available && <UpdateBadge />}
-              </div>
-              <h1 className="truncate text-3xl font-extrabold tracking-tight">{item.name}</h1>
-              {item.manifest?.originalGame && <p className="truncate text-sm text-muted">{item.manifest.originalGame}</p>}
-              <div className="mt-3 flex flex-wrap gap-x-6 gap-y-1 text-xs text-muted">
-                <span>
-                  {t('game.version')}: <strong className="text-fg">{item.entry.installedVersion ?? t('upd.unknown')}</strong>
-                </span>
-                <span className="inline-flex items-center gap-1">
-                  <Clock size={12} /> {t('game.playtime')}: <strong className="text-fg">{formatPlaytime(item.entry.totalPlayTimeSec)}</strong>
-                </span>
-                <span>
-                  {t('game.lastPlayed')}:{' '}
-                  <strong className="text-fg" title={formatDate(item.entry.lastPlayedAt, locale, true)}>
-                    {item.entry.lastPlayedAt ? formatRelative(item.entry.lastPlayedAt, t, locale) : t('game.never')}
-                  </strong>
-                </span>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button
-                variant={item.status === 'ready' ? 'success' : 'primary'}
-                size="lg"
-                icon={<Play size={18} fill="currentColor" />}
-                loading={launching}
-                disabled={!canLaunch}
-                onClick={launch}
-                className="min-w-36"
-              >
-                {item.running ? t('game.running') : item.status === 'ready' ? t('game.play') : t('game.playAnyway')}
-              </Button>
-              <Button size="lg" icon={<FolderOpen size={18} />} onClick={() => act(() => window.api.library.openFolder(id))} disabled={item.status === 'missingFolder'} aria-label={t('game.openFolder')} title={t('game.openFolder')} />
-              <div className="relative" ref={menuRef}>
-                <Button size="lg" icon={<EllipsisVertical size={18} />} aria-label={t('game.more')} title={t('game.more')} onClick={() => setMenu((m) => !m)} />
-                {menu && (
-                  <div className="animate-pop-in absolute right-0 z-30 mt-2 w-60 rounded-xl border border-line bg-elevated p-1.5 shadow-2xl">
-                    <MenuItem icon={<Pencil size={15} />} onClick={() => (setMenu(false), setDialog('rename'))}>
-                      {t('game.rename')}
-                    </MenuItem>
-                    <MenuItem icon={<FolderSearch size={15} />} onClick={() => act(() => window.api.library.changeFolder(id))}>
-                      {t('game.changeFolder')}
-                    </MenuItem>
-                    <MenuItem icon={<Image size={15} />} onClick={() => act(() => window.api.library.pickCover(id))}>
-                      {t('game.setCover')}
-                    </MenuItem>
-                    {item.entry.coverVersion && (
-                      <MenuItem icon={<ImageOff size={15} />} onClick={() => act(() => window.api.library.clearCover(id))}>
-                        {t('game.clearCover')}
-                      </MenuItem>
-                    )}
-                    <div className="my-1 border-t border-line" />
-                    <MenuItem icon={<Trash2 size={15} />} danger onClick={() => (setMenu(false), setDialog('remove'))}>
-                      {t('game.remove')}
-                    </MenuItem>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
+      {/* Arte de fundo */}
+      <div className="relative h-[300px] overflow-hidden" style={{ background: coverGradient(hueOfItem(item)) }}>
+        {cover && <img src={cover} alt="" className="absolute inset-0 h-full w-full scale-110 object-cover opacity-60 blur-2xl" draggable={false} />}
+        <div className="stripes absolute inset-0" />
+        <div className="absolute inset-0 bg-[linear-gradient(rgb(0_0_0/0)_30%,var(--panel)_100%)]" />
+        <button
+          type="button"
+          onClick={() => navigate({ page: 'library' })}
+          className="absolute top-[18px] left-6 flex h-8 items-center gap-1.5 rounded-[9px] bg-[#111112]/55 pr-3 pl-2 text-[13px] text-[#ededee] backdrop-blur-md transition-colors hover:bg-[#111112]/75"
+        >
+          <ChevronLeft size={16} strokeWidth={2} />
+          {t('game.back')}
+        </button>
       </div>
 
-      <div className="mx-auto max-w-[1400px] px-6 py-6 lg:px-8">
-        {item.status === 'missingFolder' && (
-          <div className="mb-5 flex flex-wrap items-center gap-4 rounded-xl border border-red-500/30 bg-red-500/10 p-4">
-            <TriangleAlert size={22} className="shrink-0 text-red-500" />
-            <div className="min-w-0 flex-1">
-              <div className="font-semibold">{t('game.missingFolder.title')}</div>
-              <div className="selectable text-sm break-all text-muted">{t('game.missingFolder.body', { path: item.entry.path })}</div>
-            </div>
-            <Button variant="primary" icon={<FolderSearch size={16} />} onClick={() => act(() => window.api.library.changeFolder(id))}>
-              {t('game.missingFolder.locate')}
-            </Button>
-            <Button variant="ghost" icon={<Trash2 size={16} />} onClick={() => setDialog('remove')}>
-              {t('game.remove')}
-            </Button>
+      <div className="relative -mt-[84px] max-w-[980px] px-10 pb-12 max-md:px-6">
+        <div className="flex flex-wrap items-end gap-[22px]">
+          <div className="h-[150px] w-[120px] shrink-0 overflow-hidden rounded-xl border border-white/10 shadow-[0_20px_40px_rgb(0_0_0/0.4)]">
+            <GameCover item={item} fontSize={30} />
           </div>
+          <div className="min-w-[240px] flex-1 pb-1">
+            {item.manifest?.originalGame && <div className="mb-1.5 text-[13px] text-muted">{item.manifest.originalGame}</div>}
+            <h1 className="text-[34px] leading-[1.05] font-semibold tracking-[-0.03em]">{item.name}</h1>
+          </div>
+        </div>
+
+        <div className="mt-7 flex flex-wrap gap-2">
+          {primary}
+          {item.update.available && item.update.latest && item.update.assetName !== null && (
+            <Button variant="accent" size="lg" disabled={item.busy || item.running} onClick={startUpdate}>
+              {item.busy && p?.kind === 'update'
+                ? `${t(`stage.${p.stage}`)}${p.progress !== undefined ? ` ${Math.round(p.progress * 100)}%` : ''}`
+                : t('upd.update', { version: item.update.latest.tag })}
+            </Button>
+          )}
+          <div className="relative" ref={menuRef}>
+            <Button size="lg" icon={<GearIcon />} aria-label={t('game.more')} title={t('game.more')} onClick={() => setMenu((m) => !m)} />
+            {menu && (
+              <div className="animate-pop-in absolute left-0 z-30 mt-2 w-64 rounded-xl border border-control-line bg-control p-1.5 shadow-[0_20px_50px_var(--shadow)]">
+                <MenuItem icon={<SlidersHorizontal size={15} />} onClick={() => (setMenu(false), showSection('configs'))}>
+                  {t('game.tabs.configs')}
+                </MenuItem>
+                <MenuItem icon={<Pencil size={15} />} onClick={() => (setMenu(false), setDialog('rename'))}>
+                  {t('game.rename')}
+                </MenuItem>
+                <MenuItem icon={<FolderSearch size={15} />} onClick={() => act(() => window.api.library.changeFolder(id))}>
+                  {t('game.changeFolder')}
+                </MenuItem>
+                <MenuItem icon={<Image size={15} />} onClick={() => act(() => window.api.library.pickCover(id))}>
+                  {t('game.setCover')}
+                </MenuItem>
+                {item.entry.coverVersion && (
+                  <MenuItem icon={<ImageOff size={15} />} onClick={() => act(() => window.api.library.clearCover(id))}>
+                    {t('game.clearCover')}
+                  </MenuItem>
+                )}
+                <div className="mx-1 my-1 h-px bg-line" />
+                <MenuItem icon={<Trash2 size={15} />} danger onClick={() => (setMenu(false), setDialog('remove'))}>
+                  {t('game.remove')}
+                </MenuItem>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {(item.status === 'needsSetup' || item.status === 'missingFolder') && (
+          <button
+            type="button"
+            onClick={() => (item.status === 'missingFolder' ? act(() => window.api.library.changeFolder(id)) : showSection('setup'))}
+            className="mt-5 flex w-full max-w-[560px] items-center gap-3 rounded-xl border border-line px-4 py-3 text-left text-[13px] text-fg-3 transition-colors hover:border-chip-line"
+          >
+            <Dot tone={statusTone(item)} />
+            <span className="min-w-0 flex-1">
+              {item.status === 'missingFolder' ? t('game.note.missing') : pending ? t('game.note.setup', { label: pending.type === 'executable' ? t('req.executable') : pending.label }) : t('status.needsSetup')}
+            </span>
+          </button>
         )}
 
+        <div className="mt-9 grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] overflow-hidden rounded-[14px] border border-line">
+          {info.map(([label, value]) => (
+            <div key={label} className="border-r border-line px-[18px] py-4 last:border-r-0">
+              <div className="mb-1.5 text-[12px] text-faint">{label}</div>
+              <div className="truncate text-[14px]" title={value}>
+                {value}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-7 flex min-w-0 items-center gap-2.5 text-[12.5px] text-subtle">
+          <span className="selectable min-w-0 truncate font-mono" title={item.entry.path}>
+            {item.entry.path}
+          </span>
+          <span className="shrink-0 text-ghost">·</span>
+          {item.status === 'missingFolder' ? (
+            <button type="button" className="shrink-0 text-link hover:underline" onClick={() => act(() => window.api.library.changeFolder(id))}>
+              {t('game.missingFolder.locate')}
+            </button>
+          ) : (
+            <button type="button" className="shrink-0 text-link hover:underline" onClick={() => act(() => window.api.library.openFolder(id))}>
+              {t('game.openFolder')}
+            </button>
+          )}
+        </div>
+
         {todos.length > 0 && (
-          <div className="mb-5 rounded-xl border border-amber-500/25 bg-amber-500/8 px-4 py-3 text-sm">
-            <button type="button" onClick={() => setTodosOpen((o) => !o)} className="flex w-full items-center gap-2 text-left text-amber-700 dark:text-amber-300">
-              <TriangleAlert size={16} className="shrink-0" />
-              <span className="flex-1 font-medium">{t('game.todo.title')}</span>
-              <span className="text-xs">{todosOpen ? '−' : `+${todos.length}`}</span>
+          <div className="mt-3 text-[12px] text-faint">
+            <button type="button" onClick={() => setTodosOpen((o) => !o)} className="flex items-center gap-2 hover:text-subtle">
+              <Dot tone="warn" />
+              {t('game.todo.title')} ({todos.length})
             </button>
             {todosOpen && (
-              <ul className="mt-2 ml-6 list-disc space-y-1 text-xs text-muted">
+              <ul className="mt-2 ml-4 list-disc space-y-1">
                 {todos.map((todo) => (
                   <li key={todo}>{todo}</li>
                 ))}
@@ -247,25 +311,19 @@ export function GamePage({ id, tab }: { id: string; tab?: GameTab }) {
           </div>
         )}
 
-        <div className="mb-5 flex flex-wrap gap-x-1 border-b border-line" role="tablist">
+        <div ref={sectionRef} className="mt-10 mb-5 flex scroll-mt-6 flex-wrap gap-1.5" role="tablist">
           {tabs.map((tb) => (
-            <button
-              key={tb.id}
-              type="button"
-              role="tab"
-              aria-selected={activeTab === tb.id}
-              onClick={() => setActiveTab(tb.id)}
-              className={`relative -mb-px flex items-center gap-2 border-b-2 px-4 py-2.5 text-sm font-medium whitespace-nowrap transition ${
-                activeTab === tb.id ? 'border-accent text-fg' : 'border-transparent text-muted hover:text-fg'
-              }`}
-            >
-              {tb.label}
-              {tb.badge && <span className="h-2 w-2 rounded-full bg-accent" />}
-            </button>
+            <Chip key={tb.id} active={activeTab === tb.id} onClick={() => setActiveTab(tb.id)}>
+              <span className="flex items-center gap-2">
+                {tb.label}
+                {tb.id === 'setup' && item.status === 'needsSetup' && <Dot tone="warn" />}
+                {tb.id === 'updates' && item.update.available && <Dot tone="info" />}
+              </span>
+            </Chip>
           ))}
         </div>
 
-        {activeTab === 'setup' && <ChecklistTab item={item} onLaunch={launch} />}
+        {activeTab === 'setup' && <ChecklistTab item={item} report={report} onReport={setReport} onLaunch={launch} />}
         {activeTab === 'configs' && <ConfigsTab item={item} />}
         {activeTab === 'updates' && <UpdatesTab item={item} />}
         {activeTab === 'about' && <AboutTab item={item} />}

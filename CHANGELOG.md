@@ -17,6 +17,7 @@ O conteúdo de cada versão é usado como nota do release no GitHub (`npm run re
 - Checklist de configuração com ações: selecionar a sua ROM (com validação por SHA-1), abrir a pasta e abrir o jogo pela primeira vez.
 - Editor dos arquivos de configuração (JSON/INI/texto) em formulário ou texto, com backup automático antes de salvar.
 - Botão **Jogar** com registro do último acesso e do tempo jogado.
+- Busca rápida de jogos com `Ctrl+K` e página **Downloads** com o progresso das atualizações.
 - Atualização dos jogos pelos GitHub Releases. O app:
   - verifica ao abrir e a cada 3 horas (usando ETag);
   - avisa com badge e notificação;

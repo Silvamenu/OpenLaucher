@@ -1,0 +1,32 @@
+# Publica o instalador do launcher nos GitHub Releases deste repositório.
+# O electron-updater dos apps instalados lê esses releases para se atualizar.
+# Uso: atualize "version" no package.json e a seção correspondente do CHANGELOG.md,
+# depois crie e envie a tag:  git tag v0.2.0 && git push origin v0.2.0
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - name: Conferir versão da tag
+        shell: bash
+        run: |
+          pkg="v$(node -p "require('./package.json').version")"
+          [ "$pkg" = "$GITHUB_REF_NAME" ] || { echo "Tag $GITHUB_REF_NAME diferente da versão $pkg do package.json"; exit 1; }
+      - run: npm run release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

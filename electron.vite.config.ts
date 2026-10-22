@@ -43,6 +43,8 @@ export default defineConfig({
   },
   renderer: {
     root: resolve(__dirname, 'src/renderer'),
+    // IPv4 explícito: evita "localhost" resolvido para ::1 em máquinas sem IPv6.
+    server: { host: '127.0.0.1' },
     plugins: [react(), tailwindcss(), contentSecurityPolicy()],
     build: {
       minify: true,
