@@ -15,6 +15,36 @@ export type ArchiveKind = 'zip' | '7z' | 'tar' | 'raw'
 
 const RAW_EXTENSIONS = ['.exe', '.appimage', '.dmg', '.bin', '.x86_64']
 
+/** Teto do conteúdo extraído de um pacote (proteção contra "zip bomb" lotando o disco). */
+export const MAX_EXTRACTED_BYTES = 16 * 1024 ** 3
+export const MAX_EXTRACTED_ENTRIES = 200_000
+
+/** Soma o que já foi extraído e falha ao passar do teto. */
+function extractionBudget() {
+  let bytes = 0
+  let entries = 0
+  return (size: number) => {
+    bytes += size
+    entries++
+    if (bytes > MAX_EXTRACTED_BYTES || entries > MAX_EXTRACTED_ENTRIES) {
+      throw new AppError('EXTRACT_FAILED', 'Pacote grande demais depois de extraído')
+    }
+  }
+}
+
+/**
+ * Confirma que `target` fica dentro de `realRoot` mesmo seguindo links simbólicos/junções
+ * já existentes no caminho, e que o próprio `target` não é um link. Cria as pastas do caminho.
+ */
+export async function ensureSafeTarget(realRoot: string, target: string, label: string): Promise<void> {
+  const parent = path.dirname(target)
+  await fs.mkdir(parent, { recursive: true })
+  const realParent = await fs.realpath(parent)
+  if (realParent !== realRoot && !isInside(realRoot, realParent)) throw new AppError('EXTRACT_FAILED', `Caminho inseguro: ${label}`)
+  const stat = await fs.lstat(target).catch(() => null)
+  if (stat && !stat.isFile()) throw new AppError('EXTRACT_FAILED', `Caminho inseguro: ${label}`)
+}
+
 export function archiveKindOf(fileName: string): ArchiveKind | null {
   const lower = fileName.toLowerCase()
   if (lower.endsWith('.zip')) return 'zip'
@@ -50,8 +80,10 @@ export interface ExtractOptions {
 /** Extrai um zip com proteção contra caminhos fora do destino. Retorna os arquivos extraídos. */
 export async function extractZip(file: string, dest: string, options: ExtractOptions = {}): Promise<string[]> {
   await fs.mkdir(dest, { recursive: true })
+  const realDest = await fs.realpath(dest)
   const zip = await openZip(file)
   const written: string[] = []
+  const count = extractionBudget()
   await new Promise<void>((resolve, reject) => {
     const fail = (err: unknown) => {
       zip.close()
@@ -68,7 +100,8 @@ export async function extractZip(file: string, dest: string, options: ExtractOpt
         if (rel.endsWith('/')) {
           await fs.mkdir(target, { recursive: true })
         } else if (!options.filter || options.filter(rel)) {
-          await fs.mkdir(path.dirname(target), { recursive: true })
+          count(entry.uncompressedSize)
+          await ensureSafeTarget(realDest, target, rel)
           const stream = await openEntryStream(zip, entry)
           await pipeline(stream, createWriteStream(target))
           // Mantém o bit de execução de arquivos criados em Unix (ex.: AppImage).
@@ -146,8 +179,25 @@ export async function createZipFromDir(srcDir: string, outFile: string, options:
 
 async function extractTar(file: string, dest: string): Promise<void> {
   await fs.mkdir(dest, { recursive: true })
-  // node-tar já remove caminhos absolutos e "..".
-  await tar.x({ file, cwd: dest, preservePaths: false })
+  const count = extractionBudget()
+  let rejected: AppError | null = null
+  // node-tar já remove caminhos absolutos e "..". Links não são usados pela atualização: ficam de fora.
+  await tar.x({
+    file,
+    cwd: dest,
+    preservePaths: false,
+    filter: (_path, entry) => {
+      if ('type' in entry && entry.type !== 'File' && entry.type !== 'OldFile' && entry.type !== 'Directory') return false
+      try {
+        count('size' in entry ? (entry.size ?? 0) : 0)
+        return true
+      } catch (err) {
+        rejected ??= err as AppError
+        return false
+      }
+    }
+  })
+  if (rejected) throw rejected
 }
 
 export function sevenZipPath(): string {
@@ -183,7 +233,7 @@ async function extract7z(file: string, dest: string, signal?: AbortSignal): Prom
   await fs.mkdir(dest, { recursive: true })
   const bin = await executable7z()
   await new Promise<void>((resolve, reject) => {
-    const child = spawn(bin, ['x', '-y', '-bd', `-o${dest}`, file], { stdio: ['ignore', 'ignore', 'pipe'], signal })
+    const child = spawn(bin, ['x', '-t7z', '-y', '-bd', `-o${dest}`, file], { stdio: ['ignore', 'ignore', 'pipe'], signal })
     let stderr = ''
     child.stderr?.on('data', (d) => (stderr += String(d)))
     child.on('error', reject)
@@ -211,7 +261,10 @@ async function extractOne(file: string, dest: string, options: ExtractPackageOpt
       return
     case 'raw': {
       await fs.mkdir(dest, { recursive: true })
-      const target = path.join(dest, options.rawTargetName ?? path.basename(file))
+      // Só o nome do arquivo: o manifesto não decide em que pasta o binário é gravado.
+      const name = path.basename(toPosix(options.rawTargetName ?? path.basename(file)))
+      const target = path.join(dest, name)
+      if (!name || name === '.' || name === '..' || !isInside(dest, target)) throw new AppError('EXTRACT_FAILED', `Nome de destino inseguro: ${name}`)
       await fs.copyFile(file, target)
       if (process.platform !== 'win32') await fs.chmod(target, 0o755)
       return
@@ -234,7 +287,8 @@ export async function extractPackage(file: string, dest: string, options: Extrac
       const entries = (await fs.readdir(root, { withFileTypes: true })).filter((e) => !/^readme(\.\w+)?$/i.test(e.name))
       const nested = entries.length === 1 && entries[0].isFile() ? entries[0].name : null
       const kind = nested ? archiveKindOf(nested) : null
-      if (!nested || !kind || kind === 'raw') break
+      // Pacote dentro de pacote só em zip/tar (formatos tratados em JavaScript, com as proteções acima).
+      if (!nested || (kind !== 'zip' && kind !== 'tar')) break
       const nestedDest = path.join(dest, `__nested${depth}`)
       await extractOne(path.join(root, nested), nestedDest, options)
       root = await singleRoot(nestedDest)

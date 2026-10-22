@@ -59,7 +59,7 @@ export function toReleaseInfo(raw: RawRelease): ReleaseInfo {
 
 /**
  * Cliente mínimo da API de Releases do GitHub.
- * Usa ETag/If-None-Match: respostas 304 vêm do cache e não consomem o limite de 60 req/h.
+ * Usa ETag/If-None-Match: respostas 304 reaproveitam o cache. Com token, as 304 não contam no limite da API.
  */
 export class GitHubClient {
   constructor(private readonly opts: GitHubClientOptions) {}

@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Menu, net, protocol, shell } from 'electron'
+import { app, BrowserWindow, Menu, net, protocol, session, shell } from 'electron'
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
@@ -69,6 +69,16 @@ function createWindow(ctx: AppContext): BrowserWindow {
 async function bootstrap(): Promise<void> {
   await app.whenReady()
   Menu.setApplicationMenu(null)
+  // file:// com host vira caminho UNC no Windows (\\servidor\...) e vazaria o hash NTLM do usuário.
+  session.defaultSession.webRequest.onBeforeRequest({ urls: ['file://*/*'] }, (details, callback) => {
+    let host: string
+    try {
+      host = new URL(details.url).host
+    } catch {
+      host = 'invalid'
+    }
+    callback({ cancel: host !== '' })
+  })
 
   const ctx = new AppContext()
   await ctx.reloadManifests()

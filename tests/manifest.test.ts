@@ -54,7 +54,11 @@ describe('parser de manifestos', () => {
       [{ ...minimal, requirements: [{ type: 'desconhecido', label: 'x' }] }, 'requirements'],
       [{ ...minimal, requirements: [{ type: 'userFile', label: 'ROM', validation: { sha1: ['123'] } }] }, 'sha1'],
       [{ ...minimal, updates: { source: 'github-releases', repo: 'sem-barra', assetPatterns: {} } }, 'updates.repo'],
-      [{ ...minimal, configFiles: [{ path: 'a.yaml', format: 'yaml' }] }, 'configFiles']
+      [{ ...minimal, configFiles: [{ path: 'a.yaml', format: 'yaml' }] }, 'configFiles'],
+      [{ ...minimal, executables: { win32: ['../../Startup/x.exe'] } }, 'executables'],
+      [{ ...minimal, executables: { win32: ['C:\\Windows\\x.exe'] } }, 'executables'],
+      [{ ...minimal, detectFiles: ['/etc/passwd'] }, 'detectFiles'],
+      [{ ...minimal, updates: { source: 'github-releases', repo: 'a/b', assetPatterns: { win32: '*.zip' }, preserve: ['..\\x'] } }, 'preserve']
     ]
     for (const [input, where] of cases) {
       const result = parseManifest(input)

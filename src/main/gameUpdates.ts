@@ -163,7 +163,7 @@ export class GameUpdateService {
   }
 
   async start(entryId: string, opts: { automatic?: boolean } = {}): Promise<void> {
-    const entry = this.ctx.store.getEntry(entryId)
+    let entry = this.ctx.store.getEntry(entryId)
     if (!entry) throw new AppError('NOT_FOUND')
     const manifest = this.ctx.getManifest(entry.manifestId)
     const updates = githubUpdatesOf(manifest)
@@ -177,6 +177,10 @@ export class GameUpdateService {
     }
     const release = state.latest
     if (!release) throw new AppError('NO_RELEASE')
+    // A consulta acima é assíncrona: relê a entrada (a pasta pode ter mudado) e marca como ocupado antes de usar.
+    entry = this.ctx.store.getEntry(entryId)
+    if (!entry) throw new AppError('NOT_FOUND')
+    if (this.library.isBusy(entryId)) throw new AppError('BUSY')
 
     const controller = new AbortController()
     this.controllers.set(entryId, controller)
@@ -185,7 +189,8 @@ export class GameUpdateService {
     const base = { entryId, kind: 'update' as const, version: release.tag }
     try {
       const executables = executablesFor(manifest, this.ctx.platform)
-      const rawTargetName = executables.find((n) => !/[*?[\]{}]/.test(n))
+      // Só um nome de arquivo simples (sem pastas nem curingas) serve de nome para um binário solto.
+      const rawTargetName = executables.find((n) => !/[*?[\]{}/\\]/.test(n) && n !== '.' && n !== '..')
       const result = await runUpdateFlow(
         {
           entryId,

@@ -18,6 +18,14 @@ function perPlatform<T extends z.ZodType>(item: T) {
 
 const nonEmpty = z.string().trim().min(1)
 const stringList = z.array(nonEmpty)
+
+/** Caminho relativo à pasta do jogo: sem raiz, letra de unidade ou segmentos "..". */
+export function isSafeRelativePath(value: string): boolean {
+  const posix = value.replace(/\\/g, '/')
+  return !/^(\/|[A-Za-z]:)/.test(posix) && !posix.split('/').includes('..')
+}
+const relativePath = nonEmpty.refine(isSafeRelativePath, { message: 'use um caminho relativo à pasta do jogo, sem ".."' })
+const relativePathList = z.array(relativePath)
 const httpsUrl = z.url({ protocol: /^https$/ })
 
 const hashSchema = z.union([
@@ -93,7 +101,7 @@ const githubUpdates = z.object({
   repo: z.string().regex(/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/, 'use o formato "dono/repositorio"'),
   assetPatterns: perPlatform(z.union([nonEmpty, stringList.min(1)])),
   includePrereleases: z.boolean().default(false),
-  preserve: stringList.default([]),
+  preserve: relativePathList.default([]),
   _todo: todoSchema
 })
 
@@ -113,8 +121,8 @@ export const manifestSchema = z.object({
     .string()
     .regex(/^#[0-9a-fA-F]{6}$/)
     .optional(),
-  executables: perPlatform(stringList.min(1)),
-  detectFiles: stringList.min(1),
+  executables: perPlatform(relativePathList.min(1)),
+  detectFiles: relativePathList.min(1),
   requirements: z.array(requirementSchema).default([]),
   configFiles: z.array(configFileSchema).default([]),
   launchArgs: z.union([z.array(z.string()), perPlatform(z.array(z.string()))]).default([]),

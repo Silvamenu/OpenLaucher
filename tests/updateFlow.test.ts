@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto'
 import { promises as fs } from 'node:fs'
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
+import { extractPackage } from '../src/main/archive'
 import { listBackups, runUpdateFlow, type UpdateFlowDeps } from '../src/main/updateCore'
 import type { GithubUpdates } from '../src/shared/manifest'
 import type { ReleaseInfo, UpdateStage } from '../src/shared/types'
@@ -139,5 +140,29 @@ describe('fluxo completo de atualização', () => {
     await expect(runUpdateFlow(params, deps)).rejects.toMatchObject({ code: 'CANCELLED' })
     expect((await readTree(game))['soh.exe']).toBe('v1')
     expect(await fs.readdir(deps.tmpRoot)).toEqual([])
+  })
+
+  it.skipIf(process.platform === 'win32')('não escreve através de link simbólico que aponta para fora da pasta do jogo', async () => {
+    const { game, deps, params } = await setup()
+    const outside = await tempDir('outside-')
+    await writeTree(outside, { 'soh.o2r': 'fora' })
+    await fs.symlink(path.join(outside, 'soh.o2r'), path.join(game, 'soh.o2r'))
+    const before = await readTree(game)
+    await expect(runUpdateFlow(params, deps)).rejects.toMatchObject({ code: 'UPDATE_FAILED_RESTORED' })
+    expect(await readTree(outside)).toEqual({ 'soh.o2r': 'fora' })
+    expect(await readTree(game)).toEqual(before)
+  })
+})
+
+describe('extração do pacote', () => {
+  it('binário solto usa só o nome do arquivo, mesmo com ".." no nome pedido', async () => {
+    const work = await tempDir('raw-')
+    const file = path.join(work, 'Game.AppImage')
+    await fs.writeFile(file, 'bin')
+    const dest = path.join(work, 'extracted')
+    const root = await extractPackage(file, dest, { rawTargetName: '../../evil/game.appimage' })
+    expect(root).toBe(dest)
+    expect(await fs.readdir(dest)).toEqual(['game.appimage'])
+    expect(await fs.readdir(work)).toEqual(['Game.AppImage', 'extracted'])
   })
 })

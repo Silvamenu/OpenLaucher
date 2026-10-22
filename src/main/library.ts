@@ -135,9 +135,12 @@ export class LibraryService {
   }
 
   async changeFolder(id: string, folder: string): Promise<LibraryItem> {
-    const entry = this.requireEntry(id)
+    this.requireEntry(id)
+    // Atualização/rollback em andamento usam a pasta atual; trocar agora misturaria as duas instalações.
+    if (this.busy.has(id)) throw new AppError('BUSY')
     if (!(await isDirectory(folder))) throw new AppError('FOLDER_NOT_FOUND', folder, { path: folder })
-    const next = { ...entry, path: path.resolve(folder) }
+    if (this.busy.has(id)) throw new AppError('BUSY')
+    const next = { ...this.requireEntry(id), path: path.resolve(folder) }
     this.ctx.store.saveEntry(next)
     this.iconCache.clear()
     await this.broadcast()

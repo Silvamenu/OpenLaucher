@@ -13,7 +13,7 @@ import {
   shouldSkipFile
 } from '../shared/patterns'
 import type { BackupInfo, ReleaseAsset, ReleaseInfo, UpdateStage } from '../shared/types'
-import { archiveKindOf, createZipFromDir, extractPackage, extractZip, listZip } from './archive'
+import { archiveKindOf, createZipFromDir, ensureSafeTarget, extractPackage, extractZip, listZip } from './archive'
 import { hashFile, isInside, pathExists, sanitizeFileName, walkFiles } from './fsutil'
 
 export const USER_AGENT = 'RecompHub-Launcher'
@@ -241,18 +241,20 @@ export interface ApplyOptions {
 export async function applyUpdate(opts: ApplyOptions, journal: ApplyJournal): Promise<ApplyJournal> {
   const isPreserved = createPreserveMatcher(opts.preserve)
   const files = await walkFiles(opts.sourceDir)
+  // Caminho real: links simbólicos/junções dentro da pasta do jogo não podem levar a escrita para fora dela.
+  const realGame = await fs.realpath(opts.gameDir)
   let done = 0
   for (const file of files) {
     if (opts.signal?.aborted) throw new AppError('CANCELLED')
     const target = path.join(opts.gameDir, file.rel)
     if (!isInside(opts.gameDir, target)) throw new AppError('EXTRACT_FAILED', `Caminho inseguro: ${file.rel}`)
-    const exists = await pathExists(target)
+    const exists = (await fs.lstat(target).catch(() => null)) !== null
     if (shouldSkipFile(file.rel, exists, isPreserved)) {
       journal.skipped.push(file.rel)
     } else {
+      await ensureSafeTarget(realGame, target, file.rel)
       ;(exists ? journal.modified : journal.added).push(file.rel)
       await opts.beforeWrite?.(file.rel)
-      await fs.mkdir(path.dirname(target), { recursive: true })
       await fs.copyFile(file.abs, target)
       const mode = (await fs.stat(file.abs)).mode
       if (process.platform !== 'win32') await fs.chmod(target, mode & 0o777)
@@ -266,8 +268,13 @@ export async function applyUpdate(opts: ApplyOptions, journal: ApplyJournal): Pr
 /** Remove arquivos e, em seguida, as pastas que ficaram vazias por causa disso (sem sair de `gameDir`). */
 async function removeFiles(gameDir: string, rels: string[]): Promise<void> {
   const dirs = new Set<string>()
+  const realGame = await fs.realpath(gameDir)
   for (const rel of rels) {
     const file = path.join(gameDir, rel)
+    if (!isInside(gameDir, file)) continue
+    // Nunca apaga através de um link que aponte para fora da pasta do jogo.
+    const realParent = await fs.realpath(path.dirname(file)).catch(() => null)
+    if (!realParent || (realParent !== realGame && !isInside(realGame, realParent))) continue
     await fs.rm(file, { force: true })
     for (let dir = path.dirname(file); isInside(gameDir, dir); dir = path.dirname(dir)) dirs.add(dir)
   }
@@ -409,6 +416,10 @@ export async function runUpdateFlow(params: UpdateFlowParams, deps: UpdateFlowDe
         },
         journal
       )
+      // Faz parte da transação: sem a lista de arquivos adicionados, o backup não desfaria esta versão.
+      backup.meta.addedFiles = journal.added
+      backup.meta.updatedTo = release.tag
+      await writeBackupMeta(backup)
     } catch (err) {
       deps.onStage('restoring')
       try {
@@ -423,10 +434,8 @@ export async function runUpdateFlow(params: UpdateFlowParams, deps: UpdateFlowDe
       })
     }
 
-    backup.meta.addedFiles = journal.added
-    backup.meta.updatedTo = release.tag
-    await writeBackupMeta(backup)
-    await pruneBackups(deps.backupsDir, params.entryId)
+    // Limpeza de backups antigos não é essencial: uma falha aqui (ex.: arquivo travado no Windows) não desfaz a atualização.
+    await pruneBackups(deps.backupsDir, params.entryId).catch((err) => console.warn('[updates] limpeza de backups falhou', err))
     deps.onStage('done', { progress: 1 })
     return { version: release.tag, publishedAt: release.publishedAt, journal, backup }
   } finally {
