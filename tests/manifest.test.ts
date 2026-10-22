@@ -2,15 +2,7 @@ import { promises as fs } from 'node:fs'
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { loadManifests } from '../src/main/manifests'
-import {
-  assetPatternsFor,
-  collectTodos,
-  configPathCandidates,
-  executablesFor,
-  launchArgsFor,
-  parseManifest,
-  parseManifestText
-} from '../src/shared/manifest'
+import { assetPatternsFor, collectTodos, configPathCandidates, executablesFor, launchArgsFor, parseManifest, parseManifestText } from '../src/shared/manifest'
 import { tempDir } from './helpers/fs'
 
 const minimal = {

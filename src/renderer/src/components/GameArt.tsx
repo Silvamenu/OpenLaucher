@@ -9,7 +9,11 @@ export function useExeIcon(item: LibraryItem): string | null {
   const key = `${item.entry.id}|${item.entry.path}|${item.status}`
   useEffect(() => {
     let alive = true
-    if (!iconCache.has(key)) iconCache.set(key, window.api.library.icon(item.entry.id).catch(() => null))
+    if (!iconCache.has(key))
+      iconCache.set(
+        key,
+        window.api.library.icon(item.entry.id).catch(() => null)
+      )
     void iconCache.get(key)!.then((url) => alive && setIcon(url))
     return () => {
       alive = false
@@ -75,7 +79,13 @@ export function GameCover({ item, fontSize = 44, className = '' }: { item: Libra
       <div className="stripes absolute inset-0" />
       <div className="absolute inset-0 grid place-items-center">
         {icon ? (
-          <img src={icon} alt="" draggable={false} style={{ width: fontSize * 1.2, height: fontSize * 1.2 }} className="drop-shadow-[0_8px_18px_rgba(0,0,0,0.4)]" />
+          <img
+            src={icon}
+            alt=""
+            draggable={false}
+            style={{ width: fontSize * 1.2, height: fontSize * 1.2 }}
+            className="drop-shadow-[0_8px_18px_rgba(0,0,0,0.4)]"
+          />
         ) : (
           <span className="font-bold tracking-[-0.04em] text-white/90" style={{ fontSize }}>
             {monogram(item.name)}

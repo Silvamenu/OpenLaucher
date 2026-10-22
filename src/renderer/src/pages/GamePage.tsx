@@ -41,9 +41,24 @@ function AboutTab({ item }: { item: LibraryItem }) {
     [t('about.original'), m.originalGame ?? '—'],
     [t('about.repo'), link(m.repoUrl, m.repoUrl.replace('https://github.com/', ''))],
     ...(m.website ? ([[t('about.website'), link(m.website, m.website.replace('https://', ''))]] as [string, ReactNode][]) : []),
-    [t('about.executables'), <span key="exe" className="font-mono text-[12.5px]">{executablesFor(m, platform).join(', ') || '—'}</span>],
-    [t('about.launchArgs'), <span key="args" className="font-mono text-[12.5px]">{launchArgsFor(m, platform).join(' ') || t('about.none')}</span>],
-    [t('about.manifest'), <span key="m"><span className="font-mono text-[12.5px]">{m.id}.json</span> · {m.origin === 'user' ? t('about.manifestUser') : t('about.manifestBuiltin')}</span>],
+    [
+      t('about.executables'),
+      <span key="exe" className="font-mono text-[12.5px]">
+        {executablesFor(m, platform).join(', ') || '—'}
+      </span>
+    ],
+    [
+      t('about.launchArgs'),
+      <span key="args" className="font-mono text-[12.5px]">
+        {launchArgsFor(m, platform).join(' ') || t('about.none')}
+      </span>
+    ],
+    [
+      t('about.manifest'),
+      <span key="m">
+        <span className="font-mono text-[12.5px]">{m.id}.json</span> · {m.origin === 'user' ? t('about.manifestUser') : t('about.manifestBuiltin')}
+      </span>
+    ],
     [t('about.added'), formatDate(item.entry.addedAt, locale)],
     [t('about.launches'), String(item.entry.launchCount)]
   ]
@@ -76,9 +91,12 @@ export function GamePage({ id, tab }: { id: string; tab?: GameTab }) {
   const menuRef = useRef<HTMLDivElement>(null)
   const sectionRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
+  // Uma notificação pode abrir o mesmo jogo em outra aba: ajusta o estado durante o render.
+  const [requestedTab, setRequestedTab] = useState(tab)
+  if (tab !== requestedTab) {
+    setRequestedTab(tab)
     if (tab) setActiveTab(tab)
-  }, [tab])
+  }
 
   // Requisitos recarregados sempre que a biblioteca muda (ex.: arquivos gerados após abrir o jogo).
   useEffect(() => {
@@ -154,7 +172,12 @@ export function GamePage({ id, tab }: { id: string; tab?: GameTab }) {
   const canLaunch = item.status !== 'missingFolder' && item.status !== 'unknownManifest' && !item.running && !item.busy && !!report?.executable
 
   const primary = (() => {
-    if (item.running) return <Button variant="primary" size="lg" disabled icon={<Play size={13} fill="currentColor" />}>{t('game.running')}</Button>
+    if (item.running)
+      return (
+        <Button variant="primary" size="lg" disabled icon={<Play size={13} fill="currentColor" />}>
+          {t('game.running')}
+        </Button>
+      )
     if (item.status === 'missingFolder')
       return (
         <Button variant="primary" size="lg" icon={<FolderSearch size={16} />} onClick={() => act(() => window.api.library.changeFolder(id))}>
@@ -168,7 +191,15 @@ export function GamePage({ id, tab }: { id: string; tab?: GameTab }) {
         </Button>
       )
     return (
-      <Button variant="primary" size="lg" className="font-semibold" icon={<Play size={13} fill="currentColor" />} loading={launching} disabled={!canLaunch} onClick={launch}>
+      <Button
+        variant="primary"
+        size="lg"
+        className="font-semibold"
+        icon={<Play size={13} fill="currentColor" />}
+        loading={launching}
+        disabled={!canLaunch}
+        onClick={launch}
+      >
         {t('game.play')}
       </Button>
     )
@@ -263,7 +294,11 @@ export function GamePage({ id, tab }: { id: string; tab?: GameTab }) {
           >
             <Dot tone={statusTone(item)} />
             <span className="min-w-0 flex-1">
-              {item.status === 'missingFolder' ? t('game.note.missing') : pending ? t('game.note.setup', { label: pending.type === 'executable' ? t('req.executable') : pending.label }) : t('status.needsSetup')}
+              {item.status === 'missingFolder'
+                ? t('game.note.missing')
+                : pending
+                  ? t('game.note.setup', { label: pending.type === 'executable' ? t('req.executable') : pending.label })
+                  : t('status.needsSetup')}
             </span>
           </button>
         )}

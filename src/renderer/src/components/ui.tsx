@@ -89,7 +89,19 @@ export function Chip({ active, onClick, children, count }: { active: boolean; on
   )
 }
 
-export function Toggle({ checked, onChange, label, hint, disabled }: { checked: boolean; onChange: (v: boolean) => void; label: ReactNode; hint?: ReactNode; disabled?: boolean }) {
+export function Toggle({
+  checked,
+  onChange,
+  label,
+  hint,
+  disabled
+}: {
+  checked: boolean
+  onChange: (v: boolean) => void
+  label: ReactNode
+  hint?: ReactNode
+  disabled?: boolean
+}) {
   return (
     <label className={`flex items-start gap-3 ${disabled ? 'opacity-45' : 'cursor-pointer'}`}>
       <button
@@ -147,7 +159,17 @@ export function ProgressRing({ size, stroke, percent, className = '' }: { size: 
   )
 }
 
-export function Modal({ onClose, children, labelledBy, className = '' }: { onClose: () => void; children: ReactNode; labelledBy?: string; className?: string }) {
+export function Modal({
+  onClose,
+  children,
+  labelledBy,
+  className = ''
+}: {
+  onClose: () => void
+  children: ReactNode
+  labelledBy?: string
+  className?: string
+}) {
   const panel = useRef<HTMLDivElement>(null)
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {

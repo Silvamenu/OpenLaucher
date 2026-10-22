@@ -12,9 +12,7 @@ import { LibraryService } from './library'
 
 const COVER_SCHEME = 'rh-cover'
 
-protocol.registerSchemesAsPrivileged([
-  { scheme: COVER_SCHEME, privileges: { standard: true, secure: true, supportFetchAPI: true } }
-])
+protocol.registerSchemesAsPrivileged([{ scheme: COVER_SCHEME, privileges: { standard: true, secure: true, supportFetchAPI: true } }])
 
 if (process.platform === 'win32') app.setAppUserModelId('io.github.silvamenu.recomphub')
 

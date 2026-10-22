@@ -209,7 +209,7 @@ export class LibraryService {
     if (!report.executable) return null
     const exe = path.join(entry.path, report.executable)
     if (this.iconCache.has(exe)) return this.iconCache.get(exe) ?? null
-    let url: string | null = null
+    let url: string | null
     try {
       const image = await app.getFileIcon(exe, { size: 'large' })
       url = image.isEmpty() ? null : image.toDataURL()

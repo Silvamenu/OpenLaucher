@@ -139,7 +139,9 @@ export function DownloadsPage() {
                   <span className="flex max-w-[320px] min-w-0 items-center gap-2 text-[12.5px] text-fg-3">
                     <Dot tone={tone} />
                     <span className="truncate">
-                      {h.kind === 'rollback' ? t('downloads.rolledBackTo', { version: h.version ?? '' }) : t('downloads.updatedTo', { version: h.version ?? '' })}
+                      {h.kind === 'rollback'
+                        ? t('downloads.rolledBackTo', { version: h.version ?? '' })
+                        : t('downloads.updatedTo', { version: h.version ?? '' })}
                       {' · '}
                       {h.stage === 'error' && h.error ? errorMessage(h.error, t) : t(`stage.${h.stage}`)}
                     </span>

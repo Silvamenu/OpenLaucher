@@ -1,0 +1,44 @@
+name: Bug
+description: Algo não funciona como deveria
+labels: ['bug']
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: O que aconteceu?
+      description: Descreva o problema e o que você esperava que acontecesse.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Como reproduzir
+      placeholder: |
+        1. Abra ...
+        2. Clique em ...
+        3. Veja o erro ...
+    validations:
+      required: true
+  - type: input
+    id: game
+    attributes:
+      label: Jogo/projeto envolvido
+      placeholder: Ship of Harkinian 9.3.1
+  - type: input
+    id: version
+    attributes:
+      label: Versão do RecompHub
+      description: Configurações → Sobre o RecompHub.
+      placeholder: 0.1.0
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Sistema
+      options: [Windows 11, Windows 10, Linux, Outro]
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: '> Não anexe ROMs, assets dos jogos nem tokens/senhas.'

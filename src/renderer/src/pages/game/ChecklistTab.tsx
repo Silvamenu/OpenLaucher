@@ -106,7 +106,11 @@ export function ChecklistTab({
                         {req.found ? t('req.changeFile') : t('req.selectFile')}
                       </Button>
                       {req.canCopyToGameDir && (
-                        <Button size="sm" loading={busy === `copy-${req.id}`} onClick={() => run(`copy-${req.id}`, () => window.api.library.copyUserFile(id, req.id), t('req.copied'))}>
+                        <Button
+                          size="sm"
+                          loading={busy === `copy-${req.id}`}
+                          onClick={() => run(`copy-${req.id}`, () => window.api.library.copyUserFile(id, req.id), t('req.copied'))}
+                        >
                           {t('req.copyToGame')}
                         </Button>
                       )}
@@ -114,7 +118,12 @@ export function ChecklistTab({
                   )}
                   {req.type === 'firstRun' && !req.ok && (
                     <>
-                      <Button size="sm" variant="primary" disabled={item.running || item.busy || !report.executable} onClick={() => run(`launch-${req.id}`, onLaunch)}>
+                      <Button
+                        size="sm"
+                        variant="primary"
+                        disabled={item.running || item.busy || !report.executable}
+                        onClick={() => run(`launch-${req.id}`, onLaunch)}
+                      >
                         {t('req.openFirstTime')}
                       </Button>
                       <Button size="sm" variant="ghost" onClick={() => run(`mark-${req.id}`, () => window.api.library.setFirstRunDone(id, req.id, true))}>

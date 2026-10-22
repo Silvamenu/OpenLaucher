@@ -133,7 +133,8 @@ export const ptBR = {
   'cfg.discardConfirm': 'Descartar as alterações não salvas?',
 
   'upd.noBinaries.title': 'Sem binários publicados',
-  'upd.noBinaries.body': 'Este projeto não publica executáveis prontos — é preciso compilar a partir do código-fonte. O RecompHub só mostra o link do repositório.',
+  'upd.noBinaries.body':
+    'Este projeto não publica executáveis prontos — é preciso compilar a partir do código-fonte. O RecompHub só mostra o link do repositório.',
   'upd.openRepo': 'Abrir repositório',
   'upd.installed': 'Versão instalada',
   'upd.latest': 'Versão mais recente',
@@ -207,7 +208,8 @@ export const ptBR = {
   'settings.autoPerGame': 'Atualizar automaticamente (por jogo)',
   'settings.noGames': 'Nenhum jogo na biblioteca.',
   'settings.token': 'Token pessoal do GitHub',
-  'settings.tokenHint': 'Opcional. Sem token o GitHub permite 60 consultas por hora; com token, 5.000. Não precisa de nenhuma permissão (escopo) especial. Fica guardado cifrado neste computador.',
+  'settings.tokenHint':
+    'Opcional. Sem token o GitHub permite 60 consultas por hora; com token, 5.000. Não precisa de nenhuma permissão (escopo) especial. Fica guardado cifrado neste computador.',
   'settings.tokenSet': 'Token configurado',
   'settings.tokenSave': 'Salvar token',
   'settings.tokenRemove': 'Remover token',
@@ -244,7 +246,7 @@ export const ptBR = {
   'search.placeholder': 'Buscar...',
   'profile.local': 'Perfil local',
   'profile.anonymous': 'Seu perfil',
-  'library.noResultsQuery': 'Nenhum jogo encontrado para \'{query}\'.',
+  'library.noResultsQuery': "Nenhum jogo encontrado para '{query}'.",
   'card.update': 'Atualização',
   'game.configure': 'Configurar',
   'game.status': 'Status',

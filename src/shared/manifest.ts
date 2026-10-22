@@ -29,7 +29,10 @@ const hashSchema = z.union([
 ])
 
 const baseRequirement = {
-  id: z.string().regex(/^[a-z0-9][a-z0-9_-]*$/i).optional(),
+  id: z
+    .string()
+    .regex(/^[a-z0-9][a-z0-9_-]*$/i)
+    .optional(),
   label: nonEmpty,
   helpText: z.string().optional(),
   optional: z.boolean().default(false),
@@ -68,11 +71,7 @@ const firstRunRequirement = z.object({
   doneWhen: stringList.optional()
 })
 
-export const requirementSchema = z.discriminatedUnion('type', [
-  fileRequirement,
-  userFileRequirement,
-  firstRunRequirement
-])
+export const requirementSchema = z.discriminatedUnion('type', [fileRequirement, userFileRequirement, firstRunRequirement])
 
 const pathCandidates = z.union([nonEmpty, stringList.min(1)])
 

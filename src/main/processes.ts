@@ -21,7 +21,7 @@ export async function listProcessNames(platform: NodeJS.Platform = process.platf
     return names
   }
   // Linux: /proc/<pid>/comm (até 15 caracteres) e argv[0].
-  let pids: string[] = []
+  let pids: string[]
   try {
     pids = (await fs.readdir('/proc')).filter((p) => /^\d+$/.test(p))
   } catch {

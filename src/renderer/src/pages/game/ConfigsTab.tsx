@@ -14,12 +14,18 @@ function FilterInput({ value, onChange }: { value: string; onChange: (v: string)
   return (
     <label className="mb-3 flex h-9 max-w-sm items-center gap-2 rounded-[10px] border border-field-line bg-field px-2.5">
       <Search size={14} className="shrink-0 text-subtle" />
-      <input className="min-w-0 flex-1 bg-transparent text-[13px] outline-none" placeholder={t('cfg.search')} value={value} onChange={(e) => onChange(e.target.value)} />
+      <input
+        className="min-w-0 flex-1 bg-transparent text-[13px] outline-none"
+        placeholder={t('cfg.search')}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+      />
     </label>
   )
 }
 
-const fieldInput = 'h-8 w-full rounded-lg border border-field-line bg-field px-2.5 font-mono text-[12px] text-fg outline-none focus:border-chip-line disabled:opacity-60'
+const fieldInput =
+  'h-8 w-full rounded-lg border border-field-line bg-field px-2.5 font-mono text-[12px] text-fg outline-none focus:border-chip-line disabled:opacity-60'
 
 function JsonForm({ text, onChange, readOnly }: { text: string; onChange: (text: string) => void; readOnly: boolean }) {
   const { t } = useI18n()
@@ -56,7 +62,13 @@ function JsonForm({ text, onChange, readOnly }: { text: string; onChange: (text:
             </label>
             <div className="w-[45%] max-w-sm shrink-0">
               {typeof field.value === 'boolean' ? (
-                <input type="checkbox" disabled={readOnly} checked={field.value} onChange={(e) => update(field.path, e.target.checked)} className="h-4 w-4 accent-[var(--primary)]" />
+                <input
+                  type="checkbox"
+                  disabled={readOnly}
+                  checked={field.value}
+                  onChange={(e) => update(field.path, e.target.checked)}
+                  className="h-4 w-4 accent-[var(--primary)]"
+                />
               ) : typeof field.value === 'number' ? (
                 <input
                   type="number"

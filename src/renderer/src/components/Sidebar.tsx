@@ -8,7 +8,19 @@ import { NavIcon, LogoMark } from './icons'
 import { statusTone, useStatusLabel } from './Status'
 import { Dot, Kbd, ProgressBar, ProgressRing, Tooltip } from './ui'
 
-function NavItem({ active, icon, label, badge, onClick }: { active: boolean; icon: 'library' | 'downloads' | 'settings'; label: string; badge?: number; onClick: () => void }) {
+function NavItem({
+  active,
+  icon,
+  label,
+  badge,
+  onClick
+}: {
+  active: boolean
+  icon: 'library' | 'downloads' | 'settings'
+  label: string
+  badge?: number
+  onClick: () => void
+}) {
   return (
     <button
       type="button"

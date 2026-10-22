@@ -67,9 +67,7 @@ export class AppUpdater {
     })
     autoUpdater.on('update-not-available', () => this.setState({ status: 'not-available' }))
     autoUpdater.on('update-available', (info) => this.setState({ status: 'available', version: info.version, percent: 0 }))
-    autoUpdater.on('download-progress', (p) =>
-      this.setState({ status: 'downloading', version: this.state.version, percent: Math.round(p.percent) })
-    )
+    autoUpdater.on('download-progress', (p) => this.setState({ status: 'downloading', version: this.state.version, percent: Math.round(p.percent) }))
     autoUpdater.on('update-downloaded', (info) => {
       // Guarda as notas para o devlog caso o CHANGELOG embutido não tenha a versão.
       this.ctx.store.setReleaseNotes(info.version, notesOf(info), info.releaseDate ? info.releaseDate.slice(0, 10) : null)

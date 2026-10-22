@@ -24,11 +24,7 @@ describe('formulário de configs', () => {
   it('edita INI preservando comentários, ordem e espaçamento', () => {
     const text = '; comentário\n[Window][Debug]\nPos=60,60\nSize = 400,400\n\n[Docking]\nCollapsed=0\n'
     const fields = parseIniFields(text)
-    expect(fields.map((f) => `${f.section}:${f.key}=${f.value}`)).toEqual([
-      'Window][Debug:Pos=60,60',
-      'Window][Debug:Size=400,400',
-      'Docking:Collapsed=0'
-    ])
+    expect(fields.map((f) => `${f.section}:${f.key}=${f.value}`)).toEqual(['Window][Debug:Pos=60,60', 'Window][Debug:Size=400,400', 'Docking:Collapsed=0'])
     const edited = applyIniEdits(text, [{ line: fields[1].line, value: '800,600' }])
     expect(edited).toBe('; comentário\n[Window][Debug]\nPos=60,60\nSize = 800,600\n\n[Docking]\nCollapsed=0\n')
   })

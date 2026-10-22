@@ -60,7 +60,10 @@ export function checksumCandidates<T extends AssetLike>(assets: T[], assetName: 
  * e devolve o SHA-256 em minúsculas para `assetName`.
  */
 export function parseChecksumFile(text: string, assetName: string): string | null {
-  const lines = text.split(/\r?\n/).map((l) => l.trim()).filter(Boolean)
+  const lines = text
+    .split(/\r?\n/)
+    .map((l) => l.trim())
+    .filter(Boolean)
   const target = assetName.toLowerCase()
   for (const line of lines) {
     const match = /^([0-9a-fA-F]{64})(?:\s+\*?(.+))?$/.exec(line)

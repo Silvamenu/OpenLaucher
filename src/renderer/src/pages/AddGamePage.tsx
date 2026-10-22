@@ -8,7 +8,19 @@ import { useI18n } from '../i18n'
 import { errorMessage } from '../lib/format'
 import { useAppState } from '../state/AppState'
 
-function ManifestRow({ manifest, selected, onSelect, hint, action }: { manifest: Manifest; selected?: boolean; onSelect?: () => void; hint?: string; action?: React.ReactNode }) {
+function ManifestRow({
+  manifest,
+  selected,
+  onSelect,
+  hint,
+  action
+}: {
+  manifest: Manifest
+  selected?: boolean
+  onSelect?: () => void
+  hint?: string
+  action?: React.ReactNode
+}) {
   const { t } = useI18n()
   const Tag = onSelect ? 'button' : 'div'
   return (
@@ -137,7 +149,12 @@ export function AddGamePage() {
           <div className="border-t border-line">
             <div className="px-4 pt-3 pb-1 text-[12px] text-faint">{t('add.notDetected')}</div>
             {manifests.manifests.map((m) => (
-              <ManifestRow key={m.id} manifest={m} selected={selected?.manifestId === m.id && selected.path === folder} onSelect={() => setSelected({ manifestId: m.id, path: folder! })} />
+              <ManifestRow
+                key={m.id}
+                manifest={m}
+                selected={selected?.manifestId === m.id && selected.path === folder}
+                onSelect={() => setSelected({ manifestId: m.id, path: folder! })}
+              />
             ))}
           </div>
         )}

@@ -1,12 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import {
-  checksumCandidates,
-  isAllowedAssetUrl,
-  isAllowedRedirectHost,
-  parseChecksumFile,
-  parseDigest,
-  pickAsset
-} from '../src/shared/patterns'
+import { checksumCandidates, isAllowedAssetUrl, isAllowedRedirectHost, parseChecksumFile, parseDigest, pickAsset } from '../src/shared/patterns'
 
 const asset = (name: string, size = 1000) => ({ name, size, url: `https://github.com/o/r/releases/download/1.0/${name}` })
 

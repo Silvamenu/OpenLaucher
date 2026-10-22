@@ -122,7 +122,13 @@ export function registerIpc(s: Services): void {
     const { manifest } = entryOrThrow(str(id))
     const req = manifest.requirements.find((r) => r.id === reqId)
     if (!req || req.type !== 'userFile') throw new AppError('NOT_FOUND')
-    const filters = req.extensions.length > 0 ? [{ name: req.label, extensions: req.extensions }, { name: text().allFiles, extensions: ['*'] }] : undefined
+    const filters =
+      req.extensions.length > 0
+        ? [
+            { name: req.label, extensions: req.extensions },
+            { name: text().allFiles, extensions: ['*'] }
+          ]
+        : undefined
     const file = await openDialog({ title: text().pickFile, properties: ['openFile'], filters })
     if (!file) return library.requirements(str(id))
     return library.setUserFile(str(id), req.id, file)
@@ -147,7 +153,10 @@ export function registerIpc(s: Services): void {
   handle('library:clearCover', (id) => library.clearCover(str(id)))
 
   // Configs -----------------------------------------------------------------
-  const configView = async (id: string, index: number): Promise<{ view: ConfigFileView; spec: (typeof ctx.manifestsReport.manifests)[number]['configFiles'][number] }> => {
+  const configView = async (
+    id: string,
+    index: number
+  ): Promise<{ view: ConfigFileView; spec: (typeof ctx.manifestsReport.manifests)[number]['configFiles'][number] }> => {
     const { entry, manifest } = entryOrThrow(id)
     const spec = manifest.configFiles[index]
     if (!spec) throw new AppError('NOT_FOUND')

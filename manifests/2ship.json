@@ -6,28 +6,16 @@
   "repoUrl": "https://github.com/2ship2harkinian/2ship2harkinian",
   "accentColor": "#7b3fa0",
   "executables": {
-    "win32": [
-      "2ship.exe"
-    ],
-    "linux": [
-      "2ship.appimage"
-    ]
+    "win32": ["2ship.exe"],
+    "linux": ["2ship.appimage"]
   },
-  "detectFiles": [
-    "2ship.exe",
-    "2ship.appimage",
-    "2ship.o2r",
-    "2ship.otr"
-  ],
+  "detectFiles": ["2ship.exe", "2ship.appimage", "2ship.o2r", "2ship.otr"],
   "requirements": [
     {
       "id": "port-data",
       "type": "file",
       "label": "Arquivo de dados do port (2ship.o2r)",
-      "patterns": [
-        "2ship.o2r",
-        "2ship.otr"
-      ],
+      "patterns": ["2ship.o2r", "2ship.otr"],
       "helpText": "Vem junto com o download oficial do port. Se estiver faltando, reinstale ou atualize o jogo."
     },
     {
@@ -35,11 +23,7 @@
       "type": "userFile",
       "label": "Sua ROM de Majora's Mask",
       "optional": true,
-      "extensions": [
-        "z64",
-        "n64",
-        "v64"
-      ],
+      "extensions": ["z64", "n64", "v64"],
       "validation": {
         "sha1": [
           {
@@ -59,10 +43,7 @@
       "id": "rom-assets",
       "type": "firstRun",
       "label": "Gerar os assets a partir da sua ROM (mm.o2r)",
-      "doneWhen": [
-        "mm.o2r",
-        "mm.otr"
-      ],
+      "doneWhen": ["mm.o2r", "mm.otr"],
       "helpText": "Abra o jogo uma vez: ele pergunta se deseja gerar os arquivos e pede para você escolher sua ROM. A extração leva alguns minutos e acontece só na primeira vez (e após atualizações de versão maior)."
     }
   ],
@@ -86,24 +67,10 @@
     "repo": "2ship2harkinian/2ship2harkinian",
     "assetPatterns": {
       "win32": "*Win64*.zip",
-      "linux": [
-        "*Linux*.zip",
-        "*.appimage"
-      ]
+      "linux": ["*Linux*.zip", "*.appimage"]
     },
     "includePrereleases": false,
-    "preserve": [
-      "mm.o2r",
-      "mm.otr",
-      "saves/**",
-      "2ship2harkinian.json",
-      "imgui.ini",
-      "mods/**",
-      "logs/**",
-      "*.z64",
-      "*.n64",
-      "*.v64"
-    ]
+    "preserve": ["mm.o2r", "mm.otr", "saves/**", "2ship2harkinian.json", "imgui.ini", "mods/**", "logs/**", "*.z64", "*.n64", "*.v64"]
   },
   "_todo": "O repositório mudou de HarbourMasters/2ship2harkinian para 2ship2harkinian/2ship2harkinian; build para macOS não mapeada."
 }

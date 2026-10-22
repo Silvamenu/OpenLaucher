@@ -129,11 +129,7 @@ export class GitHubClient {
    * Se `accept` for informado e o release mais recente não servir (ex.: sem binário para a
    * plataforma), procura na lista o mais novo que sirva.
    */
-  async getLatestRelease(
-    repo: string,
-    includePrereleases: boolean,
-    accept?: (release: ReleaseInfo) => boolean
-  ): Promise<ReleaseInfo | null> {
+  async getLatestRelease(repo: string, includePrereleases: boolean, accept?: (release: ReleaseInfo) => boolean): Promise<ReleaseInfo | null> {
     if (!includePrereleases) {
       const { data } = await this.getJson<RawRelease>(`/repos/${repo}/releases/latest`)
       const latest = data ? toReleaseInfo(data) : null
