@@ -11,13 +11,23 @@ import type {
 } from '../../../shared/types'
 import { I18nProvider } from '../i18n'
 
-export type Route = { page: 'library' } | { page: 'add' } | { page: 'settings' } | { page: 'game'; id: string; tab?: GameTab }
+export type Route = { page: 'library' } | { page: 'add' } | { page: 'downloads' } | { page: 'settings' } | { page: 'game'; id: string; tab?: GameTab }
 export type GameTab = 'setup' | 'configs' | 'updates' | 'about'
 
 export interface Toast {
   id: number
   kind: 'success' | 'error' | 'info'
   message: string
+}
+
+/** Operações de atualização/rollback concluídas nesta sessão (página Downloads). */
+export interface HistoryItem {
+  entryId: string
+  kind: UpdateProgress['kind']
+  stage: UpdateProgress['stage']
+  version?: string
+  error?: UpdateProgress['error']
+  at: number
 }
 
 interface DevlogState {
@@ -34,6 +44,9 @@ interface AppStateValue {
   manifests: ManifestsReport
   appUpdate: AppUpdateState
   progress: Record<string, UpdateProgress>
+  history: HistoryItem[]
+  query: string
+  setQuery: (query: string) => void
   route: Route
   navigate: (route: Route) => void
   refresh: () => Promise<void>
@@ -70,6 +83,8 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const [manifests, setManifests] = useState<ManifestsReport>({ manifests: [], errors: [] })
   const [appUpdate, setAppUpdate] = useState<AppUpdateState>({ status: 'idle' })
   const [progress, setProgress] = useState<Record<string, UpdateProgress>>({})
+  const [history, setHistory] = useState<HistoryItem[]>([])
+  const [query, setQuery] = useState('')
   const [route, setRoute] = useState<Route>({ page: 'library' })
   const [toasts, setToasts] = useState<Toast[]>([])
   const [devlog, setDevlog] = useState<DevlogState | null>(null)
@@ -125,6 +140,9 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       window.api.on('navigate:game', (id) => setRoute({ page: 'game', id, tab: 'updates' })),
       window.api.on('game:progress', (p) => {
         setProgress((all) => ({ ...all, [p.entryId]: p }))
+        if (p.stage === 'done' || p.stage === 'cancelled' || p.stage === 'error') {
+          setHistory((list) => [{ entryId: p.entryId, kind: p.kind, stage: p.stage, version: p.version, error: p.error, at: Date.now() }, ...list].slice(0, 20))
+        }
         if (p.stage === 'done' || p.stage === 'cancelled') {
           setTimeout(() => setProgress((all) => (all[p.entryId] === p ? omit(all, p.entryId) : all)), 2500)
         }
@@ -151,6 +169,9 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       manifests,
       appUpdate,
       progress,
+      history,
+      query,
+      setQuery,
       route,
       navigate,
       refresh,
@@ -164,7 +185,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       openDevlog,
       closeDevlog
     }),
-    [ready, info, settings, items, manifests, appUpdate, progress, route, navigate, refresh, updateSettings, toasts, toast, dismissToast, devlog, openDevlog, closeDevlog]
+    [ready, info, settings, items, manifests, appUpdate, progress, history, query, route, navigate, refresh, updateSettings, toasts, toast, dismissToast, devlog, openDevlog, closeDevlog]
   )
 
   return (

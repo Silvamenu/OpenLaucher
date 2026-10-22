@@ -1,39 +1,39 @@
-import { CircleCheck, ExternalLink, FolderOpen, LoaderCircle, Plus, ShieldCheck } from 'lucide-react'
+import { Check, FolderOpen, LoaderCircle, ShieldCheck } from 'lucide-react'
 import { useState } from 'react'
 import type { Manifest } from '../../../shared/manifest'
 import type { DetectionCandidate } from '../../../shared/types'
-import { artBackground, monogram } from '../components/GameArt'
-import { Button, Card } from '../components/ui'
+import { hueOf, monogram, tileColor } from '../components/GameArt'
+import { Button, Card, Page, PageHeader, SectionLabel } from '../components/ui'
 import { useI18n } from '../i18n'
 import { errorMessage } from '../lib/format'
 import { useAppState } from '../state/AppState'
 
-function ManifestTile({ manifest, selected, onSelect, hint }: { manifest: Manifest; selected: boolean; onSelect: () => void; hint?: string }) {
+function ManifestRow({ manifest, selected, onSelect, hint, action }: { manifest: Manifest; selected?: boolean; onSelect?: () => void; hint?: string; action?: React.ReactNode }) {
   const { t } = useI18n()
+  const Tag = onSelect ? 'button' : 'div'
   return (
-    <button
-      type="button"
+    <Tag
+      type={onSelect ? 'button' : undefined}
       onClick={onSelect}
-      className={`flex items-center gap-3 rounded-xl border p-3 text-left transition ${
-        selected ? 'border-accent bg-accent/8 ring-2 ring-accent/30' : 'border-line bg-card hover:border-accent/50'
-      }`}
+      className={`flex w-full items-center gap-3 px-4 py-3 text-left transition-colors ${onSelect ? 'hover:bg-hover/60' : ''} ${selected ? 'bg-hover' : ''}`}
     >
       <span
-        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-sm font-black text-white"
-        style={{ background: artBackground(manifest.accentColor ?? '#3b82f6') }}
+        className="grid h-9 w-9 shrink-0 place-items-center rounded-lg text-[11px] font-bold tracking-[-0.02em] text-white"
+        style={{ background: tileColor(hueOf(manifest.accentColor)) }}
       >
         {monogram(manifest.name)}
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block truncate text-sm font-semibold">{manifest.name}</span>
-        <span className="block truncate text-xs text-muted">
+        <span className="block truncate text-[13.5px]">{manifest.name}</span>
+        <span className="block truncate text-[12px] text-subtle">
           {manifest.originalGame}
           {manifest.updates.source === 'none' ? ` · ${t('add.noBinaries')}` : ''}
         </span>
-        {hint && <span className="mt-0.5 block truncate text-[11px] text-muted">{hint}</span>}
+        {hint && <span className="mt-0.5 block truncate font-mono text-[11px] text-faint">{hint}</span>}
       </span>
-      {selected && <CircleCheck size={20} className="shrink-0 text-accent" />}
-    </button>
+      {selected && <Check size={16} className="shrink-0 text-fg" />}
+      {action}
+    </Tag>
   )
 }
 
@@ -83,116 +83,95 @@ export function AddGamePage() {
   const showManualList = !!folder && !detecting && (manual || (candidates !== null && candidates.length === 0))
 
   return (
-    <div className="mx-auto max-w-4xl px-6 py-8 lg:px-8">
-      <h1 className="text-2xl font-bold tracking-tight">{t('add.title')}</h1>
-      <p className="mt-1 max-w-2xl text-sm text-muted">{t('add.subtitle')}</p>
+    <Page narrow>
+      <PageHeader title={t('add.title')} subtitle={t('add.subtitle')} />
 
-      <Card className="mt-6 p-5">
-        <div className="flex flex-wrap items-center gap-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent/12 text-accent">
-            <FolderOpen size={24} />
-          </div>
+      <Card className="overflow-hidden">
+        <div className="flex flex-wrap items-center gap-3 p-4">
+          <FolderOpen size={18} strokeWidth={1.7} className="shrink-0 text-subtle" />
           <div className="min-w-0 flex-1">
             {folder ? (
-              <>
-                <div className="text-xs text-muted">{t('add.folder')}</div>
-                <div className="selectable truncate font-mono text-sm" title={folder}>
-                  {folder}
-                </div>
-              </>
+              <div className="selectable truncate font-mono text-[12.5px] text-fg-2" title={folder}>
+                {folder}
+              </div>
             ) : (
-              <div className="text-sm text-muted">{t('add.noFolder')}</div>
+              <div className="text-[13px] text-subtle">{t('add.noFolder')}</div>
             )}
           </div>
-          <Button variant={folder ? 'secondary' : 'primary'} icon={<FolderOpen size={16} />} onClick={pick}>
+          <Button variant={folder ? 'secondary' : 'primary'} onClick={pick}>
             {folder ? t('add.changeFolder') : t('add.pickFolder')}
           </Button>
         </div>
 
         {detecting && (
-          <div className="mt-5 flex items-center gap-2 text-sm text-muted">
-            <LoaderCircle size={16} className="animate-spin" /> {t('add.detecting')}
+          <div className="flex items-center gap-2 border-t border-line px-4 py-3 text-[13px] text-subtle">
+            <LoaderCircle size={15} className="animate-spin" /> {t('add.detecting')}
           </div>
         )}
 
         {candidates && candidates.length > 0 && !manual && (
-          <div className="mt-5">
-            <p className="mb-2 text-sm font-medium">{candidates.length === 1 ? t('add.detected') : t('add.detectedMany')}</p>
-            <div className="grid gap-2 sm:grid-cols-2">
-              {candidates.map((c) => {
-                const m = byId(c.manifestId)
-                if (!m) return null
-                const hint = c.path !== folder ? t('add.subfolder', { path: c.path }) : t('add.matched', { files: c.matched.join(', ') })
-                return (
-                  <ManifestTile
-                    key={`${c.manifestId}|${c.path}`}
-                    manifest={m}
-                    hint={hint}
-                    selected={selected?.manifestId === c.manifestId && selected.path === c.path}
-                    onSelect={() => setSelected({ manifestId: c.manifestId, path: c.path })}
-                  />
-                )
-              })}
+          <div className="border-t border-line">
+            <div className="flex items-center justify-between px-4 pt-3 pb-1 text-[12px] text-faint">
+              <span>{candidates.length === 1 ? t('add.detected') : t('add.detectedMany')}</span>
+              <button type="button" className="text-link hover:underline" onClick={() => setManual(true)}>
+                {t('add.chooseManual')}
+              </button>
             </div>
-            <button type="button" className="mt-3 text-xs text-accent hover:underline" onClick={() => setManual(true)}>
-              {t('add.chooseManual')}
-            </button>
+            {candidates.map((c) => {
+              const m = byId(c.manifestId)
+              if (!m) return null
+              return (
+                <ManifestRow
+                  key={`${c.manifestId}|${c.path}`}
+                  manifest={m}
+                  hint={c.path !== folder ? t('add.subfolder', { path: c.path }) : t('add.matched', { files: c.matched.join(', ') })}
+                  selected={selected?.manifestId === c.manifestId && selected.path === c.path}
+                  onSelect={() => setSelected({ manifestId: c.manifestId, path: c.path })}
+                />
+              )
+            })}
           </div>
         )}
 
         {showManualList && (
-          <div className="mt-5">
-            <p className="mb-2 text-sm font-medium">{t('add.notDetected')}</p>
-            <div className="grid gap-2 sm:grid-cols-2">
-              {manifests.manifests.map((m) => (
-                <ManifestTile
-                  key={m.id}
-                  manifest={m}
-                  selected={selected?.manifestId === m.id && selected.path === folder}
-                  onSelect={() => setSelected({ manifestId: m.id, path: folder! })}
-                />
-              ))}
-            </div>
+          <div className="border-t border-line">
+            <div className="px-4 pt-3 pb-1 text-[12px] text-faint">{t('add.notDetected')}</div>
+            {manifests.manifests.map((m) => (
+              <ManifestRow key={m.id} manifest={m} selected={selected?.manifestId === m.id && selected.path === folder} onSelect={() => setSelected({ manifestId: m.id, path: folder! })} />
+            ))}
           </div>
         )}
 
         {selected && (
-          <div className="mt-6 flex justify-end">
-            <Button variant="primary" size="lg" icon={<Plus size={18} />} loading={adding} onClick={add}>
+          <div className="flex justify-end border-t border-line p-4">
+            <Button variant="primary" loading={adding} onClick={add}>
               {t('add.confirm')}
             </Button>
           </div>
         )}
       </Card>
 
-      <h2 className="mt-10 mb-3 text-sm font-semibold tracking-wide text-muted uppercase">{t('add.supported')}</h2>
-      <div className="grid gap-2 sm:grid-cols-2">
-        {manifests.manifests.map((m) => (
-          <div key={m.id} className="flex items-center gap-3 rounded-xl border border-line bg-card p-3">
-            <span
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-xs font-black text-white"
-              style={{ background: artBackground(m.accentColor ?? '#3b82f6') }}
-            >
-              {monogram(m.name)}
-            </span>
-            <div className="min-w-0 flex-1">
-              <div className="truncate text-sm font-semibold">{m.name}</div>
-              <div className="truncate text-xs text-muted">
-                {m.originalGame}
-                {m.updates.source === 'none' ? ` · ${t('add.noBinaries')}` : ''}
-              </div>
-            </div>
-            <Button variant="ghost" size="sm" icon={<ExternalLink size={14} />} onClick={() => void window.api.app.openExternal(m.repoUrl)}>
-              GitHub
-            </Button>
-          </div>
-        ))}
+      <div className="mt-10">
+        <SectionLabel>{t('add.supported')}</SectionLabel>
+        <div className="divide-y divide-line overflow-hidden rounded-[14px] border border-line">
+          {manifests.manifests.map((m) => (
+            <ManifestRow
+              key={m.id}
+              manifest={m}
+              action={
+                <button type="button" className="shrink-0 text-[12.5px] text-link hover:underline" onClick={() => void window.api.app.openExternal(m.repoUrl)}>
+                  GitHub
+                </button>
+              }
+            />
+          ))}
+        </div>
       </div>
 
-      <p className="mt-8 flex items-start gap-2 text-xs text-muted">
-        <ShieldCheck size={16} className="mt-px shrink-0 text-emerald-500" />
+      <p className="mt-8 flex items-start gap-2 text-[12px] text-faint">
+        <ShieldCheck size={14} className="mt-px shrink-0" />
         {t('legal.note')}
       </p>
-    </div>
+    </Page>
   )
 }

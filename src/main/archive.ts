@@ -1,5 +1,6 @@
 import { spawn } from 'node:child_process'
-import { createReadStream, createWriteStream, promises as fs } from 'node:fs'
+import { constants as fsConstants, createReadStream, createWriteStream, promises as fs } from 'node:fs'
+import os from 'node:os'
 import path from 'node:path'
 import { pipeline } from 'node:stream/promises'
 import { path7za } from '7zip-bin'
@@ -154,10 +155,33 @@ export function sevenZipPath(): string {
   return path7za.replace(`app.asar${path.sep}`, `app.asar.unpacked${path.sep}`)
 }
 
+/**
+ * No Linux o 7za embutido pode vir sem bit de execução e, dentro de um AppImage,
+ * a pasta é somente leitura: nesse caso usamos uma cópia executável na pasta temporária.
+ */
+async function executable7z(): Promise<string> {
+  const bin = sevenZipPath()
+  if (process.platform === 'win32') return bin
+  try {
+    await fs.access(bin, fsConstants.X_OK)
+    return bin
+  } catch {
+    // segue para as alternativas
+  }
+  try {
+    await fs.chmod(bin, 0o755)
+    return bin
+  } catch {
+    const copy = path.join(os.tmpdir(), `recomphub-7za-${process.getuid?.() ?? 0}`)
+    await fs.copyFile(bin, copy)
+    await fs.chmod(copy, 0o755)
+    return copy
+  }
+}
+
 async function extract7z(file: string, dest: string, signal?: AbortSignal): Promise<void> {
   await fs.mkdir(dest, { recursive: true })
-  const bin = sevenZipPath()
-  if (process.platform !== 'win32') await fs.chmod(bin, 0o755).catch(() => undefined)
+  const bin = await executable7z()
   await new Promise<void>((resolve, reject) => {
     const child = spawn(bin, ['x', '-y', '-bd', `-o${dest}`, file], { stdio: ['ignore', 'ignore', 'pipe'], signal })
     let stderr = ''

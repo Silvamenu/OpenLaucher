@@ -1,84 +1,199 @@
 @import 'tailwindcss';
+@import '@fontsource-variable/geist';
+@import '@fontsource-variable/geist-mono';
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/*
+ * Paleta neutra e minimalista (referência: RecompHub_Launcher.html).
+ * O tema escuro é o padrão; o claro inverte os neutros mantendo a hierarquia.
+ */
 :root {
-  --bg: #f3f5f9;
-  --sidebar: #ffffff;
-  --card: #ffffff;
-  --card-hover: #f7f9fc;
-  --elevated: #ffffff;
-  --border: #e2e7ef;
-  --fg: #0f172a;
-  --muted: #5b6678;
-  --subtle: #eef2f7;
-  --accent: #3b82f6;
-  --accent-fg: #ffffff;
+  --app: #f2f2f3;
+  --panel: #ffffff;
+  --panel-line: #e4e4e7;
+  --surface: #f7f7f8;
+  --surface-line: #e6e6e9;
+  --control: #f4f4f5;
+  --control-line: #dfdfe3;
+  --line: #e7e7ea;
+  --line-soft: #ececef;
+  --field: #ffffff;
+  --field-line: #dfdfe3;
+  --hover: #e9e9ec;
+  --chip: #ececef;
+  --chip-line: #d6d6db;
+  --fg: #18181b;
+  --fg-2: #27272a;
+  --fg-3: #3f3f46;
+  --muted: #52525b;
+  --subtle: #6e6e76;
+  --faint: #8a8a93;
+  --ghost: #c4c4cc;
+  --primary: #18181b;
+  --primary-fg: #fafafa;
+  --accent-bg: #e8efff;
+  --accent-line: #c8d7fb;
+  --accent-fg: #2f56b0;
+  --link: #2f6bd8;
+  --ok: oklch(0.62 0.15 150);
+  --warn: oklch(0.72 0.15 75);
+  --bad: oklch(0.6 0.2 25);
+  --track: #e4e4e7;
+  --shadow: rgb(0 0 0 / 0.12);
   color-scheme: light;
 }
 
 .dark {
-  --bg: #0b0f17;
-  --sidebar: #0e131d;
-  --card: #141a26;
-  --card-hover: #19202e;
-  --elevated: #171e2c;
-  --border: #232b3b;
-  --fg: #e6eaf2;
-  --muted: #8b95a8;
-  --subtle: #1b2230;
+  --app: #111112;
+  --panel: #1a1a1c;
+  --panel-line: #232326;
+  --surface: #1f1f22;
+  --surface-line: #29292c;
+  --control: #212124;
+  --control-line: #2c2c30;
+  --line: #26262a;
+  --line-soft: #1f1f22;
+  --field: #18181a;
+  --field-line: #232326;
+  --hover: #1f1f22;
+  --chip: #26262a;
+  --chip-line: #323236;
+  --fg: #ededee;
+  --fg-2: #d6d6d9;
+  --fg-3: #c4c4c8;
+  --muted: #a0a0a6;
+  --subtle: #7a7a80;
+  --faint: #6b6b70;
+  --ghost: #3a3a3f;
+  --primary: #ededee;
+  --primary-fg: #111112;
+  --accent-bg: #1d2a44;
+  --accent-line: #2a3c60;
+  --accent-fg: #a8c4ff;
+  --link: #8fb4ff;
+  --ok: oklch(0.75 0.15 150);
+  --warn: oklch(0.8 0.14 80);
+  --bad: oklch(0.68 0.18 25);
+  --track: #2a2a2e;
+  --shadow: rgb(0 0 0 / 0.45);
   color-scheme: dark;
 }
 
 @theme inline {
-  --color-bg: var(--bg);
-  --color-sidebar: var(--sidebar);
-  --color-card: var(--card);
-  --color-card-hover: var(--card-hover);
-  --color-elevated: var(--elevated);
-  --color-line: var(--border);
+  --color-app: var(--app);
+  --color-panel: var(--panel);
+  --color-panel-line: var(--panel-line);
+  --color-surface: var(--surface);
+  --color-surface-line: var(--surface-line);
+  --color-control: var(--control);
+  --color-control-line: var(--control-line);
+  --color-line: var(--line);
+  --color-line-soft: var(--line-soft);
+  --color-field: var(--field);
+  --color-field-line: var(--field-line);
+  --color-hover: var(--hover);
+  --color-chip: var(--chip);
+  --color-chip-line: var(--chip-line);
   --color-fg: var(--fg);
+  --color-fg-2: var(--fg-2);
+  --color-fg-3: var(--fg-3);
   --color-muted: var(--muted);
   --color-subtle: var(--subtle);
-  --color-accent: var(--accent);
-  --font-sans: 'Inter', 'Segoe UI Variable', 'Segoe UI', system-ui, -apple-system, 'Ubuntu', 'Cantarell', sans-serif;
-  --font-mono: 'Cascadia Code', 'JetBrains Mono', 'Consolas', ui-monospace, monospace;
-}
-
-html,
-body,
-#root {
-  height: 100%;
-}
-
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--fg);
-  font-family: var(--font-sans);
-  -webkit-font-smoothing: antialiased;
-  user-select: none;
-}
-
-input,
-textarea,
-.selectable {
-  user-select: text;
-}
-
-* {
-  scrollbar-width: thin;
-  scrollbar-color: var(--border) transparent;
+  --color-faint: var(--faint);
+  --color-ghost: var(--ghost);
+  --color-primary: var(--primary);
+  --color-primary-fg: var(--primary-fg);
+  --color-accent-bg: var(--accent-bg);
+  --color-accent-line: var(--accent-line);
+  --color-accent-fg: var(--accent-fg);
+  --color-link: var(--link);
+  --color-ok: var(--ok);
+  --color-warn: var(--warn);
+  --color-bad: var(--bad);
+  --color-track: var(--track);
+  --font-sans: 'Geist Variable', 'Segoe UI Variable', 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'Geist Mono Variable', 'Cascadia Code', 'Consolas', ui-monospace, monospace;
 }
 
 @layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    margin: 0;
+    background: var(--app);
+    color: var(--fg);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    -webkit-font-smoothing: antialiased;
+    user-select: none;
+  }
+
+  input,
+  textarea,
+  .selectable {
+    user-select: text;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--faint);
+  }
+
+  button {
+    cursor: pointer;
+  }
+
   :focus-visible {
-    outline: 2px solid var(--accent);
+    outline: 2px solid var(--accent-fg);
     outline-offset: 2px;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--track);
+    border-radius: 10px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-corner {
+    background: transparent;
   }
 }
 
-/* Botão de atualização do launcher: entrada discreta + pulso leve */
+@layer components {
+  .input {
+    height: 36px;
+    border-radius: 10px;
+    border: 1px solid var(--field-line);
+    background: var(--field);
+    padding: 0 12px;
+    font-size: 13px;
+    color: var(--fg);
+    outline: none;
+    transition: border-color 120ms;
+  }
+  .input:focus {
+    border-color: var(--chip-line);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--fg) 6%, transparent);
+  }
+  .input:disabled {
+    opacity: 0.6;
+  }
+  /* Arte gerada (listras diagonais sutis sobre o gradiente) */
+  .stripes {
+    background: repeating-linear-gradient(135deg, rgb(255 255 255 / 0.035) 0 1px, transparent 1px 9px);
+  }
+}
+
+/* Botão de atualização do launcher: entrada discreta (fade + leve pulso) */
 @keyframes update-in {
   from {
     opacity: 0;
@@ -89,19 +204,17 @@ textarea,
     transform: scale(1);
   }
 }
-
 @keyframes update-pulse {
   0% {
-    box-shadow: 0 0 0 0 rgb(59 130 246 / 0.55);
+    box-shadow: 0 0 0 0 rgb(59 130 246 / 0.5);
   }
   70% {
-    box-shadow: 0 0 0 10px rgb(59 130 246 / 0);
+    box-shadow: 0 0 0 9px rgb(59 130 246 / 0);
   }
   100% {
     box-shadow: 0 0 0 0 rgb(59 130 246 / 0);
   }
 }
-
 .update-button {
   animation:
     update-in 420ms cubic-bezier(0.2, 0.9, 0.3, 1.2) both,
@@ -116,24 +229,21 @@ textarea,
     opacity: 1;
   }
 }
-
 @keyframes pop-in {
   from {
     opacity: 0;
-    transform: translateY(8px) scale(0.98);
+    transform: translateY(6px) scale(0.985);
   }
   to {
     opacity: 1;
     transform: none;
   }
 }
-
 .animate-fade-in {
-  animation: fade-in 160ms ease-out both;
+  animation: fade-in 140ms ease-out both;
 }
-
 .animate-pop-in {
-  animation: pop-in 200ms cubic-bezier(0.2, 0.9, 0.3, 1) both;
+  animation: pop-in 180ms cubic-bezier(0.2, 0.9, 0.3, 1) both;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -146,8 +256,9 @@ textarea,
 
 /* Markdown (changelogs e devlog) */
 .markdown {
-  font-size: 0.9rem;
-  line-height: 1.6;
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--fg-3);
   user-select: text;
   overflow-wrap: anywhere;
 }
@@ -158,90 +269,83 @@ textarea,
 .markdown h2,
 .markdown h3,
 .markdown h4 {
+  color: var(--fg);
   font-weight: 600;
+  letter-spacing: -0.01em;
   margin-top: 1.1em;
 }
 .markdown h1 {
-  font-size: 1.2rem;
+  font-size: 1.15rem;
 }
 .markdown h2 {
-  font-size: 1.08rem;
+  font-size: 1.05rem;
 }
 .markdown h3,
 .markdown h4 {
-  font-size: 0.98rem;
+  font-size: 0.95rem;
 }
 .markdown ul {
   list-style: disc;
-  padding-left: 1.3em;
+  padding-left: 1.2em;
 }
 .markdown ol {
   list-style: decimal;
-  padding-left: 1.3em;
+  padding-left: 1.2em;
+}
+.markdown li::marker {
+  color: var(--faint);
 }
 .markdown li + li {
   margin-top: 0.2em;
 }
+.markdown strong {
+  color: var(--fg);
+  font-weight: 600;
+}
 .markdown a {
-  color: var(--accent);
-  text-decoration: underline;
-  text-underline-offset: 2px;
+  color: var(--link);
   cursor: pointer;
+}
+.markdown a:hover {
+  text-decoration: underline;
 }
 .markdown code {
   font-family: var(--font-mono);
-  font-size: 0.85em;
-  background: var(--subtle);
-  padding: 0.1em 0.35em;
-  border-radius: 4px;
+  font-size: 0.86em;
+  background: var(--control);
+  border: 1px solid var(--control-line);
+  padding: 0.05em 0.35em;
+  border-radius: 5px;
 }
 .markdown pre {
-  background: var(--subtle);
+  background: var(--field);
+  border: 1px solid var(--line);
   padding: 0.75em;
-  border-radius: 8px;
+  border-radius: 10px;
   overflow-x: auto;
 }
 .markdown pre code {
   background: transparent;
+  border: 0;
   padding: 0;
 }
 .markdown blockquote {
-  border-left: 3px solid var(--border);
+  border-left: 2px solid var(--line);
   padding-left: 0.8em;
-  color: var(--muted);
+  color: var(--subtle);
 }
 .markdown img {
   max-width: 100%;
-  border-radius: 8px;
+  border-radius: 10px;
 }
 .markdown table {
   border-collapse: collapse;
 }
 .markdown th,
 .markdown td {
-  border: 1px solid var(--border);
+  border: 1px solid var(--line);
   padding: 0.3em 0.6em;
 }
 .markdown hr {
-  border-color: var(--border);
-}
-
-@layer components {
-  .input {
-    height: 2.25rem;
-    border-radius: 0.5rem;
-    border: 1px solid var(--border);
-    background: var(--bg);
-    padding: 0 0.75rem;
-    font-size: 0.875rem;
-    color: var(--fg);
-    outline: none;
-    transition: border-color 120ms;
-  }
-  .input:focus {
-    border-color: var(--accent);
-  }
-  .input:disabled {
-    opacity: 0.6;
-  }
+  border-color: var(--line);
 }

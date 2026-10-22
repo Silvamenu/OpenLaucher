@@ -228,6 +228,25 @@ describe('formatos de pacote', () => {
     expect(await exists(path.join(work, '.txt'))).toBe(false)
   })
 
+  it('extrai pacotes .7z com o 7-Zip embutido', async () => {
+    const work = await tempDir('work-')
+    const src = await tempDir('src-')
+    await writeTree(src, { 'Jogo/jogo.exe': 'bin', 'Jogo/data/a.txt': 'a' })
+    const { execFileSync } = await import('node:child_process')
+    const { sevenZipPath } = await import('../src/main/archive')
+    let bin = sevenZipPath()
+    if (process.platform !== 'win32') {
+      // o 7za do pacote npm pode vir sem bit de execução
+      bin = path.join(work, '7za')
+      await fs.copyFile(sevenZipPath(), bin)
+      await fs.chmod(bin, 0o755)
+    }
+    const archive = path.join(work, 'pacote.7z')
+    execFileSync(bin, ['a', '-bd', archive, 'Jogo'], { cwd: src, stdio: 'ignore' })
+    const root = await extractPackage(archive, path.join(work, 'x'))
+    expect(await readTree(root)).toEqual({ 'jogo.exe': 'bin', 'data/a.txt': 'a' })
+  })
+
   it('recusa formatos desconhecidos', async () => {
     const work = await tempDir('work-')
     const file = path.join(work, 'pacote.rar')
