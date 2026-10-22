@@ -8,24 +8,37 @@ export const STORE_NAME = 'relaunch'
 const LEGACY_DIR = 'RecompHub'
 const LEGACY_STORE = 'recomphub.json'
 
+export interface LegacyMigration {
+  /** Itens movidos da pasta antiga nesta execução. */
+  moved: string[]
+  /** Itens que não puderam ser movidos agora (ex.: arquivo em uso); a próxima abertura tenta de novo. */
+  failed: { name: string; error: unknown }[]
+}
+
 /**
- * Traz os dados da pasta antiga (`<appData>/RecompHub`) para a pasta atual do app na primeira execução
- * com o nome novo. Move cada item (sem copiar: backups podem ser grandes) que ainda não existir no destino
- * e renomeia a biblioteca por último, para que uma falha no meio seja retomada na próxima abertura.
- * Não faz nada quando a biblioteca nova já existe ou quando não há dados antigos.
- * Retorna true quando migrou.
+ * Traz os dados da pasta antiga (`<appData>/RecompHub`) para a pasta atual do app, movendo (sem copiar:
+ * backups podem ser grandes) cada item que ainda não existir no destino. A biblioteca vai primeiro, antes que o
+ * app crie uma vazia; o resto é retomado a cada abertura enquanto sobrar algo na pasta antiga.
  */
-export function migrateLegacyUserData(appData: string, userData: string): boolean {
+export function migrateLegacyUserData(appData: string, userData: string): LegacyMigration {
+  const result: LegacyMigration = { moved: [], failed: [] }
   const legacy = path.join(appData, LEGACY_DIR)
-  const store = path.join(userData, `${STORE_NAME}.json`)
-  if (existsSync(store) || !existsSync(path.join(legacy, LEGACY_STORE))) return false
+  if (!existsSync(legacy)) return result
   mkdirSync(userData, { recursive: true })
+  const move = (name: string, target: string) => {
+    if (existsSync(target)) return
+    try {
+      renameSync(path.join(legacy, name), target)
+      result.moved.push(name)
+    } catch (error) {
+      result.failed.push({ name, error })
+    }
+  }
+  if (existsSync(path.join(legacy, LEGACY_STORE))) move(LEGACY_STORE, path.join(userData, `${STORE_NAME}.json`))
   for (const name of readdirSync(legacy)) {
     // Travas de instância única do Chromium pertencem à pasta antiga.
     if (name === LEGACY_STORE || name.startsWith('Singleton')) continue
-    const target = path.join(userData, name)
-    if (!existsSync(target)) renameSync(path.join(legacy, name), target)
+    move(name, path.join(userData, name))
   }
-  renameSync(path.join(legacy, LEGACY_STORE), store)
-  return true
+  return result
 }

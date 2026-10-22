@@ -1,4 +1,9 @@
-# Relaunch
+<h1>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/brand/relaunch-logo-white.svg">
+    <img src="docs/brand/relaunch-logo-black.svg" alt="Relaunch" height="56">
+  </picture>
+</h1>
 
 [![CI](https://github.com/Silvamenu/OpenLaucher/actions/workflows/ci.yml/badge.svg)](https://github.com/Silvamenu/OpenLaucher/actions/workflows/ci.yml)
 [![Segurança](https://github.com/Silvamenu/OpenLaucher/actions/workflows/security.yml/badge.svg)](https://github.com/Silvamenu/OpenLaucher/actions/workflows/security.yml)
@@ -149,7 +154,7 @@ Sem login, a API do GitHub permite **60 consultas por hora**. O app usa ETag (`I
 Abra essa pasta em **Configurações → Abrir pasta de dados do app**. Desinstalar o Relaunch não apaga esses dados.
 
 > [!NOTE]
-> O Relaunch se chamava **RecompHub**. Na primeira abertura com o nome novo, os dados da pasta antiga (`RecompHub`) são movidos para a pasta `Relaunch`.
+> O Relaunch se chamava **RecompHub**. Na primeira abertura com o nome novo, os dados da pasta antiga (`RecompHub`) são movidos para a pasta `Relaunch`. No Linux, o token do GitHub fica preso ao nome antigo no cofre do sistema: se ele sumir, cole-o de novo em **Configurações**.
 
 ## Criar um manifesto
 
@@ -388,6 +393,7 @@ Os apps instalados checam os releases ao abrir e a cada 3 horas, baixam em segun
 | `scripts/`          | Geração do ícone e das notas de release.                                                                                                                                                                             |
 | `build/`            | Ícone usado no empacotamento.                                                                                                                                                                                        |
 | `docs/screenshots/` | Capturas de tela usadas neste README.                                                                                                                                                                                |
+| `docs/brand/`       | Logo e símbolo do Relaunch em SVG, nas versões branca e escura. O ícone do app (`npm run icon`) é gerado a partir do símbolo.                                                                                        |
 | `.github/`          | Workflows, Dependabot, CODEOWNERS e modelos de issue e PR.                                                                                                                                                           |
 
 </details>

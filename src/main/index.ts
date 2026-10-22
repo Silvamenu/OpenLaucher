@@ -22,7 +22,9 @@ if (!app.requestSingleInstanceLock()) {
 } else {
   // Antes de qualquer leitura da pasta de dados: quem usava o nome antigo (RecompHub) mantém a biblioteca.
   try {
-    if (migrateLegacyUserData(app.getPath('appData'), app.getPath('userData'))) console.info('[dados] pasta do RecompHub migrada')
+    const { moved, failed } = migrateLegacyUserData(app.getPath('appData'), app.getPath('userData'))
+    if (moved.length > 0) console.info('[dados] itens migrados da pasta do RecompHub:', moved.join(', '))
+    for (const { name, error } of failed) console.warn(`[dados] não foi possível migrar ${name}; nova tentativa na próxima abertura`, error)
   } catch (err) {
     console.warn('[dados] migração da pasta antiga falhou', err)
   }

@@ -9,7 +9,7 @@ O conteúdo de cada versão é usado como nota do release no GitHub (`npm run re
 
 ### Melhorias
 
-- O projeto agora se chama **Relaunch**. Quem já usava o app com o nome antigo (RecompHub) mantém biblioteca, configurações e backups: os dados são levados para a pasta nova na primeira abertura.
+- O projeto agora se chama **Relaunch**, com logo e ícone novos. Quem já usava o app com o nome antigo (RecompHub) mantém biblioteca, configurações e backups: os dados são levados para a pasta nova na primeira abertura. No Linux, pode ser preciso colar de novo o token do GitHub em **Configurações**.
 
 ## [0.1.0] - 2026-10-22
 

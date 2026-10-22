@@ -43,12 +43,3 @@ export function GearIcon({ size = 17 }: { size?: number }) {
     </svg>
   )
 }
-
-/** Marca do Relaunch: quadrado claro com losango escuro. */
-export function LogoMark({ size = 30 }: { size?: number }) {
-  return (
-    <span className="grid shrink-0 place-items-center bg-primary" style={{ width: size, height: size, borderRadius: size * 0.3 }}>
-      <span className="rotate-45 bg-primary-fg" style={{ width: size * 0.4, height: size * 0.4, borderRadius: size * 0.1 }} />
-    </span>
-  )
-}

@@ -1,7 +1,7 @@
 import { Plus, RefreshCw, ShieldCheck } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { GameCard } from '../components/GameCard'
-import { LogoMark } from '../components/icons'
+import { LogoMark } from '../components/brand'
 import { Button, Chip, Page, PageHeader } from '../components/ui'
 import { useI18n } from '../i18n'
 import { errorMessage } from '../lib/format'
