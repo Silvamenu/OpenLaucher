@@ -2,6 +2,7 @@
 
 [![CI](https://github.com/Silvamenu/OpenLaucher/actions/workflows/ci.yml/badge.svg)](https://github.com/Silvamenu/OpenLaucher/actions/workflows/ci.yml)
 [![Segurança](https://github.com/Silvamenu/OpenLaucher/actions/workflows/security.yml/badge.svg)](https://github.com/Silvamenu/OpenLaucher/actions/workflows/security.yml)
+[![CodeQL](https://github.com/Silvamenu/OpenLaucher/actions/workflows/codeql.yml/badge.svg)](https://github.com/Silvamenu/OpenLaucher/actions/workflows/codeql.yml)
 
 **Seus ports favoritos, num só lugar.**
 
@@ -31,7 +32,7 @@ O RecompHub é um launcher para Windows e Linux que reúne os **ports e recompil
 O instalador não é assinado digitalmente, então o Windows SmartScreen pode avisar na primeira execução (**Mais informações → Executar assim mesmo**).
 
 > [!NOTE]
-> Enquanto o repositório for privado, a página de Releases só abre para quem tem acesso. Nesse caso, e no Linux (os releases trazem só o instalador do Windows), gere o app a partir do código: veja abaixo e [Gerar o instalador](#gerar-o-instalador).
+> Os releases trazem só o instalador do Windows. No Linux, gere o app a partir do código: veja abaixo e [Gerar o instalador](#gerar-o-instalador).
 
 ### Para rodar a partir do código
 
@@ -365,11 +366,8 @@ O workflow [`release.yml`](.github/workflows/release.yml) roda os testes, confer
 
 Os apps instalados checam os releases ao abrir e a cada 3 horas, baixam em segundo plano e instalam quando você clica no botão azul ou ao fechar o app.
 
-> [!IMPORTANT]
-> O `electron-updater` lê os GitHub Releases **deste repositório** (seção `publish` do `electron-builder.yml`). Enquanto o repositório for privado, os apps instalados não conseguem ler esses releases e não se atualizam. Para quem joga, os releases precisam ser públicos:
->
-> - torne o repositório público; ou
-> - publique num repositório público só de releases, trocando `owner`/`repo` em `publish` no `electron-builder.yml`. Nesse caso o `GITHUB_TOKEN` do workflow não tem acesso ao outro repositório: use um token com permissão de escrita nele, guardado como segredo, no `GH_TOKEN`.
+> [!NOTE]
+> O `electron-updater` lê os GitHub Releases públicos **deste repositório** (seção `publish` do `electron-builder.yml`). Só releases publicados chegam aos apps instalados: rascunhos e pré-releases são ignorados.
 
 ### Estrutura do projeto
 
@@ -402,10 +400,13 @@ Cada PR e cada push na `main` passam por verificações automáticas.
 | `npm audit`: barra vulnerabilidades altas e críticas no que vai para o app | [`ci.yml`](.github/workflows/ci.yml)                  | Todo PR e todo push na `main`          |
 | Segredos no código e no histórico (gitleaks)                               | [`security.yml`](.github/workflows/security.yml)      | Todo PR, push na `main` e toda segunda |
 | Problemas de segurança nos workflows (zizmor)                              | [`security.yml`](.github/workflows/security.yml)      | Todo PR, push na `main` e toda segunda |
+| Dependências novas com vulnerabilidade alta ou crítica (dependency review) | [`security.yml`](.github/workflows/security.yml)      | Todo PR                                |
+| Análise estática do código e dos workflows (CodeQL)                        | [`codeql.yml`](.github/workflows/codeql.yml)          | Todo PR, push na `main` e toda segunda |
 | Dependências npm e GitHub Actions, em PRs agrupados                        | [Dependabot](.github/dependabot.yml)                  | Toda segunda, com cooldown de 7 dias   |
 | Revisão de [@Silvamenu](https://github.com/Silvamenu) em toda mudança      | [`CODEOWNERS`](.github/CODEOWNERS)                    | Todo PR                                |
 | Modelos de issue (bug, ideia, novo jogo) e checklist de PR                 | [`.github/`](.github)                                 | Ao abrir issue ou PR                   |
 
+- A `main` é protegida: toda mudança entra por PR, com essas verificações passando, e o histórico não pode ser reescrito.
 - As Actions são fixadas por SHA (com a versão em comentário) e cada workflow tem as permissões mínimas.
 - O cooldown do Dependabot espera alguns dias antes de propor versões recém-publicadas, como proteção contra pacotes comprometidos.
 - Como o próprio app se protege (isolamento da interface, origem dos downloads, extração segura, token cifrado) está em [SECURITY.md](SECURITY.md#como-o-app-se-protege). O fluxo de contribuição está em [CONTRIBUTING.md](CONTRIBUTING.md).
