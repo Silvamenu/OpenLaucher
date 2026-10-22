@@ -1,0 +1,64 @@
+# Configuração do instalador (electron-builder).
+# Windows é a prioridade (NSIS); Linux gera AppImage.
+appId: io.github.silvamenu.recomphub
+productName: RecompHub
+copyright: RecompHub contributors
+
+directories:
+  buildResources: build
+  output: dist
+
+files:
+  - out/**/*
+  - package.json
+  - '!**/*.map'
+  # O 7-Zip embutido só precisa do binário da plataforma alvo.
+  - '!node_modules/7zip-bin/mac/**'
+  - '!node_modules/7zip-bin/linux/arm*/**'
+  - '!node_modules/7zip-bin/linux/ia32/**'
+  - '!node_modules/7zip-bin/win/arm64/**'
+  - '!node_modules/7zip-bin/win/ia32/**'
+
+# O binário do 7-Zip precisa ficar fora do .asar para poder ser executado.
+asarUnpack:
+  - node_modules/7zip-bin/**
+
+# Manifestos e CHANGELOG ficam em resources/ (lidos em tempo de execução).
+extraResources:
+  - from: manifests
+    to: manifests
+    filter: ['*.json']
+  - from: CHANGELOG.md
+    to: CHANGELOG.md
+  - from: build/icon.png
+    to: icon.png
+
+win:
+  target:
+    - target: nsis
+      arch: [x64]
+  artifactName: ${productName}-Setup-${version}.${ext}
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: RecompHub
+  deleteAppDataOnUninstall: false
+
+linux:
+  target:
+    - target: AppImage
+      arch: [x64]
+  category: Game
+  artifactName: ${productName}-${version}.${ext}
+
+# Atualização do próprio launcher: electron-updater lê os GitHub Releases deste repositório.
+# As notas de cada release vêm de build/release-notes.md (gerado do CHANGELOG.md por `npm run release-notes`).
+publish:
+  provider: github
+  owner: Silvamenu
+  repo: OpenLaucher
+  releaseType: release
