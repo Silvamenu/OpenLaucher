@@ -16,7 +16,7 @@ import type { BackupInfo, ReleaseAsset, ReleaseInfo, UpdateStage } from '../shar
 import { archiveKindOf, createZipFromDir, ensureSafeTarget, extractPackage, extractZip, listZip } from './archive'
 import { hashFile, isInside, pathExists, sanitizeFileName, walkFiles } from './fsutil'
 
-export const USER_AGENT = 'RecompHub-Launcher'
+export const USER_AGENT = 'Relaunch'
 export const BACKUPS_TO_KEEP = 2
 
 // ---------------------------------------------------------------------------
@@ -361,7 +361,7 @@ export async function runUpdateFlow(params: UpdateFlowParams, deps: UpdateFlowDe
   if (!archiveKindOf(asset.name)) throw new AppError('UNSUPPORTED_ARCHIVE', asset.name, { file: asset.name })
   if (await deps.isGameRunning()) throw new AppError('GAME_RUNNING')
 
-  const work = await fs.mkdtemp(path.join(deps.tmpRoot, `recomphub-${params.manifestId}-`))
+  const work = await fs.mkdtemp(path.join(deps.tmpRoot, `relaunch-${params.manifestId}-`))
   try {
     // 2. Download + validação
     const downloaded = path.join(work, sanitizeFileName(asset.name))

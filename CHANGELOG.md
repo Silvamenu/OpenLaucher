@@ -1,11 +1,15 @@
 # Changelog
 
-Todas as mudanças relevantes do RecompHub ficam registradas aqui.
+Todas as mudanças relevantes do Relaunch ficam registradas aqui.
 O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o projeto usa [versionamento semântico](https://semver.org/lang/pt-BR/).
 
 O conteúdo de cada versão é usado como nota do release no GitHub (`npm run release-notes`) e aparece no popup "Novidades" do app. Use as seções **Novidades**, **Melhorias** e **Correções**.
 
 ## [Não lançado]
+
+### Melhorias
+
+- O projeto agora se chama **Relaunch**. Quem já usava o app com o nome antigo (RecompHub) mantém biblioteca, configurações e backups: os dados são levados para a pasta nova na primeira abertura.
 
 ## [0.1.0] - 2026-10-22
 

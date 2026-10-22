@@ -1,6 +1,6 @@
 # Como contribuir
 
-Obrigado por ajudar o RecompHub! Este guia resume o fluxo do projeto.
+Obrigado por ajudar o Relaunch! Este guia resume o fluxo do projeto.
 
 ## Preparar o ambiente
 
@@ -33,6 +33,6 @@ Um jogo novo é só um arquivo `manifests/<id>.json` — não precisa mexer no c
 
 ## Regras que não mudam
 
-- O RecompHub **nunca** baixa, distribui ou embute ROMs ou assets com direitos autorais. Não envie esses arquivos em PRs, issues ou testes.
+- O Relaunch **nunca** baixa, distribui ou embute ROMs ou assets com direitos autorais. Não envie esses arquivos em PRs, issues ou testes.
 - Nada de segredos (tokens, senhas, chaves) no código: use GitHub Secrets nos workflows.
 - Problemas de segurança vão para o canal privado descrito em [SECURITY.md](SECURITY.md).

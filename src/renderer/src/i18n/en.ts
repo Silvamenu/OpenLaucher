@@ -1,7 +1,7 @@
 import type { TranslationKey } from './pt-BR'
 
 export const en: Record<TranslationKey, string> = {
-  'app.name': 'RecompHub',
+  'app.name': 'Relaunch',
   'app.tagline': 'Your favorite ports, in one place',
 
   'nav.library': 'Library',
@@ -34,14 +34,14 @@ export const en: Record<TranslationKey, string> = {
   'library.checkUpdates': 'Check for updates',
   'library.checking': 'Checking…',
   'library.empty.title': 'Your library is empty',
-  'library.empty.body': 'Add the folder of a port you already installed (Ship of Harkinian, Zelda64Recomp, Starship…) and RecompHub takes care of the rest.',
+  'library.empty.body': 'Add the folder of a port you already installed (Ship of Harkinian, Zelda64Recomp, Starship…) and Relaunch takes care of the rest.',
   'library.noResults': 'No games match the filter.',
   'library.lastPlayed': 'Played {when}',
   'library.neverPlayed': 'Never played',
   'library.play': 'Play',
   'library.details': 'Details',
 
-  'legal.note': 'RecompHub never downloads, distributes or bundles ROMs or copyrighted assets: it only uses files you already own.',
+  'legal.note': 'Relaunch never downloads, distributes or bundles ROMs or copyrighted assets: it only uses files you already own.',
 
   'add.title': 'Add game',
   'add.subtitle': 'Point to the folder of a port you already installed. The app detects which project it is and checks what is missing.',
@@ -134,7 +134,7 @@ export const en: Record<TranslationKey, string> = {
   'cfg.discardConfirm': 'Discard unsaved changes?',
 
   'upd.noBinaries.title': 'No published binaries',
-  'upd.noBinaries.body': 'This project does not publish ready-made executables — it must be built from source. RecompHub only shows the repository link.',
+  'upd.noBinaries.body': 'This project does not publish ready-made executables — it must be built from source. Relaunch only shows the repository link.',
   'upd.openRepo': 'Open repository',
   'upd.installed': 'Installed version',
   'upd.latest': 'Latest version',
@@ -223,7 +223,7 @@ export const en: Record<TranslationKey, string> = {
   'settings.manifestsHint': 'Drop <id>.json files in this folder to add or fix games without updating the app.',
   'settings.manifestErrors': 'Manifests with errors',
   'settings.openData': 'Open app data folder',
-  'settings.about': 'About RecompHub',
+  'settings.about': 'About Relaunch',
   'settings.version': 'Version {version}',
   'settings.whatsNew': "See what's new",
   'settings.checkApp': 'Check for launcher updates',

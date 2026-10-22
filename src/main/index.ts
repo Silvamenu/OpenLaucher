@@ -8,17 +8,24 @@ import { DevlogTracker } from './devlogState'
 import { GameUpdateService } from './gameUpdates'
 import { registerIpc } from './ipc'
 import { GameLauncher } from './launcher'
+import { migrateLegacyUserData } from './legacyData'
 import { LibraryService } from './library'
 
-const COVER_SCHEME = 'rh-cover'
+const COVER_SCHEME = 'rl-cover'
 
 protocol.registerSchemesAsPrivileged([{ scheme: COVER_SCHEME, privileges: { standard: true, secure: true, supportFetchAPI: true } }])
 
-if (process.platform === 'win32') app.setAppUserModelId('io.github.silvamenu.recomphub')
+if (process.platform === 'win32') app.setAppUserModelId('io.github.silvamenu.relaunch')
 
 if (!app.requestSingleInstanceLock()) {
   app.quit()
 } else {
+  // Antes de qualquer leitura da pasta de dados: quem usava o nome antigo (RecompHub) mantém a biblioteca.
+  try {
+    if (migrateLegacyUserData(app.getPath('appData'), app.getPath('userData'))) console.info('[dados] pasta do RecompHub migrada')
+  } catch (err) {
+    console.warn('[dados] migração da pasta antiga falhou', err)
+  }
   void bootstrap()
 }
 
@@ -29,7 +36,7 @@ function createWindow(ctx: AppContext): BrowserWindow {
     minWidth: 860,
     minHeight: 560,
     show: false,
-    title: 'RecompHub',
+    title: 'Relaunch',
     backgroundColor: '#0b0f17',
     autoHideMenuBar: true,
     icon: app.isPackaged ? path.join(process.resourcesPath, 'icon.png') : path.join(app.getAppPath(), 'build', 'icon.png'),

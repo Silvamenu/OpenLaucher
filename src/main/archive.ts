@@ -222,7 +222,7 @@ async function executable7z(): Promise<string> {
     await fs.chmod(bin, 0o755)
     return bin
   } catch {
-    const copy = path.join(os.tmpdir(), `recomphub-7za-${process.getuid?.() ?? 0}`)
+    const copy = path.join(os.tmpdir(), `relaunch-7za-${process.getuid?.() ?? 0}`)
     await fs.copyFile(bin, copy)
     await fs.chmod(copy, 0o755)
     return copy

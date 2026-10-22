@@ -1,8 +1,8 @@
 # Configuração do instalador (electron-builder).
 # Windows é a prioridade (NSIS); Linux gera AppImage.
-appId: io.github.silvamenu.recomphub
-productName: RecompHub
-copyright: RecompHub contributors
+appId: io.github.silvamenu.relaunch
+productName: Relaunch
+copyright: Relaunch contributors
 
 directories:
   buildResources: build
@@ -45,7 +45,7 @@ nsis:
   allowToChangeInstallationDirectory: true
   createDesktopShortcut: true
   createStartMenuShortcut: true
-  shortcutName: RecompHub
+  shortcutName: Relaunch
   deleteAppDataOnUninstall: false
 
 linux:

@@ -1,4 +1,4 @@
-# RecompHub
+# Relaunch
 
 [![CI](https://github.com/Silvamenu/OpenLaucher/actions/workflows/ci.yml/badge.svg)](https://github.com/Silvamenu/OpenLaucher/actions/workflows/ci.yml)
 [![Segurança](https://github.com/Silvamenu/OpenLaucher/actions/workflows/security.yml/badge.svg)](https://github.com/Silvamenu/OpenLaucher/actions/workflows/security.yml)
@@ -6,16 +6,16 @@
 
 **Seus ports favoritos, num só lugar.**
 
-O RecompHub é um launcher para Windows e Linux que reúne os **ports e recompilações de jogos feitos por fãs** que você já instalou: Ship of Harkinian, Zelda 64: Recompiled, Starship e outros. Ele mostra o que falta configurar, abre o jogo e mantém tudo atualizado a partir dos releases oficiais de cada projeto. A interface está em português (Brasil) e em inglês.
+O Relaunch é um launcher para Windows e Linux que reúne os **ports e recompilações de jogos feitos por fãs** que você já instalou: Ship of Harkinian, Zelda 64: Recompiled, Starship e outros. Ele mostra o que falta configurar, abre o jogo e mantém tudo atualizado a partir dos releases oficiais de cada projeto. A interface está em português (Brasil) e em inglês.
 
-![Biblioteca do RecompHub no tema escuro, com cinco jogos e o status de cada um](docs/screenshots/biblioteca.png)
+![Biblioteca do Relaunch no tema escuro, com cinco jogos e o status de cada um](docs/screenshots/biblioteca.png)
 
 > [!IMPORTANT]
-> O RecompHub **nunca** baixa, distribui ou embute ROMs, assets ou qualquer arquivo com direitos autorais. Ele só usa arquivos que você já possui, e só baixa os binários publicados pelos próprios projetos, direto do repositório declarado no manifesto, via HTTPS.
+> O Relaunch **nunca** baixa, distribui ou embute ROMs, assets ou qualquer arquivo com direitos autorais. Ele só usa arquivos que você já possui, e só baixa os binários publicados pelos próprios projetos, direto do repositório declarado no manifesto, via HTTPS.
 
 ## Sumário
 
-- **Para jogar:** [Início rápido](#início-rápido) · [Jogos suportados](#jogos-suportados) · [O que o RecompHub faz](#o-que-o-recomphub-faz) · [Atualizações](#atualizações) · [Onde ficam seus dados](#onde-ficam-seus-dados)
+- **Para jogar:** [Início rápido](#início-rápido) · [Jogos suportados](#jogos-suportados) · [O que o Relaunch faz](#o-que-o-relaunch-faz) · [Atualizações](#atualizações) · [Onde ficam seus dados](#onde-ficam-seus-dados)
 - **Para contribuir:** [Criar um manifesto](#criar-um-manifesto) · [Desenvolvimento](#desenvolvimento) · [Publicar uma versão do launcher](#publicar-uma-versão-do-launcher) · [Qualidade e segurança](#qualidade-e-segurança) · [Contribuir](#contribuir)
 - [Créditos](#créditos)
 
@@ -23,8 +23,8 @@ O RecompHub é um launcher para Windows e Linux que reúne os **ports e recompil
 
 ### Para jogar
 
-1. **Instale o RecompHub.** Baixe o `RecompHub-Setup-<versão>.exe` na página de [Releases](https://github.com/Silvamenu/OpenLaucher/releases) e execute. O instalador deixa escolher a pasta e cria atalhos na área de trabalho e no menu Iniciar.
-2. **Tenha o port instalado.** O RecompHub trabalha com jogos que você já instalou pelo site ou repositório oficial do projeto; ele não faz a primeira instalação.
+1. **Instale o Relaunch.** Baixe o `Relaunch-Setup-<versão>.exe` na página de [Releases](https://github.com/Silvamenu/OpenLaucher/releases) e execute. O instalador deixa escolher a pasta e cria atalhos na área de trabalho e no menu Iniciar.
+2. **Tenha o port instalado.** O Relaunch trabalha com jogos que você já instalou pelo site ou repositório oficial do projeto; ele não faz a primeira instalação.
 3. **Adicione o jogo.** Clique em **Adicionar jogo → Escolher pasta…** e aponte a pasta do port. O app reconhece o projeto sozinho; confirme em **Adicionar à biblioteca**.
 4. **Siga o checklist** da aba **Configuração**: por exemplo, selecionar a sua ROM ou abrir o jogo uma vez para gerar os assets.
 5. **Clique em Jogar.**
@@ -69,7 +69,7 @@ Manifestos que já vêm no app. Todos têm executáveis para Windows e Linux.
 
 Falta algum? Cada jogo é um arquivo JSON, sem mexer no código: veja [Criar um manifesto](#criar-um-manifesto) ou peça com o modelo de issue [Suporte a um novo jogo](https://github.com/Silvamenu/OpenLaucher/issues/new/choose).
 
-## O que o RecompHub faz
+## O que o Relaunch faz
 
 | Área                        | O que faz                                                                                                                                                                                                    |
 | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -82,7 +82,7 @@ Falta algum? Cada jogo é um arquivo JSON, sem mexer no código: veja [Criar um 
 | **Capas**                   | Capa gerada com a cor do manifesto, ou uma imagem escolhida por você.                                                                                                                                        |
 | **Atualizações dos jogos**  | Busca versões novas nos GitHub Releases de cada projeto, faz backup, preserva saves e volta sozinho se algo falhar. Veja [como funciona](#atualizações-dos-jogos).                                           |
 | **Downloads**               | Atualizações em andamento, disponíveis e concluídas na sessão. O progresso também aparece na barra lateral.                                                                                                  |
-| **Atualização do launcher** | Baixa a versão nova do RecompHub em segundo plano e avisa com um botão azul na barra lateral. Depois, o popup **Novidades** mostra o que mudou.                                                              |
+| **Atualização do launcher** | Baixa a versão nova do Relaunch em segundo plano e avisa com um botão azul na barra lateral. Depois, o popup **Novidades** mostra o que mudou.                                                               |
 | **Configurações**           | Tema escuro, claro ou do sistema; idioma (PT-BR padrão, EN); nome do perfil; token do GitHub; notificações; atualização automática por jogo; pastas de manifestos e de dados; reescanear pastas.             |
 
 ![Página do Ship of Harkinian com os botões Jogar e Atualizar para 9.3.1, a versão instalada, o último jogo e o tempo jogado](docs/screenshots/jogo.png)
@@ -118,7 +118,7 @@ Falta algum? Cada jogo é um arquivo JSON, sem mexer no código: veja [Criar um 
 
 ### Atualização do launcher
 
-- Na versão instalada, o RecompHub procura versões novas dele mesmo **ao abrir e a cada 3 horas**, nos GitHub Releases deste repositório.
+- Na versão instalada, o Relaunch procura versões novas dele mesmo **ao abrir e a cada 3 horas**, nos GitHub Releases deste repositório.
 - A versão nova é baixada em segundo plano. Um **botão azul** aparece acima do avatar, na barra lateral: clique para reiniciar e instalar, ou ela é instalada quando você fechar o app.
 - Depois de atualizar, o popup **Novidades da vX.Y.Z** mostra as notas do `CHANGELOG.md`. Para rever, use **Configurações → Ver novidades**.
 
@@ -133,20 +133,23 @@ Sem login, a API do GitHub permite **60 consultas por hora**. O app usa ETag (`I
 
 ## Onde ficam seus dados
 
-| Sistema | Pasta                 |
-| ------- | --------------------- |
-| Windows | `%APPDATA%\RecompHub` |
-| Linux   | `~/.config/RecompHub` |
+| Sistema | Pasta                |
+| ------- | -------------------- |
+| Windows | `%APPDATA%\Relaunch` |
+| Linux   | `~/.config/Relaunch` |
 
 | Item              | O que guarda                                                                    |
 | ----------------- | ------------------------------------------------------------------------------- |
-| `recomphub.json`  | Biblioteca, configurações e cache.                                              |
+| `relaunch.json`   | Biblioteca, configurações e cache.                                              |
 | `backups/`        | Backups feitos antes de cada atualização de jogo (os 2 mais recentes por jogo). |
 | `config-backups/` | Backups dos arquivos de configuração salvos pelo editor (até 10 por arquivo).   |
 | `covers/`         | Capas que você escolheu para os jogos.                                          |
 | `manifests/`      | Seus manifestos, que adicionam ou substituem os embutidos.                      |
 
-Abra essa pasta em **Configurações → Abrir pasta de dados do app**. Desinstalar o RecompHub não apaga esses dados.
+Abra essa pasta em **Configurações → Abrir pasta de dados do app**. Desinstalar o Relaunch não apaga esses dados.
+
+> [!NOTE]
+> O Relaunch se chamava **RecompHub**. Na primeira abertura com o nome novo, os dados da pasta antiga (`RecompHub`) são movidos para a pasta `Relaunch`.
 
 ## Criar um manifesto
 
@@ -320,7 +323,7 @@ Electron + electron-vite + React + TypeScript + Tailwind CSS. Requisitos: Node.j
 | ----------------------- | -------------------------------------------------------------------------------- |
 | `npm run build`         | Typecheck + build de produção em `out/`.                                         |
 | `npm start`             | Abre o build de produção sem empacotar.                                          |
-| `npm run dist`          | Gera o **instalador do Windows** em `dist/RecompHub-Setup-<versão>.exe`.         |
+| `npm run dist`          | Gera o **instalador do Windows** em `dist/Relaunch-Setup-<versão>.exe`.          |
 | `npm run dist:linux`    | Gera um AppImage para Linux em `dist/`.                                          |
 | `npm run dist:dir`      | Empacota sem instalador (útil para testar).                                      |
 | `npm run release-notes` | Extrai do `CHANGELOG.md` as notas da versão atual para `build/release-notes.md`. |
@@ -330,19 +333,19 @@ Electron + electron-vite + React + TypeScript + Tailwind CSS. Requisitos: Node.j
 `dist`, `dist:linux` e `release` geram as notas a partir do `CHANGELOG.md` e falham se não houver uma seção para a `version` do `package.json`.
 
 > [!TIP]
-> Em desenvolvimento a atualização automática do launcher fica desligada. Para testar o botão de atualização, rode com `RECOMPHUB_FAKE_UPDATE=1`, que simula o ciclo "disponível → baixando → pronto":
+> Em desenvolvimento a atualização automática do launcher fica desligada. Para testar o botão de atualização, rode com `RELAUNCH_FAKE_UPDATE=1`, que simula o ciclo "disponível → baixando → pronto":
 >
 > ```bash
-> RECOMPHUB_FAKE_UPDATE=1 npm run dev           # Linux
-> $env:RECOMPHUB_FAKE_UPDATE=1; npm run dev     # PowerShell
+> RELAUNCH_FAKE_UPDATE=1 npm run dev           # Linux
+> $env:RELAUNCH_FAKE_UPDATE=1; npm run dev     # PowerShell
 > ```
 
 ### Gerar o instalador
 
 | Alvo                 | Comando              | Resultado                            |
 | -------------------- | -------------------- | ------------------------------------ |
-| Windows (NSIS)       | `npm run dist`       | `dist/RecompHub-Setup-<versão>.exe`  |
-| Linux (AppImage)     | `npm run dist:linux` | `dist/RecompHub-<versão>.AppImage`   |
+| Windows (NSIS)       | `npm run dist`       | `dist/Relaunch-Setup-<versão>.exe`   |
+| Linux (AppImage)     | `npm run dist:linux` | `dist/Relaunch-<versão>.AppImage`    |
 | Teste sem instalador | `npm run dist:dir`   | Pasta `*-unpacked` dentro de `dist/` |
 
 - Rode `npm run dist` **no Windows**. O instalador deixa escolher a pasta e cria atalhos na área de trabalho e no menu Iniciar.
@@ -428,6 +431,6 @@ Cada PR e cada push na `main` passam por verificações automáticas.
 
 ## Créditos
 
-Os jogos e projetos listados pertencem aos seus respectivos autores e comunidades. O RecompHub é um launcher independente e não é afiliado a nenhum deles.
+Os jogos e projetos listados pertencem aos seus respectivos autores e comunidades. O Relaunch é um launcher independente e não é afiliado a nenhum deles.
 
 As fontes Geist e Geist Mono são distribuídas sob a SIL Open Font License.

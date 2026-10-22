@@ -1,10 +1,10 @@
 {
-  "name": "recomphub",
-  "productName": "RecompHub",
+  "name": "relaunch",
+  "productName": "Relaunch",
   "version": "0.1.0",
   "description": "Launcher unificado para ports e recompilações de jogos feitas por fãs.",
   "author": {
-    "name": "RecompHub contributors"
+    "name": "Relaunch contributors"
   },
   "private": true,
   "main": "./out/main/index.js",

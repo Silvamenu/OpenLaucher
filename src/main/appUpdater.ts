@@ -36,7 +36,7 @@ function notesOf(info: UpdateInfo): string {
 export class AppUpdater {
   private state: AppUpdateState = { status: 'idle' }
   private timer: NodeJS.Timeout | null = null
-  private readonly fake = !app.isPackaged && process.env.RECOMPHUB_FAKE_UPDATE === '1'
+  private readonly fake = !app.isPackaged && process.env.RELAUNCH_FAKE_UPDATE === '1'
 
   constructor(private readonly ctx: AppContext) {}
 
@@ -108,7 +108,7 @@ export class AppUpdater {
     setImmediate(() => autoUpdater.quitAndInstall(false, true))
   }
 
-  /** RECOMPHUB_FAKE_UPDATE=1 em desenvolvimento: simula o ciclo para testar a interface. */
+  /** RELAUNCH_FAKE_UPDATE=1 em desenvolvimento: simula o ciclo para testar a interface. */
   private simulate(): void {
     const version = '9.9.9'
     this.setState({ status: 'available', version, percent: 0 })

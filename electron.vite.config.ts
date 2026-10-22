@@ -10,7 +10,7 @@ function contentSecurityPolicy(): Plugin {
     "default-src 'self'",
     "script-src 'self'",
     "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' data: rh-cover: https:",
+    "img-src 'self' data: rl-cover: https:",
     "font-src 'self' data:",
     "connect-src 'self'",
     "object-src 'none'",
@@ -18,7 +18,7 @@ function contentSecurityPolicy(): Plugin {
     "form-action 'none'"
   ].join('; ')
   return {
-    name: 'recomphub-csp',
+    name: 'relaunch-csp',
     apply: 'build',
     transformIndexHtml: (html) => html.replace('<head>', `<head>\n    <meta http-equiv="Content-Security-Policy" content="${policy}" />`)
   }

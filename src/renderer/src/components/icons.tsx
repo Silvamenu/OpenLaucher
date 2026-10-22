@@ -44,7 +44,7 @@ export function GearIcon({ size = 17 }: { size?: number }) {
   )
 }
 
-/** Marca do RecompHub: quadrado claro com losango escuro. */
+/** Marca do Relaunch: quadrado claro com losango escuro. */
 export function LogoMark({ size = 30 }: { size?: number }) {
   return (
     <span className="grid shrink-0 place-items-center bg-primary" style={{ width: size, height: size, borderRadius: size * 0.3 }}>

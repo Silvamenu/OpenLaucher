@@ -253,7 +253,7 @@ export function SettingsPage() {
       </Section>
 
       <Section title={t('settings.about')}>
-        <Row title="RecompHub" hint={<span className="font-mono">{t('settings.version', { version: info?.version ?? '' })}</span>}>
+        <Row title="Relaunch" hint={<span className="font-mono">{t('settings.version', { version: info?.version ?? '' })}</span>}>
           <Button onClick={() => void save(async () => openDevlog(await window.api.devlog.current()))}>{t('settings.whatsNew')}</Button>
           <Button variant="ghost" onClick={() => void window.api.app.openExternal(LAUNCHER_REPO)}>
             GitHub

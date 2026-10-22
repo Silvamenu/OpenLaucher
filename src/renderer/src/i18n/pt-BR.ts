@@ -1,6 +1,6 @@
 /** Textos da interface em português do Brasil (idioma padrão). Use {nome} para parâmetros. */
 export const ptBR = {
-  'app.name': 'RecompHub',
+  'app.name': 'Relaunch',
   'app.tagline': 'Seus ports favoritos, num só lugar',
 
   'nav.library': 'Biblioteca',
@@ -33,14 +33,14 @@ export const ptBR = {
   'library.checkUpdates': 'Verificar atualizações',
   'library.checking': 'Verificando…',
   'library.empty.title': 'Sua biblioteca está vazia',
-  'library.empty.body': 'Adicione a pasta de um port que você já instalou (Ship of Harkinian, Zelda64Recomp, Starship…) e o RecompHub cuida do resto.',
+  'library.empty.body': 'Adicione a pasta de um port que você já instalou (Ship of Harkinian, Zelda64Recomp, Starship…) e o Relaunch cuida do resto.',
   'library.noResults': 'Nenhum jogo corresponde ao filtro.',
   'library.lastPlayed': 'Jogado {when}',
   'library.neverPlayed': 'Nunca jogado',
   'library.play': 'Jogar',
   'library.details': 'Detalhes',
 
-  'legal.note': 'O RecompHub nunca baixa, distribui ou embute ROMs ou assets com direitos autorais: ele só usa arquivos que você já possui.',
+  'legal.note': 'O Relaunch nunca baixa, distribui ou embute ROMs ou assets com direitos autorais: ele só usa arquivos que você já possui.',
 
   'add.title': 'Adicionar jogo',
   'add.subtitle': 'Aponte a pasta de um port já instalado. O app detecta qual projeto é e verifica o que falta.',
@@ -134,7 +134,7 @@ export const ptBR = {
 
   'upd.noBinaries.title': 'Sem binários publicados',
   'upd.noBinaries.body':
-    'Este projeto não publica executáveis prontos — é preciso compilar a partir do código-fonte. O RecompHub só mostra o link do repositório.',
+    'Este projeto não publica executáveis prontos — é preciso compilar a partir do código-fonte. O Relaunch só mostra o link do repositório.',
   'upd.openRepo': 'Abrir repositório',
   'upd.installed': 'Versão instalada',
   'upd.latest': 'Versão mais recente',
@@ -223,7 +223,7 @@ export const ptBR = {
   'settings.manifestsHint': 'Coloque arquivos <id>.json nesta pasta para adicionar ou corrigir jogos sem atualizar o app.',
   'settings.manifestErrors': 'Manifestos com erro',
   'settings.openData': 'Abrir pasta de dados do app',
-  'settings.about': 'Sobre o RecompHub',
+  'settings.about': 'Sobre o Relaunch',
   'settings.version': 'Versão {version}',
   'settings.whatsNew': 'Ver novidades',
   'settings.checkApp': 'Procurar atualização do launcher',

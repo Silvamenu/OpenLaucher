@@ -1,4 +1,4 @@
-// Gera build/icon.png (512x512) desenhando o logo do RecompHub sem dependências externas.
+// Gera build/icon.png (512x512) desenhando o logo do Relaunch sem dependências externas.
 // Uso: npm run icon
 import { writeFileSync, mkdirSync } from 'node:fs'
 import { deflateSync } from 'node:zlib'
@@ -9,7 +9,7 @@ const SIZE = 512
 const SS = 4 // supersampling por eixo (anti-aliasing)
 const S = SIZE / 100 // desenho numa grade 100x100
 
-// Marca do RecompHub (mesma do layout): quadrado claro arredondado com losango escuro.
+// Marca do Relaunch (mesma do layout): quadrado claro arredondado com losango escuro.
 const LIGHT = [237, 237, 238]
 const DARK = [17, 17, 18]
 
