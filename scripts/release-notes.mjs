@@ -18,7 +18,10 @@ if (start < 0) {
 }
 let end = lines.findIndex((l, i) => i > start && /^##\s/.test(l))
 if (end < 0) end = lines.length
-const body = lines.slice(start + 1, end).join('\n').trim()
+const body = lines
+  .slice(start + 1, end)
+  .join('\n')
+  .trim()
 if (!body) {
   console.error(`A seção ${version} do CHANGELOG.md está vazia.`)
   process.exit(1)

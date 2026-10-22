@@ -66,7 +66,10 @@ export function compareVersions(a: string | null | undefined, b: string | null |
 }
 
 export function normalizeTag(tag: string): string {
-  return tag.trim().replace(/^v(?=\d)/i, '').toLowerCase()
+  return tag
+    .trim()
+    .replace(/^v(?=\d)/i, '')
+    .toLowerCase()
 }
 
 export interface ReleaseRef {

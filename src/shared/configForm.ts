@@ -23,7 +23,14 @@ export function flattenJson(value: unknown, limit = 5000): JsonField[] {
     if (out.length >= limit) return
     if (node === null || typeof node !== 'object') {
       if (path.length === 0) return
-      out.push({ path, label: path.map((p) => (typeof p === 'number' ? `[${p}]` : p)).join('.').replace(/\.\[/g, '['), value: node as JsonPrimitive })
+      out.push({
+        path,
+        label: path
+          .map((p) => (typeof p === 'number' ? `[${p}]` : p))
+          .join('.')
+          .replace(/\.\[/g, '['),
+        value: node as JsonPrimitive
+      })
       return
     }
     if (Array.isArray(node)) {

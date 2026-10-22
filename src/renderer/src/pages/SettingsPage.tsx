@@ -37,7 +37,12 @@ export function SettingsPage() {
   const [rescanning, setRescanning] = useState(false)
   const [rateLimit, setRateLimit] = useState<RateLimitInfo | null>(null)
 
-  useEffect(() => setName(settings?.userName ?? ''), [settings?.userName])
+  // Mantém o campo em sincronia se o nome mudar por fora (ex.: outra tela).
+  const [savedName, setSavedName] = useState(settings?.userName ?? '')
+  if ((settings?.userName ?? '') !== savedName) {
+    setSavedName(settings?.userName ?? '')
+    setName(settings?.userName ?? '')
+  }
   useEffect(() => {
     void window.api.updates.rateLimit().then(setRateLimit)
   }, [settings?.hasGithubToken])
@@ -131,10 +136,18 @@ export function SettingsPage() {
 
       <Section title={t('settings.updates')}>
         <div className="px-[18px] py-4">
-          <Toggle checked={settings.checkGameUpdates} onChange={(v) => void save(() => updateSettings({ checkGameUpdates: v }))} label={t('settings.checkGames')} />
+          <Toggle
+            checked={settings.checkGameUpdates}
+            onChange={(v) => void save(() => updateSettings({ checkGameUpdates: v }))}
+            label={t('settings.checkGames')}
+          />
         </div>
         <div className="px-[18px] py-4">
-          <Toggle checked={settings.notifications} onChange={(v) => void save(() => updateSettings({ notifications: v }))} label={t('settings.notifications')} />
+          <Toggle
+            checked={settings.notifications}
+            onChange={(v) => void save(() => updateSettings({ notifications: v }))}
+            label={t('settings.notifications')}
+          />
         </div>
         <div className="px-[18px] py-4">
           <div className="mb-3 text-[13.5px] text-fg-2">{t('settings.autoPerGame')}</div>

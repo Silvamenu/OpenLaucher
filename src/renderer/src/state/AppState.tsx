@@ -1,14 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
-import type {
-  AppInfo,
-  AppUpdateState,
-  DevlogView,
-  LibraryItem,
-  ManifestsReport,
-  SettingsPatch,
-  SettingsView,
-  UpdateProgress
-} from '../../../shared/types'
+import type { AppInfo, AppUpdateState, DevlogView, LibraryItem, ManifestsReport, SettingsPatch, SettingsView, UpdateProgress } from '../../../shared/types'
 import { I18nProvider } from '../i18n'
 
 export type Route = { page: 'library' } | { page: 'add' } | { page: 'downloads' } | { page: 'settings' } | { page: 'game'; id: string; tab?: GameTab }
@@ -154,7 +145,8 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     }
   }, [refresh])
 
-  useEffect(() => (settings ? applyTheme(settings.theme) : undefined), [settings?.theme])
+  const theme = settings?.theme
+  useEffect(() => (theme ? applyTheme(theme) : undefined), [theme])
 
   useEffect(() => {
     document.documentElement.lang = settings?.language ?? 'pt-BR'
@@ -185,7 +177,27 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       openDevlog,
       closeDevlog
     }),
-    [ready, info, settings, items, manifests, appUpdate, progress, history, query, route, navigate, refresh, updateSettings, toasts, toast, dismissToast, devlog, openDevlog, closeDevlog]
+    [
+      ready,
+      info,
+      settings,
+      items,
+      manifests,
+      appUpdate,
+      progress,
+      history,
+      query,
+      route,
+      navigate,
+      refresh,
+      updateSettings,
+      toasts,
+      toast,
+      dismissToast,
+      devlog,
+      openDevlog,
+      closeDevlog
+    ]
   )
 
   return (

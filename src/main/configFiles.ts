@@ -70,13 +70,7 @@ export async function backupConfig(backupsRoot: string, entryId: string, file: s
   return target
 }
 
-export async function saveConfigFile(opts: {
-  spec: ConfigFileSpec
-  file: string
-  content: string
-  backupsRoot: string
-  entryId: string
-}): Promise<void> {
+export async function saveConfigFile(opts: { spec: ConfigFileSpec; file: string; content: string; backupsRoot: string; entryId: string }): Promise<void> {
   if (!opts.spec.editable) throw new AppError('CONFIG_NOT_EDITABLE')
   const valid = validateConfigText(opts.spec.format, opts.content)
   if (!valid.ok) throw new AppError('INVALID_CONFIG', valid.message, { detail: valid.message })

@@ -207,7 +207,11 @@ export function UpdatesTab({ item }: { item: LibraryItem }) {
           <div className="mb-2.5 flex items-center justify-between gap-2 text-[13px]">
             <span className={p.stage === 'error' ? 'text-bad' : 'text-fg-2'}>{t(`stage.${p.stage}`)}</span>
             <span className="font-mono text-[11.5px] text-subtle">
-              {p.stage === 'downloading' && p.totalBytes ? `${formatBytes(p.receivedBytes, locale)} / ${formatBytes(p.totalBytes, locale)}` : p.progress !== undefined ? `${Math.round(p.progress * 100)}%` : ''}
+              {p.stage === 'downloading' && p.totalBytes
+                ? `${formatBytes(p.receivedBytes, locale)} / ${formatBytes(p.totalBytes, locale)}`
+                : p.progress !== undefined
+                  ? `${Math.round(p.progress * 100)}%`
+                  : ''}
             </span>
           </div>
           {p.stage !== 'error' && p.stage !== 'cancelled' && <ProgressBar value={p.stage === 'done' ? 1 : p.progress} />}
@@ -217,7 +221,12 @@ export function UpdatesTab({ item }: { item: LibraryItem }) {
 
       {latest && state.assetName && <div className="font-mono text-[11.5px] text-faint">{t('upd.asset', { name: state.assetName })}</div>}
 
-      <Toggle checked={item.entry.autoUpdate} onChange={(v) => void window.api.library.update(id, { autoUpdate: v })} label={t('upd.auto')} hint={t('upd.autoHint')} />
+      <Toggle
+        checked={item.entry.autoUpdate}
+        onChange={(v) => void window.api.library.update(id, { autoUpdate: v })}
+        label={t('upd.auto')}
+        hint={t('upd.autoHint')}
+      />
 
       {latest?.body && (
         <Card className="overflow-hidden">

@@ -208,7 +208,8 @@ export const en: Record<TranslationKey, string> = {
   'settings.autoPerGame': 'Update automatically (per game)',
   'settings.noGames': 'No games in the library.',
   'settings.token': 'GitHub personal token',
-  'settings.tokenHint': 'Optional. Without a token GitHub allows 60 requests per hour; with one, 5,000. No special permission (scope) is needed. It is stored encrypted on this computer.',
+  'settings.tokenHint':
+    'Optional. Without a token GitHub allows 60 requests per hour; with one, 5,000. No special permission (scope) is needed. It is stored encrypted on this computer.',
   'settings.tokenSet': 'Token configured',
   'settings.tokenSave': 'Save token',
   'settings.tokenRemove': 'Remove token',
@@ -245,7 +246,7 @@ export const en: Record<TranslationKey, string> = {
   'search.placeholder': 'Search...',
   'profile.local': 'Local profile',
   'profile.anonymous': 'Your profile',
-  'library.noResultsQuery': 'No games found for \'{query}\'.',
+  'library.noResultsQuery': "No games found for '{query}'.",
   'card.update': 'Update',
   'game.configure': 'Set up',
   'game.status': 'Status',

@@ -7,28 +7,16 @@
   "website": "https://www.shipofharkinian.com",
   "accentColor": "#3f8f4a",
   "executables": {
-    "win32": [
-      "soh.exe"
-    ],
-    "linux": [
-      "soh.appimage"
-    ]
+    "win32": ["soh.exe"],
+    "linux": ["soh.appimage"]
   },
-  "detectFiles": [
-    "soh.exe",
-    "soh.appimage",
-    "soh.o2r",
-    "soh.otr"
-  ],
+  "detectFiles": ["soh.exe", "soh.appimage", "soh.o2r", "soh.otr"],
   "requirements": [
     {
       "id": "port-data",
       "type": "file",
       "label": "Arquivo de dados do port (soh.o2r)",
-      "patterns": [
-        "soh.o2r",
-        "soh.otr"
-      ],
+      "patterns": ["soh.o2r", "soh.otr"],
       "helpText": "Vem junto com o download oficial do port. Se estiver faltando, reinstale ou atualize o jogo."
     },
     {
@@ -36,11 +24,7 @@
       "type": "userFile",
       "label": "Sua ROM de Ocarina of Time",
       "optional": true,
-      "extensions": [
-        "z64",
-        "n64",
-        "v64"
-      ],
+      "extensions": ["z64", "n64", "v64"],
       "validation": {
         "sha1": [
           {
@@ -128,12 +112,7 @@
       "id": "rom-assets",
       "type": "firstRun",
       "label": "Gerar os assets a partir da sua ROM (oot.o2r)",
-      "doneWhen": [
-        "oot.o2r",
-        "oot-mq.o2r",
-        "oot.otr",
-        "oot-mq.otr"
-      ],
+      "doneWhen": ["oot.o2r", "oot-mq.o2r", "oot.otr", "oot-mq.otr"],
       "helpText": "Abra o jogo uma vez: ele pergunta se deseja gerar os arquivos e pede para você escolher sua ROM. A extração leva alguns minutos e acontece só na primeira vez (e após atualizações de versão maior)."
     }
   ],
@@ -157,10 +136,7 @@
     "repo": "HarbourMasters/Shipwright",
     "assetPatterns": {
       "win32": "*Win64*.zip",
-      "linux": [
-        "*.appimage",
-        "*Linux*.zip"
-      ]
+      "linux": ["*.appimage", "*Linux*.zip"]
     },
     "includePrereleases": false,
     "preserve": [

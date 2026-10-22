@@ -2,15 +2,7 @@ import { promises as fs } from 'node:fs'
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { extractPackage } from '../src/main/archive'
-import {
-  applyUpdate,
-  createBackup,
-  emptyJournal,
-  listBackups,
-  pruneBackups,
-  restoreFromJournal,
-  rollbackFromBackup
-} from '../src/main/updateCore'
+import { applyUpdate, createBackup, emptyJournal, listBackups, pruneBackups, restoreFromJournal, rollbackFromBackup } from '../src/main/updateCore'
 import { createPreserveMatcher, shouldSkipFile } from '../src/shared/patterns'
 import { exists, makeZip, readTree, tempDir, writeTree } from './helpers/fs'
 

@@ -6,26 +6,16 @@
   "repoUrl": "https://github.com/HarbourMasters/SpaghettiKart",
   "accentColor": "#d35400",
   "executables": {
-    "win32": [
-      "Spaghettify.exe"
-    ],
-    "linux": [
-      "spaghetti.appimage"
-    ]
+    "win32": ["Spaghettify.exe"],
+    "linux": ["spaghetti.appimage"]
   },
-  "detectFiles": [
-    "Spaghettify.exe",
-    "spaghetti.appimage",
-    "spaghetti.o2r"
-  ],
+  "detectFiles": ["Spaghettify.exe", "spaghetti.appimage", "spaghetti.o2r"],
   "requirements": [
     {
       "id": "port-data",
       "type": "file",
       "label": "Arquivo de dados do port (spaghetti.o2r)",
-      "patterns": [
-        "spaghetti.o2r"
-      ],
+      "patterns": ["spaghetti.o2r"],
       "helpText": "Vem junto com o download oficial do port. Se estiver faltando, reinstale ou atualize o jogo."
     },
     {
@@ -33,9 +23,7 @@
       "type": "userFile",
       "label": "Sua ROM de Mario Kart 64",
       "optional": true,
-      "extensions": [
-        "z64"
-      ],
+      "extensions": ["z64"],
       "validation": {
         "sha1": [
           {
@@ -51,9 +39,7 @@
       "id": "rom-assets",
       "type": "firstRun",
       "label": "Gerar os assets a partir da sua ROM (mk64.o2r)",
-      "doneWhen": [
-        "mk64.o2r"
-      ],
+      "doneWhen": ["mk64.o2r"],
       "helpText": "Abra o jogo uma vez: ele pergunta se deseja gerar os arquivos e pede para você escolher sua ROM. A extração leva alguns minutos e acontece só na primeira vez (e após atualizações de versão maior)."
     }
   ],
@@ -76,26 +62,11 @@
     "source": "github-releases",
     "repo": "HarbourMasters/SpaghettiKart",
     "assetPatterns": {
-      "win32": [
-        "spaghetti-windows.zip",
-        "*windows*.zip"
-      ],
-      "linux": [
-        "spaghetti-linux.zip",
-        "*linux*.zip"
-      ]
+      "win32": ["spaghetti-windows.zip", "*windows*.zip"],
+      "linux": ["spaghetti-linux.zip", "*linux*.zip"]
     },
     "includePrereleases": false,
-    "preserve": [
-      "mk64.o2r",
-      "default.sav",
-      "controllerPak_*.sav",
-      "spaghettify.cfg.json",
-      "imgui.ini",
-      "mods/**",
-      "logs/**",
-      "*.z64"
-    ]
+    "preserve": ["mk64.o2r", "default.sav", "controllerPak_*.sav", "spaghettify.cfg.json", "imgui.ini", "mods/**", "logs/**", "*.z64"]
   },
   "_todo": "Versões 0.9.x eram pré-releases com outro padrão de nome (Spaghettify-*-Windows.zip); o padrão *windows*.zip cobre as duas."
 }

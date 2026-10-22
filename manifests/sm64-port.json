@@ -6,29 +6,16 @@
   "repoUrl": "https://github.com/sm64-port/sm64-port",
   "accentColor": "#d4a017",
   "executables": {
-    "win32": [
-      "sm64.*.exe"
-    ],
-    "linux": [
-      "sm64.*.f3dex2e"
-    ]
+    "win32": ["sm64.*.exe"],
+    "linux": ["sm64.*.f3dex2e"]
   },
-  "detectFiles": [
-    "sm64.*.f3dex2e.exe",
-    "sm64.*.f3dex2e"
-  ],
+  "detectFiles": ["sm64.*.f3dex2e.exe", "sm64.*.f3dex2e"],
   "requirements": [],
   "configFiles": [
     {
       "path": {
-        "win32": [
-          "sm64config.txt",
-          "{appData}/sm64ex/sm64config.txt"
-        ],
-        "linux": [
-          "sm64config.txt",
-          "{localAppData}/sm64ex/sm64config.txt"
-        ]
+        "win32": ["sm64config.txt", "{appData}/sm64ex/sm64config.txt"],
+        "linux": ["sm64config.txt", "{localAppData}/sm64ex/sm64config.txt"]
       },
       "format": "text",
       "label": "Configurações (sm64config.txt)",

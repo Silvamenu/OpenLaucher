@@ -1,6 +1,5 @@
 import { createHash } from 'node:crypto'
-import { createReadStream } from 'node:fs'
-import { promises as fs } from 'node:fs'
+import { createReadStream, promises as fs, type Dirent } from 'node:fs'
 import path from 'node:path'
 import picomatch from 'picomatch'
 import { toPosix } from '../shared/patterns'
@@ -41,7 +40,7 @@ export interface WalkedFile {
 export async function walkFiles(root: string, maxDepth = Infinity): Promise<WalkedFile[]> {
   const out: WalkedFile[] = []
   const visit = async (dir: string, depth: number) => {
-    let entries: import('node:fs').Dirent[]
+    let entries: Dirent[]
     try {
       entries = await fs.readdir(dir, { withFileTypes: true })
     } catch {
@@ -66,7 +65,7 @@ export async function walkFiles(root: string, maxDepth = Infinity): Promise<Walk
 export async function walkDirs(root: string, maxDepth = Infinity): Promise<string[]> {
   const out: string[] = []
   const visit = async (dir: string, depth: number) => {
-    let entries: import('node:fs').Dirent[]
+    let entries: Dirent[]
     try {
       entries = await fs.readdir(dir, { withFileTypes: true })
     } catch {
@@ -140,5 +139,12 @@ export function isInside(parent: string, child: string): boolean {
 }
 
 export function sanitizeFileName(name: string): string {
-  return name.replace(/[<>:"/\\|?*\u0000-\u001f]/g, '_').replace(/^\.+/, '_').slice(0, 120) || 'arquivo'
+  return (
+    name
+      // caracteres de controle também são inválidos em nomes de arquivo
+      // eslint-disable-next-line no-control-regex
+      .replace(/[<>:"/\\|?*\u0000-\u001f]/g, '_')
+      .replace(/^\.+/, '_')
+      .slice(0, 120) || 'arquivo'
+  )
 }

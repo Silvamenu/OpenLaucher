@@ -37,7 +37,12 @@ export function DevlogModal() {
           </h2>
           {view.date && <p className="mt-1 font-mono text-[11.5px] text-faint">{formatDate(`${view.date}T12:00:00`, locale)}</p>}
         </div>
-        <button type="button" onClick={closeDevlog} aria-label={t('devlog.close')} className="-mt-1 -mr-1 rounded-lg p-1.5 text-subtle transition-colors hover:bg-hover hover:text-fg">
+        <button
+          type="button"
+          onClick={closeDevlog}
+          aria-label={t('devlog.close')}
+          className="-mt-1 -mr-1 rounded-lg p-1.5 text-subtle transition-colors hover:bg-hover hover:text-fg"
+        >
           <X size={18} />
         </button>
       </header>

@@ -14,17 +14,17 @@ Você aponta a pasta do jogo e o RecompHub:
 
 ## Funcionalidades
 
-| Área | O que faz |
-| --- | --- |
-| **Biblioteca** | Grade de cards com status (**Pronto**, **Falta configurar**, **Pasta não encontrada**), filtros e busca rápida com `Ctrl+K`. |
-| **Adicionar jogo** | Você escolhe a pasta e o app detecta o projeto pelos `detectFiles` do manifesto, inclusive em subpastas, ou deixa você escolher manualmente. |
-| **Checklist** | Requisitos do manifesto com ✓/✗ e ações: selecionar a sua ROM (validada por tamanho ou SHA-1), copiá-la para a pasta, abrir a pasta, abrir o jogo pela primeira vez e ver instruções. |
-| **Editor de configs** | Arquivos JSON, INI e texto, editáveis em formulário ou como texto. Valida antes de salvar, faz backup automático e permite restaurar. |
-| **Jogar** | Executa o binário com `cwd` na pasta do jogo, mais os `launchArgs` e `launchEnv` do manifesto. Registra o último acesso e o tempo jogado. |
-| **Atualizações dos jogos** | Consulta os GitHub Releases ao abrir e a cada 3 h, usando ETag. Mostra badge e notificação. O download tem progresso e cancelamento; o app confere tamanho e checksum, faz backup, extrai zip/7z/tar.gz e respeita `preserve`. Se algo falhar, restaura sozinho. Inclui **Voltar para versão anterior**. |
-| **Downloads** | Atualizações em andamento, disponíveis e concluídas na sessão. O progresso também aparece na barra lateral. |
-| **Atualização do launcher** | `electron-updater` com os releases deste repositório. Um botão azul aparece acima do avatar quando há versão nova. Depois de atualizar, o popup "Novidades da vX.Y.Z" mostra o CHANGELOG. |
-| **Configurações** | Tema escuro, claro ou do sistema; idioma (PT-BR padrão, EN); nome do perfil; token do GitHub; atualização automática por jogo; reescanear pastas. |
+| Área                        | O que faz                                                                                                                                                                                                                                                                                                |
+| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Biblioteca**              | Grade de cards com status (**Pronto**, **Falta configurar**, **Pasta não encontrada**), filtros e busca rápida com `Ctrl+K`.                                                                                                                                                                             |
+| **Adicionar jogo**          | Você escolhe a pasta e o app detecta o projeto pelos `detectFiles` do manifesto, inclusive em subpastas, ou deixa você escolher manualmente.                                                                                                                                                             |
+| **Checklist**               | Requisitos do manifesto com ✓/✗ e ações: selecionar a sua ROM (validada por tamanho ou SHA-1), copiá-la para a pasta, abrir a pasta, abrir o jogo pela primeira vez e ver instruções.                                                                                                                    |
+| **Editor de configs**       | Arquivos JSON, INI e texto, editáveis em formulário ou como texto. Valida antes de salvar, faz backup automático e permite restaurar.                                                                                                                                                                    |
+| **Jogar**                   | Executa o binário com `cwd` na pasta do jogo, mais os `launchArgs` e `launchEnv` do manifesto. Registra o último acesso e o tempo jogado.                                                                                                                                                                |
+| **Atualizações dos jogos**  | Consulta os GitHub Releases ao abrir e a cada 3 h, usando ETag. Mostra badge e notificação. O download tem progresso e cancelamento; o app confere tamanho e checksum, faz backup, extrai zip/7z/tar.gz e respeita `preserve`. Se algo falhar, restaura sozinho. Inclui **Voltar para versão anterior**. |
+| **Downloads**               | Atualizações em andamento, disponíveis e concluídas na sessão. O progresso também aparece na barra lateral.                                                                                                                                                                                              |
+| **Atualização do launcher** | `electron-updater` com os releases deste repositório. Um botão azul aparece acima do avatar quando há versão nova. Depois de atualizar, o popup "Novidades da vX.Y.Z" mostra o CHANGELOG.                                                                                                                |
+| **Configurações**           | Tema escuro, claro ou do sistema; idioma (PT-BR padrão, EN); nome do perfil; token do GitHub; atualização automática por jogo; reescanear pastas.                                                                                                                                                        |
 
 ## Requisitos
 
@@ -42,16 +42,16 @@ npm run dev
 
 Outros scripts:
 
-| Script | Para quê |
-| --- | --- |
-| `npm test` | Testes unitários (Vitest). |
-| `npm run typecheck` | Checagem de tipos do processo principal e da interface. |
-| `npm run build` | Typecheck + build de produção em `out/`. |
-| `npm start` | Abre o build de produção sem empacotar. |
-| `npm run dist` | Gera o **instalador do Windows** em `dist/RecompHub-Setup-<versão>.exe`. |
-| `npm run dist:linux` | Gera um AppImage para Linux. |
-| `npm run dist:dir` | Empacota sem instalador (útil para testar). |
-| `npm run icon` | Regenera `build/icon.png`. |
+| Script               | Para quê                                                                 |
+| -------------------- | ------------------------------------------------------------------------ |
+| `npm test`           | Testes unitários (Vitest).                                               |
+| `npm run typecheck`  | Checagem de tipos do processo principal e da interface.                  |
+| `npm run build`      | Typecheck + build de produção em `out/`.                                 |
+| `npm start`          | Abre o build de produção sem empacotar.                                  |
+| `npm run dist`       | Gera o **instalador do Windows** em `dist/RecompHub-Setup-<versão>.exe`. |
+| `npm run dist:linux` | Gera um AppImage para Linux.                                             |
+| `npm run dist:dir`   | Empacota sem instalador (útil para testar).                              |
+| `npm run icon`       | Regenera `build/icon.png`.                                               |
 
 Para testar o botão de atualização do launcher em desenvolvimento, rode com `RECOMPHUB_FAKE_UPDATE=1`. No PowerShell é `$env:RECOMPHUB_FAKE_UPDATE=1; npm run dev`. Isso simula um ciclo "disponível → baixando → pronto".
 
@@ -90,25 +90,35 @@ Os manifestos embutidos ficam em `manifests/`. Você também pode colocar arquiv
 
 ```jsonc
 {
-  "id": "soh",                                   // letras minúsculas, números, "-" e "_"
+  "id": "soh", // letras minúsculas, números, "-" e "_"
   "name": "Ship of Harkinian",
   "originalGame": "The Legend of Zelda: Ocarina of Time",
   "description": "Texto curto exibido na aba Sobre.",
   "repoUrl": "https://github.com/HarbourMasters/Shipwright",
-  "website": "https://www.shipofharkinian.com",   // opcional
-  "accentColor": "#3f8f4a",                      // cor da capa gerada (opcional)
+  "website": "https://www.shipofharkinian.com", // opcional
+  "accentColor": "#3f8f4a", // cor da capa gerada (opcional)
 
   "executables": { "win32": ["soh.exe"], "linux": ["soh.appimage"] },
   "detectFiles": ["soh.exe", "soh.appimage", "soh.o2r"],
 
   "requirements": [
-    { "id": "port-data", "type": "file", "label": "Arquivo de dados do port",
-      "patterns": ["soh.o2r"], "helpText": "Vem junto com o download do port." },
-    { "id": "rom", "type": "userFile", "label": "Sua ROM", "optional": true,
-      "extensions": ["z64", "n64", "v64"], "copyToGameDir": true,
-      "validation": { "sizes": [33554432], "sha1": [{ "sha1": "ad69c911…", "label": "NTSC 1.0 (US)" }] } },
-    { "id": "rom-assets", "type": "firstRun", "label": "Gerar os assets a partir da sua ROM",
-      "doneWhen": ["oot.o2r", "oot-mq.o2r"], "helpText": "Abra o jogo uma vez…" }
+    { "id": "port-data", "type": "file", "label": "Arquivo de dados do port", "patterns": ["soh.o2r"], "helpText": "Vem junto com o download do port." },
+    {
+      "id": "rom",
+      "type": "userFile",
+      "label": "Sua ROM",
+      "optional": true,
+      "extensions": ["z64", "n64", "v64"],
+      "copyToGameDir": true,
+      "validation": { "sizes": [33554432], "sha1": [{ "sha1": "ad69c911…", "label": "NTSC 1.0 (US)" }] }
+    },
+    {
+      "id": "rom-assets",
+      "type": "firstRun",
+      "label": "Gerar os assets a partir da sua ROM",
+      "doneWhen": ["oot.o2r", "oot-mq.o2r"],
+      "helpText": "Abra o jogo uma vez…"
+    }
   ],
 
   "configFiles": [
@@ -134,11 +144,13 @@ Os manifestos embutidos ficam em `manifests/`. Você também pode colocar arquiv
 ### Referência dos campos
 
 **`executables`** e **`detectFiles`**
+
 - Nomes ou globs relativos à pasta do jogo, sem diferenciar maiúsculas de minúsculas.
 - `executables` é por plataforma (`win32`, `linux`, `darwin`).
 - Na detecção, ganha o manifesto com a maior proporção de `detectFiles` encontrados.
 
 **`requirements`** — três tipos:
+
 - `file`: algum dos `patterns` precisa existir.
   - Os padrões são relativos à pasta do jogo.
   - Também aceitam caminhos absolutos com variáveis, como `{localAppData}/Jogo/arquivo.bin`.
@@ -151,23 +163,26 @@ Os manifestos embutidos ficam em `manifests/`. Você também pode colocar arquiv
 - Todos aceitam `optional`, `helpText` (markdown) e `id`. O `id` é recomendado, porque é a chave das escolhas salvas.
 
 **`configFiles`**
+
 - `format` pode ser `json`, `ini` ou `text`.
 - `path` pode ser um texto, uma lista de candidatos (o primeiro que existir é usado) ou um objeto por plataforma.
 - Variáveis disponíveis:
 
-| Variável | Windows | Linux |
-| --- | --- | --- |
-| `{gameDir}` | pasta do jogo | pasta do jogo |
-| `{appData}` | `%APPDATA%` | `~/.config` |
+| Variável         | Windows          | Linux            |
+| ---------------- | ---------------- | ---------------- |
+| `{gameDir}`      | pasta do jogo    | pasta do jogo    |
+| `{appData}`      | `%APPDATA%`      | `~/.config`      |
 | `{localAppData}` | `%LOCALAPPDATA%` | `~/.local/share` |
-| `{home}` | pasta do usuário | pasta do usuário |
-| `{documents}` | Documentos | `~/Documents` |
+| `{home}`         | pasta do usuário | pasta do usuário |
+| `{documents}`    | Documentos       | `~/Documents`    |
 
 **`launchArgs`** e **`launchEnv`**
+
 - Argumentos e variáveis de ambiente, opcionalmente por plataforma.
 - Os valores aceitam as variáveis acima.
 
 **`updates`**
+
 - `{ "source": "none" }` para projetos sem binários publicados; o app mostra só o link do repositório.
 - `{ "source": "github-releases", … }` para projetos que publicam releases:
   - `assetPatterns`: globs por plataforma, testados em ordem.
@@ -243,6 +258,7 @@ scripts/              Geração do ícone e das notas de release
 ```
 
 Os dados do app ficam na pasta de dados do usuário: `%APPDATA%\RecompHub` no Windows e `~/.config/RecompHub` no Linux. Lá estão:
+
 - `recomphub.json`: biblioteca, configurações e cache;
 - `backups/`;
 - `config-backups/`;

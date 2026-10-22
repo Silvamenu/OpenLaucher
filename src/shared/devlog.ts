@@ -30,7 +30,7 @@ export interface ChangelogEntry {
   body: string
 }
 
-const HEADING_RE = /^##\s+\[?v?(\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.\-]+)?)\]?(?:\s*[-–—(]\s*(\d{4}-\d{2}-\d{2})\)?)?\s*$/
+const HEADING_RE = /^##\s+\[?v?(\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?)\]?(?:\s*[-–—(]\s*(\d{4}-\d{2}-\d{2})\)?)?\s*$/
 
 /** Lê todas as seções "## [x.y.z] - AAAA-MM-DD" de um CHANGELOG no formato Keep a Changelog. */
 export function parseChangelog(markdown: string): ChangelogEntry[] {
@@ -74,7 +74,20 @@ export interface NoteSection {
 
 const KIND_ALIASES: Record<Exclude<NoteSectionKind, 'outros'>, string[]> = {
   novidades: ['novidades', 'novo', 'novos', 'adicionado', 'adicionados', 'added', 'new', 'features', 'feature', "what's new", 'whats new'],
-  melhorias: ['melhorias', 'melhoria', 'alterado', 'alterações', 'alteracoes', 'mudanças', 'mudancas', 'changed', 'changes', 'improvements', 'improved', 'enhancements'],
+  melhorias: [
+    'melhorias',
+    'melhoria',
+    'alterado',
+    'alterações',
+    'alteracoes',
+    'mudanças',
+    'mudancas',
+    'changed',
+    'changes',
+    'improvements',
+    'improved',
+    'enhancements'
+  ],
   correcoes: ['correções', 'correcoes', 'correção', 'correcao', 'corrigido', 'fixed', 'fixes', 'bug fixes', 'bugfixes']
 }
 
@@ -83,7 +96,10 @@ function stripEmoji(text: string): string {
 }
 
 export function sectionKindOf(title: string): NoteSectionKind {
-  const clean = stripEmoji(title).replace(/[:#*_]/g, '').trim().toLowerCase()
+  const clean = stripEmoji(title)
+    .replace(/[:#*_]/g, '')
+    .trim()
+    .toLowerCase()
   for (const [kind, aliases] of Object.entries(KIND_ALIASES) as [NoteSectionKind, string[]][]) {
     if (aliases.includes(clean)) return kind
   }

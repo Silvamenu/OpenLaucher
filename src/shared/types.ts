@@ -53,15 +53,7 @@ export interface GameEntry {
 
 export type GameStatus = 'ready' | 'needsSetup' | 'missingFolder' | 'unknownManifest'
 
-export type RequirementDetail =
-  | 'ok'
-  | 'notFound'
-  | 'notSelected'
-  | 'missingFile'
-  | 'sizeMismatch'
-  | 'hashMismatch'
-  | 'notDone'
-  | 'markedDone'
+export type RequirementDetail = 'ok' | 'notFound' | 'notSelected' | 'missingFile' | 'sizeMismatch' | 'hashMismatch' | 'notDone' | 'markedDone'
 
 export interface RequirementStatus {
   id: string
@@ -166,17 +158,7 @@ export interface ConfigBackup {
 // Progresso de atualização de jogo
 // ---------------------------------------------------------------------------
 
-export type UpdateStage =
-  | 'checking'
-  | 'downloading'
-  | 'verifying'
-  | 'backup'
-  | 'extracting'
-  | 'applying'
-  | 'restoring'
-  | 'done'
-  | 'error'
-  | 'cancelled'
+export type UpdateStage = 'checking' | 'downloading' | 'verifying' | 'backup' | 'extracting' | 'applying' | 'restoring' | 'done' | 'error' | 'cancelled'
 
 export interface UpdateProgress {
   entryId: string
