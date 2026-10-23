@@ -7,7 +7,7 @@ O conteúdo de cada versão é usado como nota do release no GitHub (`npm run re
 
 ## [Não lançado]
 
-## [0.1.0] - 2026-10-22
+## [0.1.0] - 2026-10-23
 
 ### Novidades
 
