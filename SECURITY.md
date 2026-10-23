@@ -28,6 +28,7 @@ Inclua o que for possível: versão do Relaunch, sistema operacional, passos par
 - Downloads apenas de `https://github.com/<repo do manifesto>/releases/download/…`, com redirecionamento restrito à CDN do GitHub, conferência de tamanho e de SHA-256 quando o release publica o hash.
 - Extração e atualização protegidas contra caminhos fora do destino e links simbólicos, com limite de tamanho; manifestos não aceitam caminhos absolutos ou `..`. Backup antes de atualizar e restauração automática em caso de falha.
 - Instalação pelo botão **Baixar**: mesma origem e mesmas verificações das atualizações, numa pasta nova que precisa estar vazia; se não terminar, o jogo sai da biblioteca e a pasta vazia é apagada.
+- Capa e banner: só imagens PNG, JPEG, GIF ou WebP de até 20 MB, conferidas pelo conteúdo (não pelo nome); a cópia fica na pasta de dados e a interface só a lê pelo protocolo `rl-cover://`, que aceita apenas o id do jogo.
 - Perfis locais: o PIN de 4 dígitos fica só como hash scrypt com sal, nunca em texto, e cada PIN errado espera meio segundo antes da resposta. Ele evita entrar no perfil errado, mas não cifra os dados do app. Arquivos `.relaunch` importados são validados (formato e tamanho) antes de virar perfil.
 - Token do GitHub cifrado com o cofre do sistema quando disponível (DPAPI no Windows; no Linux sem chaveiro fica em texto puro na pasta de dados) e nunca devolvido à interface.
 - Releases do launcher são criados como rascunho, só a partir de commits da `main`, e publicados manualmente depois de conferidos.

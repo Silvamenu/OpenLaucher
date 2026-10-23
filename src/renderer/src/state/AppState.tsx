@@ -12,7 +12,8 @@ import type {
 } from '../../../shared/types'
 import { I18nProvider } from '../i18n'
 
-export type Route = { page: 'library' } | { page: 'add' } | { page: 'downloads' } | { page: 'settings' } | { page: 'game'; id: string; tab?: GameTab }
+export type Route =
+  { page: 'library' } | { page: 'add' } | { page: 'downloads' } | { page: 'settings' } | { page: 'faq' } | { page: 'game'; id: string; tab?: GameTab }
 export type GameTab = 'setup' | 'configs' | 'updates' | 'about'
 
 export interface Toast {

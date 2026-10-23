@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import type { LibraryItem } from '../../../shared/types'
+import type { ArtKind, LibraryItem } from '../../../shared/types'
 import { COVER_SCHEME } from '../../../shared/ipc'
 
 const iconCache = new Map<string, Promise<string | null>>()
@@ -66,14 +66,16 @@ export function monogram(name: string): string {
     .toUpperCase()
 }
 
-export function coverUrl(item: LibraryItem): string | null {
-  return item.entry.coverVersion ? `${COVER_SCHEME}://cover/${item.entry.id}?v=${item.entry.coverVersion}` : null
+/** Imagem escolhida pelo usuário (capa ou banner); a versão na URL invalida o cache a cada troca. */
+export function artUrl(item: LibraryItem, kind: ArtKind): string | null {
+  const version = kind === 'cover' ? item.entry.coverVersion : item.entry.bannerVersion
+  return version ? `${COVER_SCHEME}://${kind}/${item.entry.id}?v=${version}` : null
 }
 
 /** Capa: imagem escolhida pelo usuário, ou gradiente listrado com ícone do .exe / monograma. */
 export function GameCover({ item, fontSize = 44, className = '' }: { item: LibraryItem; fontSize?: number; className?: string }) {
   const icon = useExeIcon(item)
-  const cover = coverUrl(item)
+  const cover = artUrl(item, 'cover')
   if (cover) return <img src={cover} alt="" draggable={false} className={`h-full w-full object-cover ${className}`} />
   return (
     <div className={`relative h-full w-full ${className}`} style={{ background: coverGradient(hueOfItem(item)) }}>
@@ -99,7 +101,7 @@ export function GameCover({ item, fontSize = 44, className = '' }: { item: Libra
 
 /** Quadradinho colorido com as iniciais (lista da barra lateral). */
 export function GameTile({ item, size = 22 }: { item: LibraryItem; size?: number }) {
-  const cover = coverUrl(item)
+  const cover = artUrl(item, 'cover')
   return (
     <span
       className="grid shrink-0 place-items-center overflow-hidden rounded-md font-bold tracking-[-0.02em] text-white"

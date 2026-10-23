@@ -1,8 +1,8 @@
-import { ChevronLeft, FolderSearch, Image, ImageOff, LoaderCircle, Pencil, Play, SlidersHorizontal, Trash2 } from 'lucide-react'
+import { ChevronLeft, FolderSearch, ImageOff, LoaderCircle, Pencil, Play, SlidersHorizontal, Trash2 } from 'lucide-react'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { collectTodos, executablesFor, launchArgsFor } from '../../../shared/manifestUtils'
 import type { LibraryItem, RequirementsReport } from '../../../shared/types'
-import { GameCover, coverGradient, coverUrl, hueOfItem } from '../components/GameArt'
+import { GameCover, artUrl, coverGradient, hueOfItem } from '../components/GameArt'
 import { GlossaryText } from '../components/Glossary'
 import { NavIcon } from '../components/icons'
 import { statusTone, useStatusLabel } from '../components/Status'
@@ -175,7 +175,8 @@ export function GamePage({ id, tab }: { id: string; tab?: GameTab }) {
   const p = progress[id]
   const pending = report?.items.find((r) => !r.ok && !r.optional)
   const todos = item.manifest ? collectTodos(item.manifest) : []
-  const cover = coverUrl(item)
+  const cover = artUrl(item, 'cover')
+  const banner = artUrl(item, 'banner')
   const canLaunch = item.status !== 'missingFolder' && item.status !== 'unknownManifest' && !item.running && !item.busy && !!report?.executable
 
   const primary = (() => {
@@ -234,10 +235,16 @@ export function GamePage({ id, tab }: { id: string; tab?: GameTab }) {
 
   return (
     <div className="min-h-full">
-      {/* Arte de fundo */}
+      {/* Banner: imagem escolhida pelo usuário ou o gradiente do jogo (com a capa desfocada, se houver) */}
       <div className="relative h-[300px] overflow-hidden" style={{ background: coverGradient(hueOfItem(item)) }}>
-        {cover && <img src={cover} alt="" className="absolute inset-0 h-full w-full scale-110 object-cover opacity-60 blur-2xl" draggable={false} />}
-        <div className="stripes absolute inset-0" />
+        {banner ? (
+          <img src={banner} alt="" className="absolute inset-0 h-full w-full object-cover" draggable={false} />
+        ) : (
+          <>
+            {cover && <img src={cover} alt="" className="absolute inset-0 h-full w-full scale-110 object-cover opacity-60 blur-2xl" draggable={false} />}
+            <div className="stripes absolute inset-0" />
+          </>
+        )}
         <div className="absolute inset-0 bg-[linear-gradient(rgb(0_0_0/0)_30%,var(--panel)_100%)]" />
         <button
           type="button"
@@ -247,13 +254,34 @@ export function GamePage({ id, tab }: { id: string; tab?: GameTab }) {
           <ChevronLeft size={16} strokeWidth={2} />
           {t('game.back')}
         </button>
+        <button
+          type="button"
+          aria-label={t('game.setBanner')}
+          title={t('game.setBanner')}
+          onClick={() => act(() => window.api.library.pickArt(id, 'banner'))}
+          className="absolute top-[18px] right-6 grid h-8 w-8 place-items-center rounded-[9px] bg-[#111112]/55 text-[#ededee] backdrop-blur-md transition-colors hover:bg-[#111112]/75"
+        >
+          <Pencil size={15} strokeWidth={2} />
+        </button>
       </div>
 
       <div className="relative -mt-[84px] max-w-[980px] px-10 pb-12 max-md:px-6">
         <div className="flex flex-wrap items-end gap-[22px]">
-          <div className="h-[150px] w-[120px] shrink-0 overflow-hidden rounded-xl border border-white/10 shadow-[0_20px_40px_rgb(0_0_0/0.4)]">
+          <button
+            type="button"
+            aria-label={t('game.setCover')}
+            title={t('game.setCover')}
+            onClick={() => act(() => window.api.library.pickArt(id, 'cover'))}
+            className="group relative h-[150px] w-[120px] shrink-0 overflow-hidden rounded-xl border border-white/10 shadow-[0_20px_40px_rgb(0_0_0/0.4)]"
+          >
             <GameCover item={item} fontSize={30} />
-          </div>
+            {/* Ao passar o mouse (ou focar), um cinza claro cobre a capa com o lápis de trocar. */}
+            <span className="absolute inset-0 grid place-items-center bg-[#e4e4e7]/45 opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+              <span className="grid h-9 w-9 place-items-center rounded-full bg-[#111112]/60 text-[#ededee] backdrop-blur-md">
+                <Pencil size={16} strokeWidth={2} />
+              </span>
+            </span>
+          </button>
           <div className="min-w-[240px] flex-1 pb-1">
             {item.manifest?.originalGame && <div className="mb-1.5 text-[13px] text-muted">{item.manifest.originalGame}</div>}
             <h1 className="text-[34px] leading-[1.05] font-semibold tracking-[-0.03em]">{item.name}</h1>
@@ -282,12 +310,14 @@ export function GamePage({ id, tab }: { id: string; tab?: GameTab }) {
                 <MenuItem icon={<FolderSearch size={15} />} onClick={() => act(() => window.api.library.changeFolder(id))}>
                   {t('game.changeFolder')}
                 </MenuItem>
-                <MenuItem icon={<Image size={15} />} onClick={() => act(() => window.api.library.pickCover(id))}>
-                  {t('game.setCover')}
-                </MenuItem>
-                {item.entry.coverVersion && (
-                  <MenuItem icon={<ImageOff size={15} />} onClick={() => act(() => window.api.library.clearCover(id))}>
+                {!!item.entry.coverVersion && (
+                  <MenuItem icon={<ImageOff size={15} />} onClick={() => act(() => window.api.library.clearArt(id, 'cover'))}>
                     {t('game.clearCover')}
+                  </MenuItem>
+                )}
+                {!!item.entry.bannerVersion && (
+                  <MenuItem icon={<ImageOff size={15} />} onClick={() => act(() => window.api.library.clearArt(id, 'banner'))}>
+                    {t('game.clearBanner')}
                   </MenuItem>
                 )}
                 <div className="mx-1 my-1 h-px bg-line" />

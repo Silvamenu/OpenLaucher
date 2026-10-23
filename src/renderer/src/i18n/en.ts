@@ -6,6 +6,7 @@ export const en: Record<TranslationKey, string> = {
   'nav.library': 'Library',
   'nav.add': 'Add game',
   'nav.settings': 'Settings',
+  'nav.faq': 'FAQ',
   'nav.games': 'Games',
 
   'appUpdate.available': 'Update available — v{version}',
@@ -63,6 +64,46 @@ export const en: Record<TranslationKey, string> = {
   'glossary.decomp.title': 'Decompilation',
   'glossary.decomp.text': "The game's source code, rebuilt by fans from the original. It's what makes it possible to remake the game to run on PC.",
 
+  'faq.title': 'Frequently asked questions',
+  'faq.subtitle': 'Quick answers about ROMs, ports and how Relaunch works.',
+  'faq.rom.q': 'What is a ROM?',
+  'faq.rom.note': "“Don't search the internet for game name + ROM”",
+  'faq.rom.a':
+    "A ROM is a copy of the original game in a single file (for example, .z64), made from the cartridge. Ports need it because they take the game's content from it, such as graphics, sounds and text. That content is copyrighted, so it doesn't come with the port.\nWebsites that offer ROMs for download distribute pirated copies and often hide malware in the files. The recommended way is to use a copy (a \"dump\") of the cartridge you own, made with a device built for that.\nRelaunch doesn't provide, download or point to where to get ROMs. It is also not responsible for the files and executables used with it and assumes that whoever uses them obtained them legally.",
+  'faq.useRom.q': 'How do I use my ROM in the game?',
+  'faq.useRom.a':
+    '1. In the library, open the game and go to the "{setupTab}" tab.\n2. On the ROM item, click "{selectFile}" and choose the file. Relaunch checks that it is a version the port accepts. For the port to find the ROM on its own, also use "{copyToGame}".\n3. Click "{openFirstTime}" and follow what the port asks: it generates the assets from the ROM. This only happens the first time.',
+  'faq.sha1.q': 'It says "Unrecognized SHA-1". What now?',
+  'faq.sha1.a':
+    'The file doesn\'t match any version the port accepts. It may be a different version of the game (from another region, for example), a modified file or the ROM in another format (.n64 or .v64), which has a different SHA-1.\nThe "{aboutTab}" tab has the project\'s link, where you can see which versions it accepts. In several ports this item is optional: the game itself checks the ROM when it opens.',
+  'faq.port.q': 'What is a port? Is it an emulator?',
+  'faq.port.a':
+    "It's not an emulator. A port is the game rebuilt by fans to run natively on PC, from the original code decompiled or recompiled. That's why it usually has widescreen, higher frame rates and mod support.\nThe port only brings the program: the game's content comes from your ROM.",
+  'faq.download.q': "Why doesn't Relaunch download the full game?",
+  'faq.download.a':
+    "Because the games' content is copyrighted. Relaunch only downloads the port published by the project itself, straight from its official GitHub repository over HTTPS. The ROM and the assets always come from your cartridge.",
+  'faq.art.q': "How do I change a game's cover and banner?",
+  'faq.art.a':
+    'On the game page, hover over the cover and click the pencil to choose another image. For the banner at the top, use the pencil in the top-right corner.\nTo go back to the default image, open "{gameOptions}" (the gear next to "{play}") and choose "{clearCover}" or "{clearBanner}". Images stay on this computer only: PNG, JPEG, GIF or WebP up to 20 MB.',
+  'faq.saves.q': 'Do I lose my saves when the game updates?',
+  'faq.saves.a':
+    'No. Before updating, Relaunch backs up the files that will be replaced and never overwrites saves, settings, mods or files generated from your ROM. If something goes wrong, the previous version comes back on its own, and you can also roll back from the "{updatesTab}" tab.',
+  'faq.wontStart.q': "The game won't open. What should I do?",
+  'faq.wontStart.a':
+    'Check the "{setupTab}" tab: required items need a ✓. If the game folder moved, use "{locate}".\nThe first time, the port may take a few minutes generating the assets. If the problem persists, the "{aboutTab}" tab has the project\'s link, where each port provides support.',
+  'faq.warning.q': 'Windows or my antivirus warned about an executable. Is it safe?',
+  'faq.warning.a':
+    "Many ports are open projects without a digital signature, so Windows SmartScreen may warn when opening them. Relaunch only downloads from each project's official repository over HTTPS and checks the file's integrity when the project publishes a checksum.\nEven so, only open executables that came from Relaunch or from the project's official page. When in doubt, don't run it.",
+  'faq.data.q': 'Do I need an account? Where is my data?',
+  'faq.data.a':
+    'No account needed. Profiles, library and settings stay on this computer only, in the app data folder ("{settings}" > "{openData}"). Relaunch has no servers: it only accesses GitHub to look up and download the versions of the ports and of the launcher itself.',
+  'faq.pin.q': 'I forgot my profile PIN.',
+  'faq.pin.a':
+    'Enter another profile (or create a new one), go to "{settings}" and remove the profile with the forgotten PIN. Then just create it again: the library and games stay as they are.',
+  'faq.official.q': 'Is Relaunch official Nintendo software?',
+  'faq.official.a':
+    'No. Relaunch and the ports are independent fan-made projects, not affiliated with Nintendo or with the other companies that own the games.',
+
   'add.title': 'Add game',
   'add.subtitle':
     'Point to the folder of a port you already installed or download one from the list below. The app detects which project it is and checks what is missing.',
@@ -95,8 +136,10 @@ export const en: Record<TranslationKey, string> = {
   'game.rename': 'Rename',
   'game.renamePrompt': 'Display name',
   'game.changeFolder': 'Change game folder',
-  'game.setCover': 'Choose cover…',
+  'game.setCover': 'Change cover',
   'game.clearCover': 'Remove cover',
+  'game.setBanner': 'Change banner',
+  'game.clearBanner': 'Remove banner',
   'game.remove': 'Remove from library',
   'game.removeConfirm': 'Remove "{name}" from the library? Game files will not be deleted.',
   'game.version': 'Version',
@@ -367,5 +410,6 @@ export const en: Record<TranslationKey, string> = {
   'error.WRONG_PIN': 'Wrong PIN. Try again.',
   'error.PROFILE_EXISTS': 'A profile with this name already exists.',
   'error.INVALID_PROFILE': 'Invalid profile data.',
+  'error.INVALID_IMAGE': 'Choose a PNG, JPEG, GIF or WebP image up to 20 MB.',
   'error.UNKNOWN': 'Unexpected error: {message}'
 }

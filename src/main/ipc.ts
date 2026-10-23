@@ -3,7 +3,7 @@ import path from 'node:path'
 import { AppError, toErrorShape } from '../shared/errors'
 import type { EntryPatch } from '../shared/ipc'
 import { installableOn } from '../shared/manifestUtils'
-import type { AppInfo, ConfigFileView, IpcResult, SettingsPatch, SettingsView } from '../shared/types'
+import type { AppInfo, ArtKind, ConfigFileView, IpcResult, SettingsPatch, SettingsView } from '../shared/types'
 import type { AppUpdater } from './appUpdater'
 import { listConfigBackups, readConfigFile, restoreConfigBackup, saveConfigFile } from './configFiles'
 import type { AppContext } from './context'
@@ -28,6 +28,11 @@ export interface Services {
 
 function str(value: unknown, name = 'valor'): string {
   if (typeof value !== 'string' || value.length === 0 || value.length > 4096) throw new AppError('UNKNOWN', `Parâmetro inválido: ${name}`)
+  return value
+}
+
+function artKind(value: unknown): ArtKind {
+  if (value !== 'cover' && value !== 'banner') throw new AppError('UNKNOWN', 'Parâmetro inválido: kind')
   return value
 }
 
@@ -155,15 +160,17 @@ export function registerIpc(s: Services): void {
   })
   handle('library:launch', (id) => library.launch(str(id)))
   handle('library:icon', (id) => library.icon(str(id)))
-  handle('library:pickCover', async (id) => {
+  handle('library:pickArt', async (id, kind) => {
+    const entryId = library.requireEntry(str(id)).id
+    const art = artKind(kind)
     const file = await openDialog({
-      title: text().pickCover,
+      title: art === 'cover' ? text().pickCover : text().pickBanner,
       properties: ['openFile'],
       filters: [{ name: text().images, extensions: COVER_EXTENSIONS.map((ext) => ext.slice(1)) }]
     })
-    return file ? library.setCover(str(id), file) : library.item(entryOrThrow(str(id)).entry)
+    return file ? library.setArt(entryId, art, file) : library.item(library.requireEntry(entryId))
   })
-  handle('library:clearCover', (id) => library.clearCover(str(id)))
+  handle('library:clearArt', (id, kind) => library.clearArt(str(id), artKind(kind)))
   // Pasta escolhida aqui no diálogo; o download segue o mesmo caminho validado das atualizações.
   handle('library:install', async (manifestId) => {
     const manifest = ctx.getManifest(str(manifestId, 'manifestId'))

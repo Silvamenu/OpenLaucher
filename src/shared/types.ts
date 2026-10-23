@@ -79,7 +79,12 @@ export interface GameEntry {
   firstRunDone: Record<string, boolean>
   /** Capa personalizada (incrementa a cada troca, para invalidar o cache da imagem). */
   coverVersion?: number
+  /** Banner personalizado do topo da página do jogo (mesma lógica da capa). */
+  bannerVersion?: number
 }
+
+/** Imagens que o usuário pode trocar em cada jogo. */
+export type ArtKind = 'cover' | 'banner'
 
 export type GameStatus = 'ready' | 'needsSetup' | 'missingFolder' | 'unknownManifest'
 
@@ -278,6 +283,7 @@ export type AppErrorCode =
   | 'WRONG_PIN'
   | 'PROFILE_EXISTS'
   | 'INVALID_PROFILE'
+  | 'INVALID_IMAGE'
   | 'UNKNOWN'
 
 export interface AppErrorShape {

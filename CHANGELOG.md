@@ -18,6 +18,8 @@ O conteúdo de cada versão é usado como nota do release no GitHub (`npm run re
 - Manifestos para Ship of Harkinian, 2 Ship 2 Harkinian, Zelda 64: Recompiled, Starship, SpaghettiKart e Super Mario 64 PC Port. Um jogo novo é só um arquivo `manifests/<id>.json`.
 - Checklist de configuração com ações: selecionar a sua ROM (com validação por SHA-1), abrir a pasta e abrir o jogo pela primeira vez.
 - Dicas nos termos técnicos (**ROM**, **assets**, **port**, **SHA-1**, **.o2r**, **release**, **manifesto**…): passe o mouse ou use o Tab para ver o que cada um significa. A da ROM também explica como usá-la no jogo.
+- Capa e banner de cada jogo editáveis: lápis no canto do banner e na capa (ao passar o mouse). Para voltar ao padrão, use o menu ⚙ do jogo.
+- Página **Dúvidas frequentes** na barra lateral: o que é uma ROM e como usá-la, SHA-1 não reconhecido, saves nas atualizações, avisos do Windows, dados e PIN.
 - Editor dos arquivos de configuração (JSON/INI/texto) em formulário ou texto, com backup automático antes de salvar.
 - Botão **Jogar** com registro do último acesso e do tempo jogado.
 - Busca rápida de jogos com `Ctrl+K` e página **Downloads** com o progresso das atualizações.

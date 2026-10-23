@@ -81,14 +81,15 @@ Falta algum? Cada jogo é um arquivo JSON, sem mexer no código: veja [Criar um 
 | **Biblioteca**              | Grade com o status de cada jogo (**Pronto**, **Falta configurar**, **Pasta não encontrada**), filtros e busca rápida com `Ctrl+K`.                                                                                                           |
 | **Perfis**                  | Tela **Quem está jogando?** ao abrir: perfis locais com cor e PIN opcional, que podem ir para outro computador num arquivo `.relaunch`. Nada vai para a internet.                                                                            |
 | **Adicionar jogo**          | **Baixar** instala o port direto do repositório oficial. Ou você escolhe a pasta de um port já instalado e o app detecta o projeto pelos arquivos dela (inclusive numa subpasta).                                                            |
-| **Página do jogo**          | Abas **Configuração**, **Arquivos de config**, **Atualizações** e **Sobre**. Pelo menu do jogo: renomear, escolher uma capa, trocar a pasta ou remover da biblioteca (os arquivos do jogo não são apagados).                                 |
+| **Página do jogo**          | Abas **Configuração**, **Arquivos de config**, **Atualizações** e **Sobre**. Pelo menu do jogo: renomear, trocar a pasta, voltar à capa ou ao banner padrão e remover da biblioteca (os arquivos do jogo não são apagados).                  |
 | **Checklist**               | Requisitos com ✓/✗ e ações: selecionar a sua ROM (validada por tamanho ou SHA-1), copiá-la para a pasta do jogo, abrir a pasta, abrir o jogo pela primeira vez e ver instruções. Termos como ROM e SHA-1 têm uma dica que explica o que são. |
 | **Editor de configs**       | Arquivos JSON, INI e texto, editáveis em formulário ou como texto. Valida antes de salvar, faz backup automático e permite restaurar.                                                                                                        |
 | **Jogar**                   | Abre o executável com a pasta do jogo como diretório de trabalho, mais os argumentos e variáveis de ambiente do manifesto. Registra o último acesso e o tempo jogado.                                                                        |
-| **Capas**                   | Capa gerada com a cor do manifesto, ou uma imagem escolhida por você.                                                                                                                                                                        |
+| **Capa e banner**           | Gerados com a cor do manifesto, ou imagens escolhidas por você: clique no lápis do banner ou passe o mouse sobre a capa.                                                                                                                     |
 | **Atualizações dos jogos**  | Busca versões novas nos GitHub Releases de cada projeto, faz backup, preserva saves e volta sozinho se algo falhar. Veja [como funciona](#atualizações-dos-jogos).                                                                           |
 | **Downloads**               | Atualizações em andamento, disponíveis e concluídas na sessão. O progresso também aparece na barra lateral.                                                                                                                                  |
 | **Atualização do launcher** | Baixa a versão nova do Relaunch em segundo plano e avisa com um botão azul na barra lateral. Depois, o popup **Novidades** mostra o que mudou.                                                                                               |
+| **Dúvidas frequentes**      | Respostas sobre ROMs (o que são e como usar), SHA-1, atualizações e saves, avisos do Windows, dados e PIN.                                                                                                                                   |
 | **Configurações**           | Tema escuro, claro ou do sistema; idioma (PT-BR padrão, EN); perfil; token do GitHub; notificações; atualização automática por jogo; pastas de manifestos e de dados; reescanear pastas.                                                     |
 
 ![Página do Ship of Harkinian com os botões Jogar e Atualizar para 9.3.1, a versão instalada, o último jogo e o tempo jogado](docs/screenshots/jogo.png)
@@ -149,7 +150,7 @@ Sem login, a API do GitHub permite **60 consultas por hora**. O app usa ETag (`I
 | `relaunch.json`   | Biblioteca, configurações e cache.                                              |
 | `backups/`        | Backups feitos antes de cada atualização de jogo (os 2 mais recentes por jogo). |
 | `config-backups/` | Backups dos arquivos de configuração salvos pelo editor (até 10 por arquivo).   |
-| `covers/`         | Capas que você escolheu para os jogos.                                          |
+| `covers/`         | Capas e banners que você escolheu para os jogos.                                |
 | `manifests/`      | Seus manifestos, que adicionam ou substituem os embutidos.                      |
 
 Abra essa pasta em **Configurações → Abrir pasta de dados do app**. Desinstalar o Relaunch não apaga esses dados.

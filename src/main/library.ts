@@ -5,15 +5,17 @@ import path from 'node:path'
 import { AppError } from '../shared/errors'
 import type { EntryPatch } from '../shared/ipc'
 import type { Manifest } from '../shared/manifest'
-import type { DetectionCandidate, GameEntry, LibraryItem, RequirementsReport } from '../shared/types'
+import type { ArtKind, DetectionCandidate, GameEntry, LibraryItem, RequirementsReport } from '../shared/types'
 import type { AppContext } from './context'
 import { detectGame } from './detect'
-import { isDirectory, isFile, isInside, pathExists, sanitizeFileName } from './fsutil'
+import { imageExtension, isDirectory, isFile, isInside, pathExists, readSmallFile, sanitizeFileName, writeFileAtomic } from './fsutil'
 import type { GameLauncher } from './launcher'
 import { evaluateRequirements, validateUserFile } from './requirements'
 import { listBackups, toBackupInfo } from './updateCore'
 
 export const COVER_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.webp', '.gif']
+/** Capa e banner escolhidos pelo usuário: até 20 MB, conferidos pelo conteúdo (não só pela extensão). */
+const ART_MAX_BYTES = 20 * 1024 * 1024
 
 export class LibraryService {
   private readonly busy = new Set<string>()
@@ -149,7 +151,8 @@ export class LibraryService {
     if (this.isRunning(id) || this.busy.has(id)) throw new AppError('BUSY')
     this.ctx.store.removeEntry(id)
     this.executables.delete(id)
-    await this.removeCoverFiles(id)
+    await this.removeArtFiles(id, 'cover')
+    await this.removeArtFiles(id, 'banner')
     // Backups que o app fez deste jogo ficariam órfãos: readicionado, o jogo ganha outro id. Os arquivos do jogo ficam.
     for (const backup of await listBackups(this.backupsDirFor(entry), id)) {
       await fs.rm(backup.dir, { recursive: true, force: true }).catch(() => undefined)
@@ -262,39 +265,48 @@ export class LibraryService {
     return url
   }
 
-  // Capas personalizadas ------------------------------------------------------
+  // Capas e banners personalizados ---------------------------------------------
 
-  async coverFile(id: string): Promise<string | null> {
+  /** A capa mantém o nome de sempre (<id>.png); o banner ganha o sufixo -banner. */
+  private artBase(id: string, kind: ArtKind): string {
+    return path.join(this.ctx.paths.covers, kind === 'cover' ? id : `${id}-banner`)
+  }
+
+  async artFile(id: string, kind: ArtKind): Promise<string | null> {
     for (const ext of COVER_EXTENSIONS) {
-      const file = path.join(this.ctx.paths.covers, `${id}${ext}`)
+      const file = `${this.artBase(id, kind)}${ext}`
       if (await pathExists(file)) return file
     }
     return null
   }
 
-  private async removeCoverFiles(id: string): Promise<void> {
-    for (const ext of COVER_EXTENSIONS) await fs.rm(path.join(this.ctx.paths.covers, `${id}${ext}`), { force: true })
+  private async removeArtFiles(id: string, kind: ArtKind, keep?: string): Promise<void> {
+    for (const ext of COVER_EXTENSIONS) if (ext !== keep) await fs.rm(`${this.artBase(id, kind)}${ext}`, { force: true })
   }
 
-  async setCover(id: string, source: string): Promise<LibraryItem> {
+  /** Lê a entrada de novo depois das esperas: o tempo de jogo, por exemplo, pode ter mudado no meio. */
+  private async saveArtVersion(id: string, kind: ArtKind, changed: boolean): Promise<LibraryItem> {
     const entry = this.requireEntry(id)
-    const ext = path.extname(source).toLowerCase()
-    if (!COVER_EXTENSIONS.includes(ext)) throw new AppError('INVALID_FILE', source)
-    await fs.mkdir(this.ctx.paths.covers, { recursive: true })
-    await this.removeCoverFiles(id)
-    await fs.copyFile(source, path.join(this.ctx.paths.covers, `${id}${ext}`))
-    const next = { ...entry, coverVersion: (entry.coverVersion ?? 0) + 1 }
+    const version = changed ? ((kind === 'cover' ? entry.coverVersion : entry.bannerVersion) ?? 0) + 1 : undefined
+    const next: GameEntry = kind === 'cover' ? { ...entry, coverVersion: version } : { ...entry, bannerVersion: version }
     this.ctx.store.saveEntry(next)
     await this.broadcast()
     return this.item(next)
   }
 
-  async clearCover(id: string): Promise<LibraryItem> {
-    const entry = this.requireEntry(id)
-    await this.removeCoverFiles(id)
-    const next = { ...entry, coverVersion: undefined }
-    this.ctx.store.saveEntry(next)
-    await this.broadcast()
-    return this.item(next)
+  async setArt(id: string, kind: ArtKind, source: string): Promise<LibraryItem> {
+    this.requireEntry(id)
+    const data = await readSmallFile(source, ART_MAX_BYTES)
+    const ext = data && imageExtension(data)
+    if (!data || !ext) throw new AppError('INVALID_IMAGE', source)
+    await writeFileAtomic(`${this.artBase(id, kind)}${ext}`, data)
+    await this.removeArtFiles(id, kind, ext)
+    return this.saveArtVersion(id, kind, true)
+  }
+
+  async clearArt(id: string, kind: ArtKind): Promise<LibraryItem> {
+    this.requireEntry(id)
+    await this.removeArtFiles(id, kind)
+    return this.saveArtVersion(id, kind, false)
   }
 }

@@ -13,6 +13,7 @@ const messages = {
     profileFile: 'Perfil do Relaunch',
     pickFile: 'Selecione o arquivo',
     pickCover: 'Escolha uma imagem de capa',
+    pickBanner: 'Escolha uma imagem de banner (de preferência larga, como 1920 × 600)',
     images: 'Imagens',
     allFiles: 'Todos os arquivos'
   },
@@ -27,6 +28,7 @@ const messages = {
     profileFile: 'Relaunch profile',
     pickFile: 'Select the file',
     pickCover: 'Choose a cover image',
+    pickBanner: 'Choose a banner image (preferably wide, like 1920 × 600)',
     images: 'Images',
     allFiles: 'All files'
   }

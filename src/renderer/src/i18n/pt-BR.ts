@@ -5,6 +5,7 @@ export const ptBR = {
   'nav.library': 'Biblioteca',
   'nav.add': 'Adicionar jogo',
   'nav.settings': 'Configurações',
+  'nav.faq': 'Dúvidas frequentes',
   'nav.games': 'Jogos',
 
   'appUpdate.available': 'Atualização disponível — v{version}',
@@ -61,6 +62,46 @@ export const ptBR = {
   'glossary.decomp.title': 'Decompilação',
   'glossary.decomp.text': 'Código-fonte do jogo reconstruído por fãs a partir do original. É o que permite refazer o jogo para rodar no PC.',
 
+  'faq.title': 'Dúvidas frequentes',
+  'faq.subtitle': 'Respostas rápidas sobre ROMs, ports e o funcionamento do Relaunch.',
+  'faq.rom.q': 'O que é uma ROM?',
+  'faq.rom.note': '“Não procure nome do jogo + ROM na internet”',
+  'faq.rom.a':
+    'ROM é a cópia do jogo original em um único arquivo (por exemplo, .z64), feita a partir do cartucho. Os ports precisam dela porque é dela que tiram o conteúdo do jogo, como gráficos, sons e textos. Esse conteúdo tem direitos autorais, por isso não vem junto com o port.\nSites que oferecem ROMs para baixar distribuem cópias piratas e muitas vezes escondem vírus nos arquivos. O recomendado é usar a cópia (o "dump") do cartucho que você possui, feita com um aparelho próprio para isso.\nO Relaunch não fornece, não baixa e não indica onde conseguir ROMs. Ele também não se responsabiliza pelos arquivos e executáveis usados com ele e parte do princípio de que todos foram obtidos de forma legal por quem os usa.',
+  'faq.useRom.q': 'Como uso a minha ROM no jogo?',
+  'faq.useRom.a':
+    '1. Na biblioteca, abra o jogo e vá à aba "{setupTab}".\n2. No item da ROM, clique em "{selectFile}" e escolha o arquivo. O Relaunch confere se é uma versão que o port aceita. Para o port encontrar a ROM sozinho, use também "{copyToGame}".\n3. Clique em "{openFirstTime}" e siga o que o port pedir: ele gera os assets a partir da ROM. Isso só acontece na primeira vez.',
+  'faq.sha1.q': 'Apareceu "SHA-1 não reconhecido". E agora?',
+  'faq.sha1.a':
+    'O arquivo não é igual a nenhuma versão que o port aceita. Pode ser uma versão diferente do jogo (de outra região, por exemplo), um arquivo modificado ou a ROM em outro formato (.n64 ou .v64), que tem outro SHA-1.\nA aba "{aboutTab}" tem o link do projeto, onde você vê quais versões ele aceita. Em vários ports esse item é opcional: o próprio jogo confere a ROM quando abre.',
+  'faq.port.q': 'O que é um port? É um emulador?',
+  'faq.port.a':
+    'Não é um emulador. Um port é o jogo refeito por fãs para rodar direto no PC, a partir do código original decompilado ou recompilado. Por isso costuma ter tela widescreen, mais quadros por segundo e suporte a mods.\nO port traz só o programa: o conteúdo do jogo vem da sua ROM.',
+  'faq.download.q': 'Por que o Relaunch não baixa o jogo completo?',
+  'faq.download.a':
+    'Porque o conteúdo dos jogos tem direitos autorais. O Relaunch só baixa o port publicado pelo próprio projeto, direto do repositório oficial no GitHub e por HTTPS. A ROM e os assets vêm sempre do seu cartucho.',
+  'faq.art.q': 'Como troco a capa e o banner de um jogo?',
+  'faq.art.a':
+    'Na página do jogo, passe o mouse sobre a capa e clique no lápis para escolher outra imagem. Para o banner do topo, use o lápis no canto superior direito.\nPara voltar à imagem padrão, abra "{gameOptions}" (a engrenagem ao lado de "{play}") e escolha "{clearCover}" ou "{clearBanner}". As imagens ficam só neste computador: PNG, JPEG, GIF ou WebP de até 20 MB.',
+  'faq.saves.q': 'Meus saves se perdem quando o jogo atualiza?',
+  'faq.saves.a':
+    'Não. Antes de atualizar, o Relaunch faz backup dos arquivos que vão ser trocados e nunca sobrescreve saves, configurações, mods e arquivos gerados da sua ROM. Se algo der errado, a versão anterior volta sozinha, e você também pode voltar a ela pela aba "{updatesTab}".',
+  'faq.wontStart.q': 'O jogo não abre. O que eu faço?',
+  'faq.wontStart.a':
+    'Confira a aba "{setupTab}": os itens obrigatórios precisam estar com ✓. Se a pasta do jogo mudou de lugar, use "{locate}".\nNa primeira vez, o port pode levar alguns minutos gerando os assets. Se o problema continuar, a aba "{aboutTab}" tem o link do projeto, onde fica o suporte de cada port.',
+  'faq.warning.q': 'O Windows ou o antivírus avisou sobre um executável. É seguro?',
+  'faq.warning.a':
+    'Muitos ports são projetos abertos sem assinatura digital, então o Windows SmartScreen pode avisar ao abrir. O Relaunch só baixa do repositório oficial de cada projeto, por HTTPS, e confere a integridade do arquivo quando o projeto publica o checksum.\nMesmo assim, só abra executáveis que vieram do Relaunch ou da página oficial do projeto. Na dúvida, não execute.',
+  'faq.data.q': 'Preciso de conta? Onde ficam meus dados?',
+  'faq.data.a':
+    'Não precisa de conta. Perfis, biblioteca e configurações ficam só neste computador, na pasta de dados do app ("{settings}" > "{openData}"). O Relaunch não tem servidores: ele só acessa o GitHub para buscar e baixar as versões dos ports e do próprio launcher.',
+  'faq.pin.q': 'Esqueci o PIN do meu perfil.',
+  'faq.pin.a':
+    'Entre em outro perfil (ou crie um novo), vá em "{settings}" e remova o perfil do PIN esquecido. Depois é só criar o perfil de novo: a biblioteca e os jogos continuam como estão.',
+  'faq.official.q': 'O Relaunch é oficial da Nintendo?',
+  'faq.official.a':
+    'Não. O Relaunch e os ports são projetos independentes feitos por fãs, sem ligação com a Nintendo nem com as outras empresas donas dos jogos.',
+
   'add.title': 'Adicionar jogo',
   'add.subtitle': 'Aponte a pasta de um port já instalado ou baixe um da lista abaixo. O app detecta qual projeto é e verifica o que falta.',
   'add.noFolder': 'Nenhuma pasta selecionada ainda.',
@@ -92,8 +133,10 @@ export const ptBR = {
   'game.rename': 'Renomear',
   'game.renamePrompt': 'Nome exibido',
   'game.changeFolder': 'Trocar pasta do jogo',
-  'game.setCover': 'Escolher capa…',
+  'game.setCover': 'Trocar capa',
   'game.clearCover': 'Remover capa',
+  'game.setBanner': 'Trocar banner',
+  'game.clearBanner': 'Remover banner',
   'game.remove': 'Remover da biblioteca',
   'game.removeConfirm': 'Remover "{name}" da biblioteca? Os arquivos do jogo não serão apagados.',
   'game.version': 'Versão',
@@ -365,6 +408,7 @@ export const ptBR = {
   'error.WRONG_PIN': 'PIN incorreto. Tente de novo.',
   'error.PROFILE_EXISTS': 'Já existe um perfil com esse nome.',
   'error.INVALID_PROFILE': 'Dados do perfil inválidos.',
+  'error.INVALID_IMAGE': 'Escolha uma imagem PNG, JPEG, GIF ou WebP de até 20 MB.',
   'error.UNKNOWN': 'Erro inesperado: {message}'
 } as const
 

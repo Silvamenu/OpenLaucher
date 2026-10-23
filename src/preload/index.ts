@@ -41,8 +41,8 @@ const api: RelaunchApi = {
     openFolder: (id) => call('library:openFolder', id),
     launch: (id) => call('library:launch', id),
     icon: (id) => call('library:icon', id),
-    pickCover: (id) => call('library:pickCover', id),
-    clearCover: (id) => call('library:clearCover', id),
+    pickArt: (id, kind) => call('library:pickArt', id, kind),
+    clearArt: (id, kind) => call('library:clearArt', id, kind),
     install: (manifestId) => call('library:install', manifestId)
   },
   profiles: {

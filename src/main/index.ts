@@ -141,9 +141,11 @@ async function bootstrap(): Promise<void> {
     }
   )
 
+  // rl-cover://cover/<id> ou rl-cover://banner/<id>
   protocol.handle(COVER_SCHEME, async (request) => {
-    const id = decodeURIComponent(new URL(request.url).pathname.replace(/^\/+/, ''))
-    const file = /^[\w-]+$/.test(id) ? await library.coverFile(id) : null
+    const { hostname: kind, pathname } = new URL(request.url)
+    const id = decodeURIComponent(pathname.replace(/^\/+/, ''))
+    const file = (kind === 'cover' || kind === 'banner') && /^[\w-]+$/.test(id) ? await library.artFile(id, kind) : null
     if (!file) return new Response('not found', { status: 404 })
     return net.fetch(pathToFileURL(file).toString())
   })

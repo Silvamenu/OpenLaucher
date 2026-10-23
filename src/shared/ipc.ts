@@ -1,5 +1,6 @@
 import type {
   AppInfo,
+  ArtKind,
   AppUpdateState,
   ConfigBackup,
   ConfigFileView,
@@ -65,8 +66,9 @@ export interface RelaunchApi {
     openFolder(entryId: string): Promise<void>
     launch(entryId: string): Promise<void>
     icon(entryId: string): Promise<string | null>
-    pickCover(entryId: string): Promise<LibraryItem>
-    clearCover(entryId: string): Promise<LibraryItem>
+    /** Escolhe a imagem no diálogo do processo principal (sem mudança se cancelar). */
+    pickArt(entryId: string, kind: ArtKind): Promise<LibraryItem>
+    clearArt(entryId: string, kind: ArtKind): Promise<LibraryItem>
     /** Escolhe a pasta, cadastra o jogo e baixa a versão mais recente em segundo plano (null se cancelar o diálogo). */
     install(manifestId: string): Promise<LibraryItem | null>
   }
