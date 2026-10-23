@@ -1,4 +1,7 @@
 import { z } from 'zod'
+import { CATEGORIES, COMPATIBILITY, RUNNER_GAME_FILE } from './catalog'
+
+export { RUNNER_GAME_FILE }
 
 /**
  * Esquema dos manifestos de jogos (manifests/<id>.json).
@@ -115,22 +118,40 @@ const noUpdates = z.object({
   _todo: todoSchema
 })
 
+const manifestId = z.string().regex(/^[a-z0-9][a-z0-9_-]*$/, 'id deve conter apenas letras minúsculas, números, "-" e "_"')
+const argList = z.union([z.array(z.string()), perPlatform(z.array(z.string()))])
+
+/**
+ * Jogo que roda num emulador instalado pelo app (outro manifesto, ex.: "rpcs3"). O jogo é o arquivo
+ * do próprio usuário (requisito userFile de id "game"): nos argumentos, {gameFile} vira o caminho
+ * desse arquivo e {gameDir} a pasta dele.
+ */
+const runnerSchema = z.object({
+  manifest: manifestId,
+  args: argList.default(['{gameFile}']),
+  _todo: todoSchema
+})
+
 export const manifestSchema = z.object({
-  id: z.string().regex(/^[a-z0-9][a-z0-9_-]*$/, 'id deve conter apenas letras minúsculas, números, "-" e "_"'),
+  id: manifestId,
   name: nonEmpty,
   originalGame: z.string().optional(),
   description: z.string().optional(),
+  /** Lista do catálogo (plataforma original do jogo); manifestos do usuário sem ela vão para "custom". */
+  category: z.enum(CATEGORIES).default('custom'),
+  compatibility: z.enum(COMPATIBILITY).optional(),
+  runner: runnerSchema.optional(),
   repoUrl: httpsUrl,
   website: httpsUrl.optional(),
   accentColor: z
     .string()
     .regex(/^#[0-9a-fA-F]{6}$/)
     .optional(),
-  executables: perPlatform(relativePathList.min(1)),
-  detectFiles: relativePathList.min(1),
+  executables: perPlatform(relativePathList.min(1)).default({}),
+  detectFiles: relativePathList.default([]),
   requirements: z.array(requirementSchema).default([]),
   configFiles: z.array(configFileSchema).default([]),
-  launchArgs: z.union([z.array(z.string()), perPlatform(z.array(z.string()))]).default([]),
+  launchArgs: argList.default([]),
   /** Variáveis de ambiente extras ao iniciar (aceitam as mesmas variáveis de caminho, ex.: {gameDir}). */
   launchEnv: perPlatform(z.record(z.string(), z.string())).default({}),
   updates: z.discriminatedUnion('source', [githubUpdates, noUpdates]).default({ source: 'none' }),
@@ -145,11 +166,14 @@ export type Requirement = ParsedRequirement & { id: string }
 export type UserFileRequirement = Extract<Requirement, { type: 'userFile' }>
 export type ConfigFileSpec = z.output<typeof configFileSchema>
 export type GithubUpdates = z.output<typeof githubUpdates>
+export type Runner = z.output<typeof runnerSchema>
 
 export interface Manifest extends Omit<ParsedManifest, 'requirements'> {
   requirements: Requirement[]
   /** De onde o manifesto foi carregado (embutido no app ou pasta do usuário). */
   origin?: 'builtin' | 'user'
+  /** Gerado pelo app a partir do link de um repositório: só esses o app reescreve ou apaga. */
+  generated?: boolean
 }
 
 export type ManifestParseResult = { ok: true; manifest: Manifest } | { ok: false; error: string }
@@ -180,9 +204,26 @@ export function parseManifest(data: unknown): ManifestParseResult {
     seen.add(id)
     requirements.push({ ...req, id })
   }
+  if (parsed.runner) {
+    // O jogo roda no emulador: quem é instalado e atualizado é o emulador, não este manifesto.
+    if (parsed.runner.manifest === parsed.id) return { ok: false, error: 'runner.manifest: o emulador precisa ser outro manifesto' }
+    const game = requirements.find((r) => r.id === RUNNER_GAME_FILE)
+    if (game?.type !== 'userFile' || game.optional) {
+      return { ok: false, error: `requirements: jogos com runner precisam de um userFile obrigatório com id "${RUNNER_GAME_FILE}" (o arquivo do jogo)` }
+    }
+    // Quem abre é o emulador: executável, detecção e argumentos do jogo seriam ignorados.
+    const args = Array.isArray(parsed.launchArgs) ? parsed.launchArgs : Object.values(parsed.launchArgs).flat()
+    const exes = Object.values(parsed.executables).flat()
+    if (exes.length > 0 || parsed.detectFiles.length > 0 || args.length > 0 || Object.keys(parsed.launchEnv).length > 0) {
+      return { ok: false, error: 'runner: jogos com runner não usam executables, detectFiles, launchArgs nem launchEnv (use runner.args)' }
+    }
+    if (parsed.updates.source !== 'none') return { ok: false, error: 'updates: jogos com runner são atualizados pelo emulador (use "none")' }
+    return { ok: true, manifest: { ...parsed, requirements } }
+  }
   if (!Object.values(parsed.executables).some((list) => list && list.length > 0)) {
     return { ok: false, error: 'executables: informe ao menos uma plataforma' }
   }
+  if (parsed.detectFiles.length === 0) return { ok: false, error: 'detectFiles: informe ao menos um arquivo' }
   return { ok: true, manifest: { ...parsed, requirements } }
 }
 

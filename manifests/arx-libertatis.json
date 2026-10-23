@@ -1,0 +1,80 @@
+{
+  "id": "arx-libertatis",
+  "name": "Arx Libertatis",
+  "originalGame": "Arx Fatalis",
+  "description": "Port multiplataforma de Arx Fatalis baseado no código-fonte liberado pela Arkane, com correções de bugs e melhorias para sistemas atuais. Usa os arquivos de dados da sua própria cópia do jogo.",
+  "category": "pc",
+  "repoUrl": "https://github.com/arx/ArxLibertatis",
+  "website": "https://arx-libertatis.org",
+  "accentColor": "#a0522d",
+  "executables": {
+    "win32": ["arx.exe"],
+    "linux": ["arx"]
+  },
+  "detectFiles": ["arx.exe", "arx", "arx-portable.exe", "arx-portable", "bin/x64/arx.exe", "bin/amd64/arx"],
+  "requirements": [
+    {
+      "id": "data-pak",
+      "type": "file",
+      "label": "Arquivos do seu Arx Fatalis (data.pak e demais .pak)",
+      "patterns": ["data/data.pak", "data.pak", "{localAppData}/arx/data.pak", "{home}/Saved Games/Arx Libertatis/data.pak"],
+      "helpText": "Copie da sua instalação do Arx Fatalis (GOG, Steam ou CD com o patch 1.21) todos os arquivos .pak (data.pak, data2.pak, loc.pak, sfx.pak, speech.pak e, se existirem, loc_default.pak e speech_default.pak), mais as pastas misc e graph, para a subpasta data dentro da pasta do jogo. No Linux, os nomes dos arquivos e pastas precisam estar em minúsculas. O Arx Libertatis também lê os dados da pasta de usuário: %USERPROFILE%\\Saved Games\\Arx Libertatis no Windows ou ~/.local/share/arx no Linux."
+    },
+    {
+      "id": "data2-pak",
+      "type": "file",
+      "label": "Patch 1.21/1.22 do seu Arx Fatalis (data2.pak)",
+      "patterns": ["data/data2.pak", "data2.pak", "{localAppData}/arx/data2.pak", "{home}/Saved Games/Arx Libertatis/data2.pak"],
+      "helpText": "As versões da GOG e da Steam já vêm atualizadas e trazem este arquivo. Se a sua cópia for de CD, instale antes o patch oficial 1.21 e depois copie os arquivos para a pasta do jogo."
+    }
+  ],
+  "configFiles": [
+    {
+      "path": {
+        "win32": ["cfg.ini", "{home}/Saved Games/Arx Libertatis/cfg.ini"],
+        "linux": ["cfg.ini", "{appData}/arx/cfg.ini"]
+      },
+      "format": "ini",
+      "label": "Configurações (cfg.ini)",
+      "editable": true,
+      "_todo": "O cfg.ini só é criado depois da primeira execução. Na pasta do jogo ele só existe no modo portátil (arx-portable), que este manifesto não usa."
+    }
+  ],
+  "launchArgs": [],
+  "updates": {
+    "source": "github-releases",
+    "repo": "arx/ArxLibertatis",
+    "assetPatterns": {
+      "win32": "arx-libertatis-*-windows.zip",
+      "linux": "arx-libertatis-*-linux.tar.xz"
+    },
+    "includePrereleases": false,
+    "preserve": ["*.pak", "data/graph/**", "data/misc/logo.*", "data/misc/arx_*.ttf", "graph/**", "misc/**", "cfg.ini", "save/**"],
+    "_todo": [
+      "O instalador arx-libertatis-*-windows.exe e as builds de depuração (*-debug.tar.xz) são ignorados de propósito; o .zip do Windows é portátil.",
+      "Linux: o extrator do app descarta links simbólicos do .tar. No pacote, bin/amd64/libSDL2-2.0.so.0 e bin/amd64/libopenal.so.1 são links; sem eles o arx usa as bibliotecas do sistema, então SDL2 e OpenAL precisam estar instaladas (ex.: libsdl2-2.0-0 e libopenal1). Os atalhos arx-install-data, arxsavetool e arxunpak da raiz também são links e não aparecem."
+    ]
+  },
+  "_todo": [
+    "Último release (1.2.1) é de 10/04/2022 e o último commit no master é de 22/08/2024 (verificado em 23/10/2026): o projeto é o port oficial e não está arquivado, mas anda devagar.",
+    "No Windows, o arx.exe da raiz escolhe sozinho bin\\x64\\arx.exe ou bin\\x86\\arx.exe; o bin\\x64\\arx.exe procura dados em '.;..;../..' a partir da própria pasta, ou seja, também na raiz da instalação e em data/.",
+    "No Linux, o script arx da raiz exporta arx_PATH com a pasta da instalação; o binário usa essa variável para ler dados da raiz e de data/."
+  ],
+  "_sources": [
+    "https://github.com/arx/ArxLibertatis",
+    "https://github.com/arx/ArxLibertatis/releases/latest",
+    "https://github.com/arx/ArxLibertatis/releases/expanded_assets/1.2.1",
+    "https://raw.githubusercontent.com/arx/ArxLibertatis/1.2.1/src/io/fs/SystemPaths.cpp",
+    "https://raw.githubusercontent.com/arx/ArxLibertatis/1.2.1/src/core/ArxGame.cpp",
+    "https://raw.githubusercontent.com/arx/ArxLibertatis/1.2.1/scripts/arx-install-data",
+    "https://raw.githubusercontent.com/arx/ArxLibertatis/1.2.1/CMakeLists.txt",
+    "https://github.com/arx/ArxLibertatis/commits/master"
+  ],
+  "_verified": [
+    "Release 1.2.1 tem arx-libertatis-1.2.1-windows.zip (11,2 MB), arx-libertatis-1.2.1-windows.exe (instalador), arx-libertatis-1.2.1-linux.tar.xz (5,58 MB), builds -debug, o código-fonte arx-libertatis-1.2.1.tar.xz e assinaturas .sig.",
+    "O .zip do Windows não tem pasta raiz única: arx.exe e arx-portable.exe (lançadores que chamam bin\\x64\\arx.exe ou bin\\x86\\arx.exe), arx.bat, bin/x64, bin/x86, data/ (README, localisation, misc com fontes do port, openal) e licenças. Nenhum arquivo do jogo original vem no pacote.",
+    "O .tar.xz do Linux tem uma pasta raiz arx-libertatis-1.2.1-linux/ com o script arx (755) que escolhe bin/amd64 ou bin/i686; bin/amd64/arx tem RUNPATH $ORIGIN e precisa de libSDL2-2.0.so.0 e libopenal.so.1.",
+    "data/README do pacote: copiar os .pak e as pastas misc e graph de um Arx Fatalis 1.21 ou 1.22 para a pasta data. SystemPaths.cpp adiciona a pasta do executável e a subpasta data às pastas de dados; a pasta de usuário também é lida como pasta de dados.",
+    "cfg.ini fica na pasta de configuração (Windows: %USERPROFILE%\\Saved Games\\Arx Libertatis; Linux: ~/.config/arx) e os saves em save/ dentro da pasta de usuário (Windows: a mesma; Linux: ~/.local/share/arx), segundo o README do pacote e ArxGame.cpp."
+  ]
+}

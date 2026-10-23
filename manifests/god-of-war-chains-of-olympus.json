@@ -1,0 +1,41 @@
+{
+  "id": "god-of-war-chains-of-olympus",
+  "name": "God of War: Chains of Olympus",
+  "originalGame": "PSP (PlayStation Portable)",
+  "description": "Roda no PPSSPP com o dump do seu próprio UMD. Avaliado entre Perfect e Playable na base de compatibilidade oficial do PPSSPP (relatos da comunidade); em máquinas fracas pode haver queda de desempenho.",
+  "category": "playstation",
+  "compatibility": "playable",
+  "repoUrl": "https://github.com/hrydgard/ppsspp",
+  "accentColor": "#b07a1c",
+  "runner": {
+    "manifest": "ppsspp",
+    "args": ["--pause-menu-exit", "{gameFile}"]
+  },
+  "requirements": [
+    {
+      "id": "game",
+      "type": "userFile",
+      "label": "Seu dump do jogo (ISO/CSO)",
+      "extensions": ["iso", "cso", "chd", "pbp"],
+      "helpText": "Escolha a imagem (.iso, .cso ou .chd) que você mesmo criou a partir do seu UMD original de God of War: Chains of Olympus, ou o EBOOT.PBP da versão digital que você comprou, copiado do seu próprio PSP; o app não fornece jogos. Versões com status verificado: EUA (UCUS-98653) e Europa (UCES-00842). O PPSSPP não precisa de BIOS."
+    }
+  ],
+  "updates": {
+    "source": "none"
+  },
+  "_todo": [
+    "A base oficial de compatibilidade do PPSSPP (report.ppsspp.org, relatos da comunidade) não pôde ser aberta neste ambiente; o status foi lido no índice de busca dessas páginas (lista de jogos: Compat Perfect). Conferir direto na página do jogo.",
+    "O PPSSPP aplica correções próprias para este jogo automaticamente (assets/compat.ini da v1.20.4: RequireBufferedRendering, GoWFramerateHack60 e rotação do analógico) para UCUS98653, UCES00842, UCAS40198, ULJM05438, ULJM05348, UCKS45084 e NPUG80325. A página da versão EUA mostra relatos mistos (maioria Perfect, alguns Playable/Ingame e poucos \"Doesn't Boot\" em celulares).",
+    "Argumentos verificados no código do PPSSPP v1.20.4 (UI/NativeApp.cpp): o primeiro argumento sem \"-\" é o arquivo a iniciar; --pause-menu-exit troca \"Sair para o menu\" do menu de pausa por \"Sair\", fechando o emulador (opção listada na página oficial de argumentos de linha de comando do PPSSPP para frontends; a página só foi vista pelo índice de busca). Tela cheia não é forçada (opção do próprio PPSSPP, ou o argumento --fullscreen)."
+  ],
+  "_sources": [
+    "https://report.ppsspp.org/game/UCUS98653_1.00",
+    "https://report.ppsspp.org/game/UCES00842_0.01",
+    "https://report.ppsspp.org/games?order=latest",
+    "https://raw.githubusercontent.com/hrydgard/ppsspp/v1.20.4/assets/compat.ini",
+    "https://raw.githubusercontent.com/hrydgard/ppsspp/v1.20.4/UI/NativeApp.cpp",
+    "https://raw.githubusercontent.com/hrydgard/ppsspp/v1.20.4/UI/PauseScreen.cpp",
+    "https://raw.githubusercontent.com/hrydgard/ppsspp/v1.20.4/Core/Loaders.cpp",
+    "https://www.ppsspp.org/docs/reference/command-line"
+  ]
+}

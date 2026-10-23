@@ -1,0 +1,37 @@
+{
+  "id": "resident-evil-2-ps1",
+  "name": "Resident Evil 2",
+  "originalGame": "PlayStation (PS1)",
+  "description": "Roda no DuckStation com o dump dos seus próprios discos. Marcado como sem problemas (NoIssues) na base de compatibilidade oficial do DuckStation, incluindo a versão Dual Shock.",
+  "category": "playstation",
+  "compatibility": "playable",
+  "repoUrl": "https://github.com/stenzek/duckstation",
+  "accentColor": "#8b1a1a",
+  "runner": {
+    "manifest": "duckstation",
+    "args": ["-batch", "--", "{gameFile}"]
+  },
+  "requirements": [
+    {
+      "id": "game",
+      "type": "userFile",
+      "label": "Seu dump do jogo (CUE/CHD do disco 1)",
+      "extensions": ["cue", "chd", "bin", "iso", "img", "ecm", "mds", "ccd", "pbp", "m3u"],
+      "helpText": "Escolha a imagem que você mesmo criou a partir dos seus discos originais de Resident Evil 2; o app não fornece jogos. O jogo tem 2 discos: escolha o arquivo .cue (ou .chd) do disco 1. Quando o jogo pedir outro disco, use Sistema > Mudar disco no DuckStation (ou escolha aqui um arquivo .m3u que liste todos os discos). Versões com status verificado: EUA (SLUS-00421/00592), EUA Dual Shock Ver. (SLUS-00748/00756) e Espanha (SLES-00976/10976). O DuckStation também precisa do BIOS do seu console configurado (veja os requisitos do DuckStation)."
+    }
+  ],
+  "updates": {
+    "source": "none"
+  },
+  "_todo": [
+    "Status tirado da base de jogos oficial do DuckStation (data/resources/gamedb.yaml, campo compatibility.rating: NoIssues). Essa base registra a versão testada, que é antiga (0.1-8xx a 0.1-9xxx); não há lista de compatibilidade separada mantida hoje.",
+    "Argumentos verificados no código do DuckStation (src/duckstation-qt/qthost.cpp, ajuda de linha de comando \"[parameters] [--] [boot filename]\"): -batch fecha o emulador quando o jogo é desligado e -- marca o fim das opções antes do arquivo. Tela cheia não é forçada (opção do próprio DuckStation, ou o argumento -fullscreen).",
+    "Outras versões europeias (SLES-00972 a 00975) e as japonesas (Biohazard 2, SLPS-01222/01223 e Dual Shock SLPS-01510/01511) estão sem status na base. O DuckStation limita a aceleração de leitura do CD neste jogo (evita travamentos) automaticamente."
+  ],
+  "_sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/HEAD/data/resources/gamedb.yaml",
+    "https://raw.githubusercontent.com/stenzek/duckstation/HEAD/src/duckstation-qt/qthost.cpp",
+    "https://raw.githubusercontent.com/stenzek/duckstation/HEAD/src/duckstation-qt/mainwindow.cpp",
+    "https://raw.githubusercontent.com/stenzek/duckstation/HEAD/README.md"
+  ]
+}

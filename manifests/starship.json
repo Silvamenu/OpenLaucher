@@ -3,6 +3,7 @@
   "name": "Starship",
   "originalGame": "Star Fox 64",
   "description": "Port para PC de Star Fox 64 baseado na decompilação do jogo, com widescreen, alta taxa de quadros e mods.",
+  "category": "nintendo",
   "repoUrl": "https://github.com/HarbourMasters/Starship",
   "accentColor": "#2f6fb5",
   "executables": {

@@ -1,0 +1,117 @@
+{
+  "id": "dk64-recomp",
+  "name": "Donkey Kong 64: Recompiled",
+  "originalGame": "Donkey Kong 64",
+  "description": "Recompilação estática de Donkey Kong 64 para PC (N64: Recompiled + RT64), com widescreen, alta taxa de quadros e tempos de carregamento instantâneos. Precisa da sua própria ROM americana do N64.",
+  "category": "nintendo",
+  "repoUrl": "https://github.com/Rainchus/Donkey-Kong-64-Recompiled",
+  "accentColor": "#8b5a2b",
+  "executables": {
+    "win32": ["DK64Recompiled.exe"],
+    "linux": ["DK64Recompiled"]
+  },
+  "detectFiles": ["DK64Recompiled.exe", "DK64Recompiled", "recompcontrollerdb.txt"],
+  "requirements": [
+    {
+      "id": "rom",
+      "type": "userFile",
+      "label": "Sua ROM de Donkey Kong 64 (N64, EUA)",
+      "optional": true,
+      "extensions": ["z64", "n64", "v64"],
+      "copyToGameDir": false,
+      "helpText": "Opcional: a ROM é escolhida dentro do próprio jogo, no menu inicial. Só a versão americana do N64 é aceita; arquivos .n64/.v64 são convertidos pelo jogo.",
+      "_todo": "O projeto valida a ROM por XXH3 (0x4d876060f09b3fc5) e não documenta SHA-1; por isso não há validação por hash aqui."
+    },
+    {
+      "id": "select-rom",
+      "type": "firstRun",
+      "label": "Selecionar sua ROM no menu do jogo",
+      "doneWhen": ["DK64.z64", "{localAppData}/DK64Recompiled/DK64.z64", "{home}/.config/DK64Recompiled/DK64.z64"],
+      "helpText": "Abra o jogo e escolha sua ROM no menu inicial. O jogo valida e guarda uma cópia em sua pasta de dados (%LOCALAPPDATA%\\DK64Recompiled no Windows ou ~/.config/DK64Recompiled no Linux).",
+      "_todo": "Nome DK64.z64 = game_id \"DK64\" + \".z64\". Conferido no fork usado pelo projeto (Killklli/N64ModernRuntime@patch-1, stored_filename) e no Killklli/RecompFrontend@mod_store (pasta LOCALAPPDATA ou ~/.config + program_id \"DK64Recompiled\"; portable.txt na pasta de trabalho). Não conferido num jogo instalado."
+    }
+  ],
+  "configFiles": [
+    {
+      "path": {
+        "win32": ["general.json", "{localAppData}/DK64Recompiled/general.json"],
+        "linux": ["general.json", "{home}/.config/DK64Recompiled/general.json"]
+      },
+      "format": "json",
+      "label": "Geral (general.json)",
+      "editable": true
+    },
+    {
+      "path": {
+        "win32": ["graphics.json", "{localAppData}/DK64Recompiled/graphics.json"],
+        "linux": ["graphics.json", "{home}/.config/DK64Recompiled/graphics.json"]
+      },
+      "format": "json",
+      "label": "Gráficos (graphics.json)",
+      "editable": true
+    },
+    {
+      "path": {
+        "win32": ["controls.json", "{localAppData}/DK64Recompiled/controls.json"],
+        "linux": ["controls.json", "{home}/.config/DK64Recompiled/controls.json"]
+      },
+      "format": "json",
+      "label": "Controles (controls.json)",
+      "editable": true
+    },
+    {
+      "path": {
+        "win32": ["sound.json", "{localAppData}/DK64Recompiled/sound.json"],
+        "linux": ["sound.json", "{home}/.config/DK64Recompiled/sound.json"]
+      },
+      "format": "json",
+      "label": "Som (sound.json)",
+      "editable": true
+    }
+  ],
+  "launchArgs": [],
+  "updates": {
+    "source": "github-releases",
+    "repo": "Rainchus/Donkey-Kong-64-Recompiled",
+    "assetPatterns": {
+      "win32": "DK64Recompiled-Windows-Release*.zip",
+      "linux": "DK64Recompiled-Linux-X64-Release*.zip"
+    },
+    "includePrereleases": false,
+    "preserve": [
+      "portable.txt",
+      "saves/**",
+      "mods/**",
+      "mod_config/**",
+      "mods.json",
+      "general.json",
+      "graphics.json",
+      "controls.json",
+      "sound.json",
+      "*.z64",
+      "*.n64",
+      "*.v64"
+    ],
+    "_todo": "O .zip do Linux traz um DK64Recompiled.tar.gz dentro (arquivo aninhado, extraído pelo instalador). Linux ARM64, Flatpak e macOS não são selecionados."
+  },
+  "_todo": [
+    "Os nomes general/graphics/controls/sound.json vêm do RecompFrontend (config ids); o DK64 usa um fork (Killklli/RecompFrontend), não conferido num jogo instalado.",
+    "Saves documentados no README: %LOCALAPPDATA%\\DK64Recompiled\\saves (Windows) e ~/.config/DK64Recompiled/saves (Linux).",
+    "Requisitos do README: GPU com D3D12 (SM6) ou Vulkan 1.2 e CPU com AVX. O README avisa que o binário Linux pode não funcionar em algumas distribuições."
+  ],
+  "_sources": [
+    "https://github.com/Rainchus/Donkey-Kong-64-Recompiled",
+    "https://raw.githubusercontent.com/Rainchus/Donkey-Kong-64-Recompiled/HEAD/README.md",
+    "https://github.com/Rainchus/Donkey-Kong-64-Recompiled/releases/latest",
+    "https://github.com/Rainchus/Donkey-Kong-64-Recompiled/releases/expanded_assets/v1.0.3",
+    "https://github.com/Rainchus/Donkey-Kong-64-Recompiled/releases/expanded_assets/1.0.0",
+    "https://raw.githubusercontent.com/Rainchus/Donkey-Kong-64-Recompiled/HEAD/src/main/main.cpp",
+    "https://raw.githubusercontent.com/N64Recomp/RecompFrontend/main/recompui/include/recompui/config.h",
+    "https://raw.githubusercontent.com/N64Recomp/N64ModernRuntime/main/librecomp/src/recomp.cpp",
+    "https://raw.githubusercontent.com/Rainchus/Donkey-Kong-64-Recompiled/HEAD/.gitmodules",
+    "https://raw.githubusercontent.com/Rainchus/Donkey-Kong-64-Recompiled/HEAD/include/donk_config.h",
+    "https://raw.githubusercontent.com/Killklli/N64ModernRuntime/patch-1/librecomp/src/recomp.cpp",
+    "https://raw.githubusercontent.com/Killklli/RecompFrontend/mod_store/recompui/src/util/file.cpp",
+    "https://raw.githubusercontent.com/Killklli/RecompFrontend/mod_store/recompui/include/recompui/config.h"
+  ]
+}

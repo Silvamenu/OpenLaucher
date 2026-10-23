@@ -7,6 +7,7 @@ import { useI18n } from './i18n'
 import { errorMessage } from './lib/format'
 import { AddGamePage } from './pages/AddGamePage'
 import { DownloadsPage } from './pages/DownloadsPage'
+import { FaqPage } from './pages/FaqPage'
 import { GamePage } from './pages/GamePage'
 import { LibraryPage } from './pages/LibraryPage'
 import { LoginScreen } from './pages/LoginScreen'
@@ -52,6 +53,8 @@ export default function App() {
             <DownloadsPage />
           ) : route.page === 'settings' ? (
             <SettingsPage />
+          ) : route.page === 'faq' ? (
+            <FaqPage />
           ) : (
             <GamePage key={route.id} id={route.id} tab={route.tab} />
           )}

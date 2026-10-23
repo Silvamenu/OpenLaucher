@@ -18,7 +18,7 @@ function NavItem({
   onClick
 }: {
   active: boolean
-  icon: 'library' | 'downloads' | 'settings'
+  icon: 'library' | 'downloads' | 'settings' | 'faq'
   label: string
   badge?: number
   onClick: () => void
@@ -224,6 +224,7 @@ export function Sidebar() {
         <NavItem active={is('library')} icon="library" label={t('nav.library')} badge={updates} onClick={() => navigate({ page: 'library' })} />
         <NavItem active={is('downloads')} icon="downloads" label={t('nav.downloads')} badge={downloads} onClick={() => navigate({ page: 'downloads' })} />
         <NavItem active={is('settings')} icon="settings" label={t('nav.settings')} onClick={() => navigate({ page: 'settings' })} />
+        <NavItem active={is('faq')} icon="faq" label={t('nav.faq')} onClick={() => navigate({ page: 'faq' })} />
       </nav>
 
       <div className="mx-1 mt-4 mb-3.5 h-px bg-line-soft" />

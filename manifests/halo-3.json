@@ -1,0 +1,43 @@
+{
+  "id": "halo-3",
+  "name": "Halo 3",
+  "originalGame": "Xbox 360",
+  "description": "Roda no Xenia Canary com o dump da sua própria cópia. A lista oficial de compatibilidade marca como jogável do início ao fim, com tela dividida funcionando. Restam defeitos pequenos, como sombras de personagens nas cutscenes e reflexos de lente que pedem occlusion_query = \"fast\" na configuração.",
+  "category": "xbox",
+  "compatibility": "playable",
+  "repoUrl": "https://github.com/xenia-canary/xenia-canary",
+  "accentColor": "#4b6e2e",
+  "runner": {
+    "manifest": "xenia-canary",
+    "args": ["{gameFile}"]
+  },
+  "requirements": [
+    {
+      "id": "game",
+      "type": "userFile",
+      "label": "Seu dump do jogo (arquivo GOD, ISO ou default.xex)",
+      "extensions": ["iso", "xex", "zar"],
+      "helpText": "Escolha o arquivo do jogo feito por você, a partir do seu próprio disco ou console. Se você instalou o jogo no seu Xbox 360 e o transferiu para um pendrive, ele fica em Content/0000000000000000/4D5307E6/, dentro de uma subpasta (por exemplo 00007000): é o arquivo sem extensão, com nome de letras e números, ao lado de uma pasta .data com o mesmo nome (use 'Todos os arquivos' no seletor para vê-lo). Se o jogo estiver extraído, escolha o default.xex; arquivos .iso e .zar também funcionam. Atualizações (TU) e DLC que você tiver são instaladas no Xenia em Content > Install Content. O app não fornece jogos.",
+      "_todo": "A subpasta exata do jogo instalado/transferido (00007000 ou outra) não foi confirmada para instalações de disco no console sem modificação; o texto cita 00007000 só como exemplo (o Quickstart oficial também não fixa a pasta)."
+    }
+  ],
+  "updates": {
+    "source": "none"
+  },
+  "_todo": [
+    "Lista oficial (issue #214, TitleID 4D5307E6): rótulo state-playable (campanha completa relatada em 27/11/2025 no build 07501cf); relato de 20/10/2026 com a campanha completa e tela dividida para 2 jogadores funcionando (rótulo splitscreen-working).",
+    "Ajustes citados pelos colaboradores: occlusion_query = \"fast\" ou \"strict\" (lens flare) e depth_bias_shader_offset = true (decalques piscando). Não são aplicados pelo app.",
+    "Desbloquear o FPS deixa o jogo rápido demais (manter 30 fps).",
+    "O Xenia abre o jogo pelo caminho passado como argumento posicional (opção 'target' em xenia_main.cc); a tela cheia pode ser forçada com --fullscreen=true, não usado aqui."
+  ],
+  "_sources": [
+    "https://github.com/xenia-canary/game-compatibility/issues/214",
+    "https://github.com/xenia-canary/game-compatibility/labels?page=2",
+    "https://github.com/xenia-canary/game-compatibility/labels?page=3",
+    "https://raw.githubusercontent.com/xenia-canary/xenia-canary/HEAD/src/xenia/app/xenia_main.cc",
+    "https://raw.githubusercontent.com/xenia-canary/xenia-canary/HEAD/src/xenia/app/emulator_window.cc",
+    "https://raw.githubusercontent.com/wiki/xenia-canary/xenia-canary/Quickstart.md",
+    "https://raw.githubusercontent.com/xenia-canary/xenia-canary/HEAD/src/xenia/xbox.h",
+    "https://raw.githubusercontent.com/xenia-canary/xenia-canary/HEAD/src/xenia/emulator.cc"
+  ]
+}

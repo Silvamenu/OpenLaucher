@@ -1,0 +1,43 @@
+{
+  "id": "xenoblade-chronicles-x",
+  "name": "Xenoblade Chronicles X",
+  "originalGame": "Nintendo Wii U",
+  "description": "Roda no Cemu com o dump da sua própria cópia de Wii U. A lista oficial do Cemu marca como \"Playable\" (último teste no Cemu 1.26.2f): dá para terminar, mas com pequenos problemas gráficos, como algumas texturas distantes.",
+  "category": "nintendo",
+  "compatibility": "playable",
+  "repoUrl": "https://github.com/cemu-project/Cemu",
+  "accentColor": "#2d5d8a",
+  "runner": {
+    "manifest": "cemu",
+    "args": ["-g", "{gameFile}"]
+  },
+  "requirements": [
+    {
+      "id": "game",
+      "type": "userFile",
+      "label": "Seu dump do jogo (.wud, .wux, .wua ou .rpx)",
+      "extensions": ["wud", "wux", "wua", "iso", "rpx", "tmd"],
+      "helpText": "Escolha o dump que você fez da sua própria cópia, no seu próprio Wii U: a imagem de disco .wud/.wux, o arquivo .wua ou, num dump descriptografado (pastas code, content e meta), o arquivo .rpx que fica na pasta code do jogo base (IDs: EUA 00050000101C4D00, Europa 00050000101C4C00, Japão 0005000010116100). A atualização e os pacotes de dados/DLC que você tiver também vêm do seu console: instale-os no Cemu (File > Install game title, update or DLC) ou deixe-os na pasta de jogos configurada no Cemu. Imagens .wud/.wux precisam da chave do disco no keys.txt do Cemu. O app não fornece jogos."
+    }
+  ],
+  "updates": { "source": "none" },
+  "_todo": [
+    "Status pela lista oficial do Cemu: 'Playable' no Cemu 1.26.2f (USA); não há teste oficial em versões 2.x. Problemas conhecidos citados no wiki: algumas texturas distantes em NLA e Noctilum e um piscar de tela que parece ocorrer só no Vulkan.",
+    "wiki.cemu.info e compat.cemu.info estão bloqueados neste ambiente: o status acima veio dos trechos das páginas oficiais exibidos pela busca na web, não da leitura direta das páginas.",
+    "Segundo o wiki, na versão mundial os personagens de DLC já estão no disco; os pacotes de dados opcionais só aceleram o carregamento."
+  ],
+  "_titleIds": {
+    "USA": "00050000101C4D00",
+    "EUR": "00050000101C4C00",
+    "JPN": "0005000010116100"
+  },
+  "_sources": [
+    "https://wiki.cemu.info/wiki/Xenoblade_Chronicles_X",
+    "https://compat.cemu.info/?sort=X",
+    "https://raw.githubusercontent.com/cemu-project/cemu_graphic_packs/HEAD/src/XenobladeChroniclesX/Graphics/rules.txt",
+    "https://raw.githubusercontent.com/cemu-project/Cemu/v2.6/bin/gameProfiles/default/00050000101c4d00.ini",
+    "https://raw.githubusercontent.com/cemu-project/Cemu/v2.6/bin/gameProfiles/default/00050000101c4c00.ini",
+    "https://raw.githubusercontent.com/cemu-project/Cemu/v2.6/bin/gameProfiles/default/0005000010116100.ini",
+    "https://raw.githubusercontent.com/cemu-project/Cemu/v2.6/src/config/LaunchSettings.cpp"
+  ]
+}

@@ -61,10 +61,30 @@ export async function validateUserFile(file: string, req: UserFileRequirement): 
   return { ok: true, detail: 'ok' }
 }
 
-/** Primeiro executável da plataforma encontrado na pasta (relativo). */
-export function findExecutable(files: WalkedFile[], manifest: Manifest, platform: Platform): string | null {
-  const patterns = executablesFor(manifest, platform)
-  return matchWalked(files, patterns)[0] ?? null
+/**
+ * Executável da plataforma encontrado na pasta (relativo). Se o primeiro padrão que acha algo acha
+ * vários (ex.: "jogo_*.exe" com o nome da versão), vale o mais recente: a atualização não apaga o antigo.
+ */
+export async function findExecutable(files: WalkedFile[], manifest: Manifest, platform: Platform): Promise<string | null> {
+  for (const pattern of executablesFor(manifest, platform)) {
+    const found = matchWalked(files, [pattern])
+    if (found.length <= 1) {
+      if (found[0]) return found[0]
+      continue
+    }
+    const byRel = new Map(files.map((f) => [f.rel, f.abs]))
+    const dated = await Promise.all(
+      found.map(async (rel) => ({
+        rel,
+        mtime: await fs.stat(byRel.get(rel) ?? rel).then(
+          (s) => s.mtimeMs,
+          () => 0
+        )
+      }))
+    )
+    return dated.reduce((a, b) => (b.mtime > a.mtime ? b : a)).rel
+  }
+  return null
 }
 
 /**
@@ -84,23 +104,57 @@ async function firstMatch(files: WalkedFile[], patterns: string[], gameDir: stri
   return undefined
 }
 
-/** Verifica a pasta do jogo contra os requisitos do manifesto. */
-export async function evaluateRequirements(manifest: Manifest, entry: GameEntry, platform: Platform): Promise<RequirementsReport> {
+/** Emulador de um jogo que roda via "runner", como está na biblioteca. */
+export interface RunnerState {
+  manifestId: string
+  name: string
+  /** Entrada do emulador na biblioteca e o caminho absoluto do executável (null: não instalado). */
+  entryId: string | null
+  executable: string | null
+  /** O emulador está sendo instalado ou atualizado agora. */
+  installing?: boolean
+}
+
+/**
+ * Verifica a pasta do jogo contra os requisitos do manifesto. Jogos via emulador trocam o
+ * executável pelo emulador (`runner`): o "executable" do relatório é o do emulador, absoluto.
+ */
+export async function evaluateRequirements(manifest: Manifest, entry: GameEntry, platform: Platform, runner?: RunnerState): Promise<RequirementsReport> {
   const folderExists = await isDirectory(entry.path)
   const items: RequirementStatus[] = []
-  const files = folderExists ? await walkFiles(entry.path, 3) : []
+  // A pasta de um jogo via emulador é a do dump do usuário (pode ser enorme): só é listada se algum requisito precisar.
+  const needsFiles = !manifest.runner || manifest.requirements.some((r) => r.type === 'file' || (r.type === 'firstRun' && !!r.doneWhen?.length))
+  const files = folderExists && needsFiles ? await walkFiles(entry.path, 3) : []
 
-  const exe = folderExists ? findExecutable(files, manifest, platform) : null
-  const exeNames = executablesFor(manifest, platform)
-  items.push({
-    id: '__executable',
-    type: 'executable',
-    label: exeNames.join(' / ') || '—',
-    optional: false,
-    ok: exe !== null,
-    detail: exe ? 'ok' : 'notFound',
-    found: exe ?? undefined
-  })
+  let exe: string | null
+  if (manifest.runner) {
+    exe = runner?.executable ?? null
+    items.push({
+      id: '__runner',
+      type: 'runner',
+      label: runner?.name ?? manifest.runner.manifest,
+      optional: false,
+      ok: exe !== null,
+      // Sem executável: instalando agora, instalado mas com a pasta ou o executável faltando, ou não instalado.
+      detail: exe ? 'ok' : runner?.installing ? 'runnerBusy' : runner?.entryId ? 'runnerBroken' : 'runnerMissing',
+      found: exe ?? undefined,
+      runnerId: manifest.runner.manifest,
+      runnerEntryId: runner?.entryId ?? undefined
+    })
+  } else {
+    exe = folderExists ? await findExecutable(files, manifest, platform) : null
+    const exeNames = executablesFor(manifest, platform)
+    items.push({
+      id: '__executable',
+      type: 'executable',
+      label: exeNames.join(' / ') || '—',
+      optional: false,
+      ok: exe !== null,
+      detail: exe ? 'ok' : 'notFound',
+      found: exe ?? undefined,
+      canPickExecutable: manifest.generated === true
+    })
+  }
 
   for (const req of manifest.requirements) {
     const base = { id: req.id, label: req.label, helpText: req.helpText, optional: req.optional }

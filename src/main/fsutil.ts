@@ -89,10 +89,10 @@ export async function hashFile(file: string, algorithm: 'sha1' | 'sha256'): Prom
 }
 
 /**
- * Lê um arquivo de texto pequeno, recusando (null) se passar de `maxBytes`. Abre uma vez só e lê
- * no máximo maxBytes + 1: não há corrida entre conferir o tamanho e ler, nem arquivo enorme na memória.
+ * Lê um arquivo pequeno, recusando (null) se passar de `maxBytes`. Abre uma vez só e lê no máximo
+ * maxBytes + 1: não há corrida entre conferir o tamanho e ler, nem arquivo enorme na memória.
  */
-export async function readSmallTextFile(file: string, maxBytes: number): Promise<string | null> {
+export async function readSmallFile(file: string, maxBytes: number): Promise<Buffer | null> {
   const handle = await fs.open(file, 'r')
   try {
     const buffer = Buffer.alloc(maxBytes + 1)
@@ -103,10 +103,24 @@ export async function readSmallTextFile(file: string, maxBytes: number): Promise
       size += bytesRead
       if (size > maxBytes) return null
     }
-    return buffer.subarray(0, size).toString('utf8')
+    return buffer.subarray(0, size)
   } finally {
     await handle.close()
   }
+}
+
+export async function readSmallTextFile(file: string, maxBytes: number): Promise<string | null> {
+  return (await readSmallFile(file, maxBytes))?.toString('utf8') ?? null
+}
+
+/** Extensão de uma imagem PNG, JPEG, GIF ou WebP pelo conteúdo (assinatura), não pelo nome do arquivo. */
+export function imageExtension(data: Buffer): '.png' | '.jpg' | '.gif' | '.webp' | null {
+  const ascii = (start: number, end: number) => data.subarray(start, end).toString('latin1')
+  if (ascii(0, 8) === '\x89PNG\r\n\x1a\n') return '.png'
+  if (data[0] === 0xff && data[1] === 0xd8 && data[2] === 0xff) return '.jpg'
+  if (ascii(0, 6) === 'GIF87a' || ascii(0, 6) === 'GIF89a') return '.gif'
+  if (ascii(0, 4) === 'RIFF' && ascii(8, 12) === 'WEBP') return '.webp'
+  return null
 }
 
 /** Escrita atômica: grava em arquivo temporário e renomeia. */

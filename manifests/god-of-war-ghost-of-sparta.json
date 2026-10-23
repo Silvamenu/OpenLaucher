@@ -1,0 +1,41 @@
+{
+  "id": "god-of-war-ghost-of-sparta",
+  "name": "God of War: Ghost of Sparta",
+  "originalGame": "PSP (PlayStation Portable)",
+  "description": "Roda no PPSSPP com o dump do seu próprio UMD. Avaliado como Perfect na base de compatibilidade oficial do PPSSPP (relatos da comunidade), com correções automáticas do emulador para este jogo.",
+  "category": "playstation",
+  "compatibility": "playable",
+  "repoUrl": "https://github.com/hrydgard/ppsspp",
+  "accentColor": "#a3341f",
+  "runner": {
+    "manifest": "ppsspp",
+    "args": ["--pause-menu-exit", "{gameFile}"]
+  },
+  "requirements": [
+    {
+      "id": "game",
+      "type": "userFile",
+      "label": "Seu dump do jogo (ISO/CSO)",
+      "extensions": ["iso", "cso", "chd", "pbp"],
+      "helpText": "Escolha a imagem (.iso, .cso ou .chd) que você mesmo criou a partir do seu UMD original de God of War: Ghost of Sparta, ou o EBOOT.PBP da versão digital que você comprou, copiado do seu próprio PSP; o app não fornece jogos. Versões com status verificado: EUA (UCUS-98737, versões 1.00 e 2.00) e Europa (UCES-01473). O PPSSPP não precisa de BIOS."
+    }
+  ],
+  "updates": {
+    "source": "none"
+  },
+  "_todo": [
+    "A base oficial de compatibilidade do PPSSPP (report.ppsspp.org, relatos da comunidade) não pôde ser aberta neste ambiente; o status foi lido no índice de busca dessas páginas (lista de jogos: Compat Perfect). Conferir direto na página do jogo.",
+    "O PPSSPP aplica correções próprias para este jogo automaticamente (assets/compat.ini da v1.20.4: RequireBufferedRendering, RequireDefaultCPUClock, GoWFramerateHack60, NullPageValid e rotação do analógico) para UCUS98737, UCES01401, UCES01473, UCJS10114, UCAS40323, NPHG00092 e outros. Não altere o clock da CPU emulada neste jogo (o PPSSPP força o padrão).",
+    "Argumentos verificados no código do PPSSPP v1.20.4 (UI/NativeApp.cpp): o primeiro argumento sem \"-\" é o arquivo a iniciar; --pause-menu-exit troca \"Sair para o menu\" do menu de pausa por \"Sair\", fechando o emulador (opção listada na página oficial de argumentos de linha de comando do PPSSPP para frontends; a página só foi vista pelo índice de busca). Tela cheia não é forçada (opção do próprio PPSSPP, ou o argumento --fullscreen)."
+  ],
+  "_sources": [
+    "https://report.ppsspp.org/game/UCUS98737_2.00",
+    "https://report.ppsspp.org/game/UCES01473_1.01",
+    "https://report.ppsspp.org/games?order=latest",
+    "https://raw.githubusercontent.com/hrydgard/ppsspp/v1.20.4/assets/compat.ini",
+    "https://raw.githubusercontent.com/hrydgard/ppsspp/v1.20.4/UI/NativeApp.cpp",
+    "https://raw.githubusercontent.com/hrydgard/ppsspp/v1.20.4/UI/PauseScreen.cpp",
+    "https://raw.githubusercontent.com/hrydgard/ppsspp/v1.20.4/Core/Loaders.cpp",
+    "https://www.ppsspp.org/docs/reference/command-line"
+  ]
+}

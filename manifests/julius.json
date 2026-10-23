@@ -1,0 +1,70 @@
+{
+  "id": "julius",
+  "name": "Julius",
+  "originalGame": "Caesar III",
+  "description": "Reimplementação de código aberto de Caesar III com a mesma lógica do original, telas widescreen e melhorias de interface; os saves são compatíveis com o jogo original. Usa os arquivos da sua cópia de Caesar III.",
+  "category": "pc",
+  "repoUrl": "https://github.com/bvschaik/julius",
+  "accentColor": "#9c2a1e",
+  "executables": {
+    "win32": ["julius.exe"],
+    "linux": ["julius.appimage"]
+  },
+  "detectFiles": ["julius.exe", "julius.appimage"],
+  "requirements": [
+    {
+      "id": "c3-data",
+      "type": "firstRun",
+      "label": "Indicar a pasta do seu Caesar III",
+      "doneWhen": ["c3.eng", "c3.rus", "{appData}/bvschaik/julius/data_dir.txt", "{localAppData}/bvschaik/julius/data_dir.txt"],
+      "helpText": "Na primeira execução o Julius pede a pasta onde está instalado o seu Caesar III (GOG, Steam ou CD com instalação completa) e lembra a escolha. Outra opção é copiar os arquivos do seu Caesar III para a pasta do jogo. Os saves ficam na pasta dos arquivos do Caesar III, que precisa permitir escrita. O jogo precisa estar atualizado para a versão 1.0.1.0; se o Julius avisar que falta a atualização, atualize a sua cópia."
+    }
+  ],
+  "configFiles": [
+    {
+      "path": "julius.ini",
+      "format": "ini",
+      "label": "Configurações (julius.ini)",
+      "editable": true,
+      "_todo": "Só existe na pasta do jogo quando os arquivos do Caesar III estão nela; se você escolheu outra pasta, o julius.ini fica lá."
+    },
+    {
+      "path": "julius-hotkeys.ini",
+      "format": "ini",
+      "label": "Teclas de atalho (julius-hotkeys.ini)",
+      "editable": true,
+      "_todo": "Mesmo caso do julius.ini: fica na pasta dos arquivos do Caesar III."
+    }
+  ],
+  "launchArgs": [],
+  "updates": {
+    "source": "github-releases",
+    "repo": "bvschaik/julius",
+    "assetPatterns": {
+      "win32": "julius-*-windows.zip",
+      "linux": "julius-*-linux.AppImage"
+    },
+    "includePrereleases": false,
+    "preserve": ["julius.ini", "julius-hotkeys.ini", "*.sav", "*.svx", "*.map"],
+    "_todo": "O julius-*-linux-x86_64.zip (binário solto que depende do SDL2 do sistema) e o .flatpak são ignorados; o AppImage traz tudo junto."
+  },
+  "_todo": [
+    "O executável do Windows é de 32 bits (x86), o que funciona no Windows de 64 bits.",
+    "O caminho escolhido fica em data_dir.txt na pasta de preferências do SDL: %APPDATA%\\bvschaik\\julius no Windows e ~/.local/share/bvschaik/julius no Linux.",
+    "O Julius procura os arquivos primeiro na pasta de trabalho (a pasta do jogo, onde o app o inicia) e na pasta do executável, depois no data_dir.txt e só então abre o seletor de pasta (no Linux o seletor usa zenity/kdialog; sem eles, copie os arquivos para a pasta do jogo).",
+    "Para jogar com mudanças de jogabilidade (bloqueios de estrada, limites maiores etc.), existe o fork Augustus, com manifesto separado (augustus)."
+  ],
+  "_sources": [
+    "https://github.com/bvschaik/julius/releases/latest",
+    "https://github.com/bvschaik/julius/releases/expanded_assets/v1.8.0",
+    "https://github.com/bvschaik/julius/releases/expanded_assets/v1.7.0",
+    "https://raw.githubusercontent.com/bvschaik/julius/HEAD/README.md",
+    "https://github.com/bvschaik/julius/wiki/Patches",
+    "https://raw.githubusercontent.com/bvschaik/julius/v1.8.0/src/platform/prefs.c",
+    "https://raw.githubusercontent.com/bvschaik/julius/HEAD/src/platform/julius.c",
+    "https://raw.githubusercontent.com/bvschaik/julius/HEAD/src/game/game.c",
+    "https://raw.githubusercontent.com/bvschaik/julius/HEAD/src/core/lang.c",
+    "https://raw.githubusercontent.com/bvschaik/julius/v1.8.0/src/core/config.c",
+    "https://raw.githubusercontent.com/bvschaik/julius/v1.8.0/src/core/hotkey_config.c"
+  ]
+}

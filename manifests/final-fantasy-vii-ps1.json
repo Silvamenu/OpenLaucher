@@ -1,0 +1,37 @@
+{
+  "id": "final-fantasy-vii-ps1",
+  "name": "Final Fantasy VII",
+  "originalGame": "PlayStation (PS1)",
+  "description": "Roda no DuckStation com o dump dos seus próprios discos. Marcado como sem problemas (NoIssues) na base de compatibilidade oficial do DuckStation nas versões dos EUA, Europa e Japão.",
+  "category": "playstation",
+  "compatibility": "playable",
+  "repoUrl": "https://github.com/stenzek/duckstation",
+  "accentColor": "#1f4e8c",
+  "runner": {
+    "manifest": "duckstation",
+    "args": ["-batch", "--", "{gameFile}"]
+  },
+  "requirements": [
+    {
+      "id": "game",
+      "type": "userFile",
+      "label": "Seu dump do jogo (CUE/CHD do disco 1)",
+      "extensions": ["cue", "chd", "bin", "iso", "img", "ecm", "mds", "ccd", "pbp", "m3u"],
+      "helpText": "Escolha a imagem que você mesmo criou a partir dos seus discos originais de Final Fantasy VII; o app não fornece jogos. O jogo tem 3 discos: escolha o arquivo .cue (ou .chd) do disco 1. Quando o jogo pedir outro disco, use Sistema > Mudar disco no DuckStation (ou escolha aqui um arquivo .m3u que liste todos os discos). Versões com status verificado: EUA (SCUS-94163/94164/94165), Europa (SCES-00867 e variantes de idioma SCES-00868/00869/00900) e Japão (SLPS-00700/00701/00702). O DuckStation também precisa do BIOS do seu console configurado (veja os requisitos do DuckStation)."
+    }
+  ],
+  "updates": {
+    "source": "none"
+  },
+  "_todo": [
+    "Status tirado da base de jogos oficial do DuckStation (data/resources/gamedb.yaml, campo compatibility.rating: NoIssues). Essa base registra a versão testada, que é antiga (0.1-8xx a 0.1-9xxx); não há lista de compatibilidade separada mantida hoje.",
+    "Argumentos verificados no código do DuckStation (src/duckstation-qt/qthost.cpp, ajuda de linha de comando \"[parameters] [--] [boot filename]\"): -batch fecha o emulador quando o jogo é desligado e -- marca o fim das opções antes do arquivo. Tela cheia não é forçada (opção do próprio DuckStation, ou o argumento -fullscreen).",
+    "Final Fantasy VII International (SLPM-84020...) está sem status na base. O DuckStation desativa widescreen e filtro de texturas de sprites neste jogo (quebram os cenários), de forma automática."
+  ],
+  "_sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/HEAD/data/resources/gamedb.yaml",
+    "https://raw.githubusercontent.com/stenzek/duckstation/HEAD/src/duckstation-qt/qthost.cpp",
+    "https://raw.githubusercontent.com/stenzek/duckstation/HEAD/src/duckstation-qt/mainwindow.cpp",
+    "https://raw.githubusercontent.com/stenzek/duckstation/HEAD/README.md"
+  ]
+}

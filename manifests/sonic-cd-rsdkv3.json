@@ -1,0 +1,65 @@
+{
+  "id": "sonic-cd-rsdkv3",
+  "name": "Sonic CD (RSDKv3 Decompilation)",
+  "originalGame": "Sonic CD (Sega CD)",
+  "description": "Decompilação da Retro Engine v3, o motor do remaster de Sonic CD de 2011, rodando nativamente no PC com suporte a mods. Usa o arquivo de dados da sua cópia oficial do jogo.",
+  "category": "sega",
+  "repoUrl": "https://github.com/RSDKModding/RSDKv3-Decompilation",
+  "accentColor": "#3949ab",
+  "executables": {
+    "win32": ["RSDKv3.exe"],
+    "linux": ["RSDKv3"]
+  },
+  "detectFiles": ["RSDKv3.exe", "RSDKv3"],
+  "requirements": [
+    {
+      "id": "data",
+      "type": "file",
+      "label": "Arquivo de dados do seu Sonic CD (Data.rsdk)",
+      "patterns": ["Data.rsdk", "Data/Game/GameConfig.bin"],
+      "helpText": "Copie o Data.rsdk da sua cópia de Sonic CD (versão Steam de 2011 ou versão mobile) para a pasta do jogo. Também vale usar a pasta Data já extraída no lugar do arquivo. O Data.rsdk do Sonic Origins está em outro formato (RSDKv5) e precisa ser convertido antes; ele também não traz as músicas e os efeitos sonoros, que precisam vir de outra versão sua do jogo (veja o FAQ do projeto RSDKModding). Sem os dados, o jogo cria um usage.txt com essas instruções."
+    },
+    {
+      "id": "videos",
+      "type": "file",
+      "label": "Vídeos do seu Sonic CD da Steam (pasta videos)",
+      "optional": true,
+      "patterns": ["videos/*.ogv"],
+      "helpText": "Opcional: copie a pasta videos (arquivos .ogv) da versão Steam original para a pasta do jogo. Vídeos das versões mobile e Origins não funcionam."
+    }
+  ],
+  "configFiles": [
+    {
+      "path": "settings.ini",
+      "format": "ini",
+      "label": "Configurações (settings.ini)",
+      "editable": true
+    }
+  ],
+  "launchArgs": [],
+  "updates": {
+    "source": "github-releases",
+    "repo": "RSDKModding/RSDKv3-Decompilation",
+    "assetPatterns": {
+      "win32": "v3-windows-x64.zip",
+      "linux": "v3-linux.zip"
+    },
+    "includePrereleases": false,
+    "preserve": ["Data.rsdk", "Data/**", "videos/**", "mods/**", "settings.ini", "SData.bin", "SGame.bin", "Udata.bin"]
+  },
+  "_todo": [
+    "Linux: v3-linux.zip contém linux.tar.gz com o binário RSDKv3 (x86_64), extraído pelo suporte a arquivo aninhado; ele depende de SDL2, GLEW, libogg, libvorbis e libtheora do sistema.",
+    "O FAQ do projeto diz que instalar dentro da pasta do usuário (Desktop, Downloads, Documentos) pode causar problemas no Windows; não verificado com a pasta padrão do app.",
+    "settings.ini e os saves (SData.bin etc.) são criados na pasta do jogo; nomes tirados de RSDKv3/Userdata.cpp.",
+    "Também existe v3-windows.zip (32 bits), não usado."
+  ],
+  "_sources": [
+    "https://github.com/RSDKModding/RSDKv3-Decompilation/releases",
+    "https://github.com/RSDKModding/RSDKv3-Decompilation/releases/expanded_assets/1.3.3",
+    "https://raw.githubusercontent.com/RSDKModding/RSDKv3-Decompilation/HEAD/README.md",
+    "https://raw.githubusercontent.com/RSDKModding/RSDKv3-Decompilation/HEAD/FAQ.md",
+    "https://raw.githubusercontent.com/RSDKModding/RSDKv3-Decompilation/HEAD/RSDKv3/RetroEngine.cpp",
+    "https://raw.githubusercontent.com/RSDKModding/RSDKv3-Decompilation/HEAD/RSDKv3/Userdata.cpp",
+    "https://raw.githubusercontent.com/RSDKModding/RSDKv3-Decompilation/HEAD/RSDKv3/Video.cpp"
+  ]
+}

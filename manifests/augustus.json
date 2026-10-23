@@ -1,0 +1,70 @@
+{
+  "id": "augustus",
+  "name": "Augustus",
+  "originalGame": "Caesar III",
+  "description": "Fork do Julius que muda a jogabilidade de Caesar III: bloqueios de estrada, pedidos especiais de mercado, limites maiores, zoom e mais. Usa os arquivos da sua cópia de Caesar III; saves do Augustus não abrem no jogo original.",
+  "category": "pc",
+  "repoUrl": "https://github.com/Keriew/augustus",
+  "accentColor": "#6b2d8f",
+  "executables": {
+    "win32": ["augustus.exe"],
+    "linux": ["augustus.appimage"]
+  },
+  "detectFiles": ["augustus.exe", "augustus.appimage", "assets/Graphics/ui.xml"],
+  "requirements": [
+    {
+      "id": "c3-data",
+      "type": "firstRun",
+      "label": "Indicar a pasta do seu Caesar III",
+      "doneWhen": ["c3.eng", "c3.rus", "{appData}/augustus/augustus/data_dir.txt", "{localAppData}/augustus/augustus/data_dir.txt"],
+      "helpText": "Na primeira execução o Augustus pede a pasta onde está instalado o seu Caesar III (GOG, Steam ou CD com instalação completa) e lembra a escolha. Outra opção é copiar os arquivos do seu Caesar III para a pasta do jogo. Os saves ficam na pasta dos arquivos do Caesar III, que precisa permitir escrita. O jogo precisa estar atualizado para a versão 1.0.1.0; se o Augustus avisar que falta a atualização, atualize a sua cópia."
+    }
+  ],
+  "configFiles": [
+    {
+      "path": "augustus.ini",
+      "format": "ini",
+      "label": "Configurações (augustus.ini)",
+      "editable": true,
+      "_todo": "Só existe na pasta do jogo quando os arquivos do Caesar III estão nela; se você escolheu outra pasta, o augustus.ini fica lá."
+    },
+    {
+      "path": "augustus-hotkeys.ini",
+      "format": "ini",
+      "label": "Teclas de atalho (augustus-hotkeys.ini)",
+      "editable": true,
+      "_todo": "Mesmo caso do augustus.ini: fica na pasta dos arquivos do Caesar III."
+    }
+  ],
+  "launchArgs": [],
+  "updates": {
+    "source": "github-releases",
+    "repo": "Keriew/augustus",
+    "assetPatterns": {
+      "win32": ["augustus-*-windows-64bit.zip", "augustus-*-windows.zip"],
+      "linux": ["augustus-*-linux.AppImage", "augustus-*-linux-x86_64.AppImage"]
+    },
+    "includePrereleases": false,
+    "preserve": ["augustus.ini", "augustus-hotkeys.ini", "*.sav"],
+    "_todo": "Hoje (4.0.0) só existe augustus-4.0.0-windows.zip (32 bits) e augustus-4.0.0-linux.AppImage. O CI do projeto (.ci_scripts/build_upload.ps1) já gera augustus-<versão>-windows-64bit.zip; se ele aparecer num release, é o escolhido primeiro. Os padrões são exatos para não pegar por engano builds windows-arm64, windows-64bit-sdl3, windows-msvc-x64 ou o linux-x86_64.zip (binário que depende do SDL2 do sistema)."
+  },
+  "_todo": [
+    "No release 4.0.0 o executável do Windows é de 32 bits (x86), o que funciona no Windows de 64 bits.",
+    "O caminho escolhido fica em data_dir.txt na pasta de preferências do SDL: %APPDATA%\\augustus\\augustus no Windows e ~/.local/share/augustus/augustus no Linux.",
+    "A pasta assets (gráficos novos do Augustus, licença CC BY-SA 3.0) precisa ficar junto do augustus.exe; ela vem no pacote oficial e não contém arquivos do jogo original.",
+    "O preserve não inclui *.map/*.svx porque o pacote traz mapas e cenários em maps/ que devem ser atualizados; os mapas e saves do usuário ficam na pasta do Caesar III (ou na raiz da pasta do jogo) e não existem no pacote, então nunca são sobrescritos."
+  ],
+  "_sources": [
+    "https://github.com/Keriew/augustus/releases/latest",
+    "https://github.com/Keriew/augustus/releases/expanded_assets/v4.0.0",
+    "https://github.com/Keriew/augustus/releases/expanded_assets/v3.2.0",
+    "https://github.com/Keriew/augustus/releases",
+    "https://raw.githubusercontent.com/Keriew/augustus/HEAD/README.md",
+    "https://raw.githubusercontent.com/Keriew/augustus/v4.0.0/src/platform/prefs.c",
+    "https://raw.githubusercontent.com/Keriew/augustus/v4.0.0/src/platform/augustus.c",
+    "https://raw.githubusercontent.com/Keriew/augustus/v4.0.0/src/core/config.c",
+    "https://raw.githubusercontent.com/Keriew/augustus/v4.0.0/src/core/hotkey_config.c",
+    "https://raw.githubusercontent.com/Keriew/augustus/HEAD/.ci_scripts/build_upload.ps1",
+    "https://raw.githubusercontent.com/Keriew/augustus/HEAD/.ci_scripts/build_upload.sh"
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "id": "zelda-breath-of-the-wild",
+  "name": "The Legend of Zelda: Breath of the Wild",
+  "originalGame": "Nintendo Wii U",
+  "description": "Roda no Cemu com o dump da sua própria cópia de Wii U. A lista oficial do Cemu marca o jogo como \"Perfect\" (testes no Cemu 2.x); o desempenho depende bastante do processador e da placa de vídeo.",
+  "category": "nintendo",
+  "compatibility": "playable",
+  "repoUrl": "https://github.com/cemu-project/Cemu",
+  "accentColor": "#2b7a78",
+  "runner": {
+    "manifest": "cemu",
+    "args": ["-g", "{gameFile}"]
+  },
+  "requirements": [
+    {
+      "id": "game",
+      "type": "userFile",
+      "label": "Seu dump do jogo (.wud, .wux, .wua ou U-King.rpx)",
+      "extensions": ["wud", "wux", "wua", "iso", "rpx", "tmd"],
+      "helpText": "Escolha o dump que você fez da sua própria cópia, no seu próprio Wii U: a imagem de disco .wud/.wux, o arquivo .wua ou, num dump descriptografado (pastas code, content e meta), o arquivo code/U-King.rpx do jogo base (IDs: EUA 00050000101C9400, Europa 00050000101C9500, Japão 00050000101C9300). A atualização mais recente do Wii U (1.5.0) e a DLC, se você tiver, também vêm do seu console: instale-as no Cemu (File > Install game title, update or DLC) ou deixe-as na pasta de jogos configurada no Cemu. Imagens .wud/.wux precisam da chave do disco no keys.txt do Cemu. O app não fornece jogos."
+    }
+  ],
+  "updates": { "source": "none" },
+  "_todo": [
+    "Status pela lista oficial do Cemu: 'Perfect' no Cemu 1.26.2f (região não informada). Relatos na página do jogo no wiki: 'Perfect' no Windows com 2.0-7 e 2.0-29, 'Playable' no Linux nativo com 2.0-22 (720p, 20 FPS em hardware fraco). Sem relato oficial na v2.6.",
+    "wiki.cemu.info e compat.cemu.info estão bloqueados neste ambiente: o status acima veio dos trechos das páginas oficiais exibidos pela busca na web, não da leitura direta das páginas.",
+    "O wiki do Cemu recomenda ativar o recompilador multi-core (CPU mode Auto ou multi-core) no perfil do jogo; os perfis padrão já vêm em gameProfiles/default.",
+    "Verificação: 1.5.0 (31/01/2018) foi a última atualização com versão para Wii U; a 1.6.0 (2019) saiu só para Switch (zeldawiki, histórico de versões). Fonte não oficial do Cemu.",
+    "Verificação independente: a busca na web mostrou o status 'Perfect' na página do wiki oficial (testes 2.0-7, 2.0-29 e 2.0-39 'Perfect'; 2.0-22 no Linux 'Playable')."
+  ],
+  "_titleIds": {
+    "USA": "00050000101C9400",
+    "EUR": "00050000101C9500",
+    "JPN": "00050000101C9300"
+  },
+  "_sources": [
+    "https://wiki.cemu.info/wiki/The_Legend_of_Zelda:_Breath_of_the_Wild",
+    "https://compat.cemu.info/?sort=L",
+    "https://wiki.cemu.info/wiki/Multicore_Recompiler",
+    "https://raw.githubusercontent.com/cemu-project/cemu_graphic_packs/HEAD/src/BreathOfTheWild/Graphics/rules.txt",
+    "https://raw.githubusercontent.com/cemu-project/Cemu/v2.6/bin/gameProfiles/default/00050000101c9400.ini",
+    "https://raw.githubusercontent.com/cemu-project/Cemu/v2.6/bin/gameProfiles/default/00050000101c9500.ini",
+    "https://raw.githubusercontent.com/cemu-project/Cemu/v2.6/src/config/LaunchSettings.cpp",
+    "https://raw.githubusercontent.com/cemu-project/Cemu/v2.6/src/Cafe/TitleList/TitleInfo.cpp",
+    "https://zeldamods.org/wiki/Special:MobileDiff/11823",
+    "https://zeldawiki.wiki/wiki/The_Legend_of_Zelda:_Breath_of_the_Wild/Version_History",
+    "https://raw.githubusercontent.com/cemu-project/Cemu/v2.6/src/gui/MainWindow.cpp"
+  ]
+}

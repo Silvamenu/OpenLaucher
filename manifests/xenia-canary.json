@@ -1,0 +1,91 @@
+{
+  "id": "xenia-canary",
+  "name": "Xenia Canary",
+  "originalGame": "Xbox 360",
+  "description": "Emulador de Xbox 360 de código aberto (versão experimental do Xenia, atualizada com frequência). Roda jogos a partir do dump da sua própria cópia e não precisa de nenhum arquivo de sistema do console. Exige placa de vídeo com Direct3D 12 ou Vulkan e processador com AVX. O build nativo para Linux ainda é experimental.",
+  "category": "emulators",
+  "repoUrl": "https://github.com/xenia-canary/xenia-canary",
+  "accentColor": "#5fa83a",
+  "executables": {
+    "win32": ["xenia_canary.exe"],
+    "linux": ["xenia_canary_linux.AppImage"]
+  },
+  "detectFiles": ["xenia_canary.exe", "xenia_canary_linux.AppImage"],
+  "requirements": [
+    {
+      "id": "vcredist",
+      "type": "firstRun",
+      "optional": true,
+      "label": "Microsoft Visual C++ Redistributable 2017-2026 x64 (só no Windows)",
+      "helpText": "No Windows, o Xenia precisa desse pacote da Microsoft. Se o emulador não abrir e reclamar de VCRUNTIME140.dll ou MSVCP140.dll, instale-o pelo link oficial da Microsoft indicado pelo Xenia: https://aka.ms/vc14/vc_redist.x64.exe. Não é necessário no Linux. Marque como feito depois de instalar."
+    }
+  ],
+  "configFiles": [
+    {
+      "path": {
+        "win32": ["xenia-canary.config.toml"],
+        "linux": ["{localAppData}/Xenia/xenia-canary.config.toml", "xenia-canary.config.toml"]
+      },
+      "format": "text",
+      "label": "Configurações do emulador (xenia-canary.config.toml)",
+      "editable": true,
+      "_todo": "Arquivo TOML (editado como texto), criado na primeira execução. No Windows o Xenia Canary roda em modo portátil por padrão (configuração, saves em content/ e cache ficam na pasta do emulador). No Linux ficam em $XDG_DATA_HOME/Xenia ou ~/.local/share/Xenia. Configurações por jogo ficam em config/<TitleID>.config.toml."
+    }
+  ],
+  "launchArgs": [],
+  "updates": {
+    "source": "github-releases",
+    "repo": "xenia-canary/xenia-canary",
+    "assetPatterns": {
+      "win32": ["xenia_canary_windows.7z", "xenia_canary_windows*.zip"],
+      "linux": "xenia_canary_linux.AppImage"
+    },
+    "includePrereleases": false,
+    "preserve": [
+      "portable.txt",
+      "xenia-canary.config.toml",
+      "recent.toml",
+      "config/**",
+      "content/**",
+      "cache/**",
+      "cache0/**",
+      "cache1/**",
+      "cache_host/**",
+      "scratch/**",
+      "patches/**",
+      "plugins/**",
+      "screenshots/**",
+      "*.log"
+    ],
+    "_todo": [
+      "O arquivo de Windows (xenia_canary_windows.7z, 3,5 MB) tem só LICENSE e xenia_canary.exe na raiz, sem pasta de topo (conferido de novo na release e6cd2e4 em 23/10/2026). O padrão *.zip é só uma reserva caso o formato antigo volte.",
+      "O projeto publica várias releases por dia (tag = commit curto, ex.: e6cd2e4); todas ficam marcadas como 'Latest' em sequência, sem pré-lançamentos."
+    ]
+  },
+  "_todo": [
+    "Build de Linux (AppImage oficial nas releases) é experimental: o FAQ oficial ainda diz que o Linux não é suportado nativamente e o Quickstart lista como mínimo 'Linux with Proton' (rodar o build de Windows). A compatibilidade dos jogos foi medida no Windows.",
+    "Atualizações de título (TU) e DLC da cópia do usuário são instaladas pelo menu Content > Install Content do próprio Xenia; não foram mapeadas como requisitos.",
+    "Jogos digitais/XBLA rodam em modo demo por padrão; o Xenia tem uma opção para rodar como versão completa (license_mask), não mapeada aqui.",
+    "O Xenia verifica CPU (AVX) e GPU (Direct3D 12 ou Vulkan) ao iniciar e fecha se não forem compatíveis; placas AMD e GPUs integradas não são recomendadas pelo projeto."
+  ],
+  "_sources": [
+    "https://raw.githubusercontent.com/xenia-canary/xenia-canary/HEAD/README.md",
+    "https://github.com/xenia-canary/xenia-canary/releases/latest",
+    "https://github.com/xenia-canary/xenia-canary/releases",
+    "https://github.com/xenia-canary/xenia-canary/releases/expanded_assets/e6cd2e4",
+    "https://github.com/xenia-canary/xenia-canary/releases/expanded_assets/976c357",
+    "https://github.com/xenia-canary/xenia-canary-releases/releases",
+    "https://github.com/xenia-canary/xenia-canary/wiki/Quickstart",
+    "https://raw.githubusercontent.com/wiki/xenia-canary/xenia-canary/Quickstart.md",
+    "https://github.com/xenia-canary/xenia-canary/wiki/FAQ",
+    "https://raw.githubusercontent.com/xenia-canary/xenia-canary/HEAD/src/xenia/app/xenia_main.cc",
+    "https://raw.githubusercontent.com/xenia-canary/xenia-canary/HEAD/src/xenia/app/emulator_window.cc",
+    "https://raw.githubusercontent.com/xenia-canary/xenia-canary/HEAD/src/xenia/config.cc",
+    "https://raw.githubusercontent.com/xenia-canary/xenia-canary/HEAD/src/xenia/base/filesystem_posix.cc",
+    "https://raw.githubusercontent.com/xenia-canary/xenia-canary/HEAD/src/xenia/base/filesystem_win.cc",
+    "https://raw.githubusercontent.com/xenia-canary/xenia-canary/HEAD/src/xenia/emulator.cc",
+    "https://raw.githubusercontent.com/xenia-canary/xenia-canary/HEAD/src/xenia/base/logging.cc",
+    "https://raw.githubusercontent.com/xenia-canary/xenia-canary/HEAD/src/xenia/kernel/xam/xam_content.cc",
+    "https://raw.githubusercontent.com/xenia-canary/xenia-canary/HEAD/src/xenia/patcher/patch_db.cc"
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "id": "dusklight",
+  "name": "Dusklight",
+  "originalGame": "The Legend of Zelda: Twilight Princess",
+  "description": "Reimplementação de Twilight Princess para PC baseada na decompilação do jogo, com resolução e taxa de quadros maiores, pacotes de texturas e mods. Precisa do dump do seu próprio disco.",
+  "category": "nintendo",
+  "repoUrl": "https://github.com/TwilitRealm/dusklight",
+  "website": "https://twilitrealm.dev",
+  "accentColor": "#4b3f72",
+  "executables": {
+    "win32": ["dusklight.exe"],
+    "linux": ["dusklight.appimage"]
+  },
+  "detectFiles": ["dusklight.exe", "dusklight.appimage", "mods/randomizer.dusk"],
+  "requirements": [
+    {
+      "id": "disc",
+      "type": "userFile",
+      "label": "Seu dump do disco de Twilight Princess (GameCube ou Wii)",
+      "optional": true,
+      "extensions": ["iso", "gcm", "ciso", "gcz", "nfs", "rvz", "wbfs", "wia", "tgc"],
+      "copyToGameDir": false,
+      "helpText": "Faça o dump do seu próprio disco (GameCube ou Wii, todas as versões comerciais exceto a coreana do Wii). Você pode converter o .iso para .rvz para economizar espaço. O arquivo é escolhido dentro do próprio Dusklight, na tela inicial.",
+      "_todo": "O Dusklight valida o disco por XXH3-128 e não documenta SHA-1; por isso não há validação por hash aqui."
+    },
+    {
+      "id": "select-disc",
+      "type": "firstRun",
+      "label": "Selecionar o dump do seu disco na tela inicial",
+      "helpText": "Abra o Dusklight e escolha o arquivo do seu disco na tela inicial. O caminho fica salvo no config.json da pasta de dados (%APPDATA%\\TwilitRealm\\Dusklight no Windows ou ~/.local/share/TwilitRealm/Dusklight no Linux)."
+    }
+  ],
+  "configFiles": [
+    {
+      "path": {
+        "win32": ["data/config.json", "{appData}/TwilitRealm/Dusklight/config.json"],
+        "linux": ["{localAppData}/TwilitRealm/Dusklight/config.json"]
+      },
+      "format": "json",
+      "label": "Configurações (config.json)",
+      "editable": true,
+      "_todo": "Pasta deduzida de SDL_GetPrefPath(\"TwilitRealm\", \"Dusklight\") (biblioteca borealis); \"data/\" ao lado do executável só vale no modo portátil, ativado no menu do jogo."
+    }
+  ],
+  "launchArgs": [],
+  "updates": {
+    "source": "github-releases",
+    "repo": "TwilitRealm/dusklight",
+    "assetPatterns": {
+      "win32": "Dusklight-*-win32-x86_64.zip",
+      "linux": "Dusklight-*-linux-x86_64.AppImage"
+    },
+    "includePrereleases": false,
+    "preserve": ["data/**", "data_location.json"],
+    "_todo": "Builds win32-arm64, linux-arm64, macOS, Android e iOS não são selecionados."
+  },
+  "_todo": [
+    "Requisito do README: GPU com D3D12, Vulkan 1.1+ ou Metal (D3D11 com suporte limitado).",
+    "O Dusklight aceita o caminho do disco por linha de comando (--dvd ou argumento posicional), mas manifestos nativos ainda não conseguem repassar o arquivo escolhido pelo usuário; por isso a seleção é feita no menu do jogo.",
+    "O projeto se chamava Dusk; pastas de dados antigas (TwilitRealm/Dusk) são migradas pelo próprio jogo."
+  ],
+  "_sources": [
+    "https://github.com/TwilitRealm/dusklight",
+    "https://raw.githubusercontent.com/TwilitRealm/dusklight/HEAD/README.md",
+    "https://github.com/TwilitRealm/dusklight/releases/latest",
+    "https://github.com/TwilitRealm/dusklight/releases/expanded_assets/v2.0.3",
+    "https://raw.githubusercontent.com/TwilitRealm/dusklight/HEAD/src/dusk/data.cpp",
+    "https://raw.githubusercontent.com/TwilitRealm/dusklight/HEAD/src/dusk/app_info.hpp",
+    "https://raw.githubusercontent.com/TwilitRealm/dusklight/HEAD/src/dusk/iso_validate.cpp",
+    "https://raw.githubusercontent.com/TwilitRealm/dusklight/HEAD/src/dusk/ui/prelaunch.cpp",
+    "https://raw.githubusercontent.com/TwilitRealm/dusklight/HEAD/src/m_Do/m_Do_main.cpp",
+    "https://raw.githubusercontent.com/encounter/borealis/HEAD/src/data.cpp"
+  ]
+}

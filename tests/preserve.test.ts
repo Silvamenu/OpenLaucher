@@ -239,6 +239,38 @@ describe('formatos de pacote', () => {
     expect(await readTree(root)).toEqual({ 'jogo.exe': 'bin', 'data/a.txt': 'a' })
   })
 
+  it('extrai pacotes .tar.xz (comuns no Linux) e para no teto de tamanho', async () => {
+    const work = await tempDir('work-')
+    const src = await tempDir('src-')
+    await writeTree(src, { 'Jogo/jogo': 'bin', 'Jogo/data/a.txt': 'a' })
+    const { execFileSync } = await import('node:child_process')
+    const tar = await import('tar')
+    const { sevenZipPath, MAX_EXTRACTED_BYTES } = await import('../src/main/archive')
+    let bin = sevenZipPath()
+    if (process.platform !== 'win32') {
+      bin = path.join(work, '7za')
+      await fs.copyFile(sevenZipPath(), bin)
+      await fs.chmod(bin, 0o755)
+    }
+    const xz = async (name: string, tarFile: string) => {
+      const out = path.join(work, name)
+      execFileSync(bin, ['a', '-txz', '-bd', out, tarFile], { stdio: 'ignore' })
+      return out
+    }
+    const plain = path.join(work, 'pacote.tar')
+    await tar.c({ file: plain, cwd: src }, ['Jogo'])
+    const root = await extractPackage(await xz('pacote.tar.xz', plain), path.join(work, 'x'))
+    expect(await readTree(root)).toEqual({ jogo: 'bin', 'data/a.txt': 'a' })
+
+    // Cabeçalho que promete mais que o teto: recusado antes de escrever qualquer coisa.
+    const header = new tar.Header({ path: 'bomba.bin', type: 'File', size: MAX_EXTRACTED_BYTES + 1, mode: 0o644, mtime: new Date(0) })
+    header.encode()
+    const bomb = path.join(work, 'bomba.tar')
+    await fs.writeFile(bomb, Buffer.concat([header.block!, Buffer.alloc(1024)]))
+    await expect(extractPackage(await xz('bomba.txz', bomb), path.join(work, 'y'))).rejects.toThrow(/grande demais/)
+    expect(await exists(path.join(work, 'y', 'bomba.bin'))).toBe(false)
+  })
+
   it('aplica o teto de extração à listagem de pacotes .7z', async () => {
     const { check7zListing, MAX_EXTRACTED_BYTES, MAX_EXTRACTED_ENTRIES } = await import('../src/main/archive')
     const entry = (name: string, size: number) => `Path = ${name}\nSize = ${size}\nPacked Size = 1\n`

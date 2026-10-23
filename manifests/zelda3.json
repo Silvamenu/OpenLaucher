@@ -1,0 +1,79 @@
+{
+  "id": "zelda3",
+  "name": "Zelda3",
+  "originalGame": "The Legend of Zelda: A Link to the Past",
+  "description": "Reimplementação em C de A Link to the Past (SNES), com widescreen, shaders, áudio MSU-1 e correções de bugs. Só há build para Windows e precisa da sua própria ROM americana.",
+  "category": "nintendo",
+  "repoUrl": "https://github.com/snesrev/zelda3",
+  "accentColor": "#3d7a3a",
+  "executables": {
+    "win32": ["zelda3.exe"]
+  },
+  "detectFiles": ["zelda3.exe", "zelda3_assets.bps", "zelda3_assets.dat"],
+  "requirements": [
+    {
+      "id": "rom",
+      "type": "userFile",
+      "label": "Sua ROM de A Link to the Past (SNES, EUA)",
+      "optional": true,
+      "extensions": ["sfc", "smc"],
+      "validation": {
+        "sha1": [
+          {
+            "sha1": "6d4f10a8b10e10dbe624cb23cf03b88bb8252973",
+            "label": "EUA (sem cabeçalho)"
+          }
+        ]
+      },
+      "copyToGameDir": true,
+      "helpText": "Opcional: escolha sua ROM aqui para o app conferir se é a versão certa (só a americana do SNES funciona, sem cabeçalho de 512 bytes). O jogo procura o arquivo zelda3.sfc na própria pasta: se o seu arquivo tiver outro nome, renomeie para zelda3.sfc antes de copiar."
+    },
+    {
+      "id": "rom-in-folder",
+      "type": "file",
+      "label": "ROM na pasta do jogo (zelda3.sfc)",
+      "patterns": ["zelda3.sfc", "zelda3_assets.dat"],
+      "helpText": "Coloque sua ROM com o nome zelda3.sfc na pasta do jogo e deixe-a lá. A cada execução o jogo lê os recursos (fases, gráficos) da sua ROM aplicando o zelda3_assets.bps que vem no download; o arquivo zelda3_assets.dat só existe se você o gerar com as ferramentas do projeto."
+    }
+  ],
+  "configFiles": [
+    {
+      "path": "zelda3.ini",
+      "format": "ini",
+      "label": "Configurações (zelda3.ini)",
+      "editable": true
+    },
+    {
+      "path": "zelda3.user.ini",
+      "format": "ini",
+      "label": "Configurações pessoais (zelda3.user.ini, tem prioridade se existir)",
+      "editable": true
+    }
+  ],
+  "launchArgs": [],
+  "updates": {
+    "source": "github-releases",
+    "repo": "snesrev/zelda3",
+    "assetPatterns": {
+      "win32": "zelda3_v*.zip"
+    },
+    "includePrereleases": false,
+    "preserve": ["zelda3.sfc", "zelda3.smc", "zelda3_assets.dat", "zelda3.ini", "zelda3.user.ini", "saves/**", "msu/**"]
+  },
+  "_todo": [
+    "Só existe uma release (v0.3, agosto de 2023) e ela traz apenas zelda3.exe para Windows; no Linux é preciso compilar a partir do código-fonte.",
+    "SHA-1 da ROM EUA tirado de assets/util.py do projeto (ZELDA3_SHA1_US); o BUILDING.md documenta o SHA-256 66871d66be19ad2c34c927d6b14cd8eb6fc3181965b6e517cb361f7316009cfb.",
+    "O copyToGameDir do app copia o arquivo com o nome original; o jogo só lê zelda3.sfc.",
+    "O main.c da tag v0.3 só lê zelda3_assets.dat. Mesmo assim, o zelda3.exe do zip v0.3 traz o caminho via BPS (conferido nas strings do binário: \"zelda3_assets.bps\", \"Missing file: zelda3.sfc\"), igual ao main.c atual. Esse caminho não grava zelda3_assets.dat, então zelda3.sfc precisa continuar na pasta."
+  ],
+  "_sources": [
+    "https://github.com/snesrev/zelda3",
+    "https://raw.githubusercontent.com/snesrev/zelda3/HEAD/README.md",
+    "https://raw.githubusercontent.com/snesrev/zelda3/HEAD/BUILDING.md",
+    "https://raw.githubusercontent.com/snesrev/zelda3/HEAD/assets/util.py",
+    "https://raw.githubusercontent.com/snesrev/zelda3/HEAD/src/main.c",
+    "https://raw.githubusercontent.com/snesrev/zelda3/HEAD/src/config.c",
+    "https://github.com/snesrev/zelda3/releases",
+    "https://github.com/snesrev/zelda3/releases/expanded_assets/v0.3"
+  ]
+}

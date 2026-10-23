@@ -79,7 +79,8 @@ export interface ReleaseRef {
 
 /**
  * Decide se `latest` é mais nova que a versão instalada.
- * - Tags iguais (ignorando "v" inicial): não.
+ * - Tags iguais (ignorando "v" inicial): só se o release foi publicado de novo depois do instalado
+ *   (projetos que republicam sempre a mesma tag, como "latest" ou "ci-dev-build").
  * - Ambas interpretáveis como versão: compara numericamente.
  * - Caso contrário, usa a data de publicação quando disponível.
  * - Sem como comparar e tags diferentes: considera nova (é o release mais recente do repositório).
@@ -87,7 +88,9 @@ export interface ReleaseRef {
 export function isNewerRelease(latest: ReleaseRef, installed: ReleaseRef | string | null | undefined): boolean {
   if (!installed) return false
   const inst: ReleaseRef = typeof installed === 'string' ? { tag: installed } : installed
-  if (normalizeTag(latest.tag) === normalizeTag(inst.tag)) return false
+  if (normalizeTag(latest.tag) === normalizeTag(inst.tag)) {
+    return !!latest.publishedAt && !!inst.publishedAt && Date.parse(latest.publishedAt) > Date.parse(inst.publishedAt)
+  }
   const cmp = compareVersions(latest.tag, inst.tag)
   if (cmp !== null) return cmp > 0
   if (latest.publishedAt && inst.publishedAt) {

@@ -1,0 +1,89 @@
+{
+  "id": "uzdoom",
+  "name": "UZDoom",
+  "originalGame": "DOOM e DOOM II",
+  "description": "Continuação do GZDoom: source port moderno do DOOM com OpenGL e Vulkan, iluminação dinâmica e amplo suporte a mods. Também roda Heretic, Hexen e Strife. Usa os arquivos WAD da sua própria cópia do jogo.",
+  "category": "pc",
+  "repoUrl": "https://github.com/UZDoom/UZDoom",
+  "website": "https://zdoom.org",
+  "accentColor": "#9b1c1c",
+  "executables": {
+    "win32": ["uzdoom.exe"],
+    "linux": ["uzdoom.appimage"]
+  },
+  "detectFiles": ["uzdoom.exe", "uzdoom.appimage", "uzdoom.pk3"],
+  "requirements": [
+    {
+      "id": "iwad",
+      "type": "file",
+      "label": "Arquivos WAD do seu DOOM (DOOM.WAD ou DOOM2.WAD)",
+      "patterns": [
+        "doom2.wad",
+        "doom.wad",
+        "doomu.wad",
+        "plutonia.wad",
+        "tnt.wad",
+        "heretic.wad",
+        "hexen.wad",
+        "strife1.wad",
+        "{localAppData}/games/uzdoom/doom2.wad",
+        "{localAppData}/games/uzdoom/DOOM2.WAD",
+        "{localAppData}/games/uzdoom/doom.wad",
+        "{localAppData}/games/uzdoom/DOOM.WAD"
+      ],
+      "helpText": "Copie o DOOM.WAD e/ou DOOM2.WAD da sua cópia do jogo (Steam, GOG ou CD) para a pasta do jogo. TNT.WAD, PLUTONIA.WAD, HERETIC.WAD, HEXEN.WAD e STRIFE1.WAD também funcionam. Se o jogo estiver instalado pela Steam ou GOG, o UZDoom costuma encontrar os WADs sozinho, e este item pode continuar pendente. No Linux ele também procura em ~/.local/share/games/uzdoom. Com mais de um WAD disponível, uma janela pede para escolher o jogo ao abrir."
+    }
+  ],
+  "configFiles": [
+    {
+      "path": {
+        "win32": ["uzdoom_portable.ini", "{documents}/My Games/UZDoom/uzdoom.ini"],
+        "linux": ["{appData}/uzdoom/uzdoom.ini"]
+      },
+      "format": "ini",
+      "label": "Configurações (uzdoom.ini)",
+      "editable": true,
+      "_todo": "Só existe depois da primeira execução. No Windows, se existir um uzdoom_portable.ini na pasta do jogo, o UZDoom entra em modo portátil (configuração ali e saves em Save/); sem ele, usa Documentos\\My Games\\UZDoom\\uzdoom.ini e saves em Jogos Salvos\\UZDoom. No Linux: ~/.config/uzdoom/uzdoom.ini."
+    }
+  ],
+  "launchArgs": [],
+  "updates": {
+    "source": "github-releases",
+    "repo": "UZDoom/UZDoom",
+    "assetPatterns": {
+      "win32": "Windows-UZDoom-*-x86_64.zip",
+      "linux": "Linux-UZDoom-*-x86_64.AppImage"
+    },
+    "includePrereleases": false,
+    "preserve": ["*.wad", "uzdoom_portable.ini", "Save/**", "autoexec.cfg"],
+    "_todo": "Os pré-releases (x-preview, x-testing) e o .zsync do AppImage são ignorados. O pacote do Windows traz o updater.exe do próprio UZDoom (compilado com USE_UPDATER), mas a busca e a instalação automáticas vêm desligadas (cvars updater_check_updates e updater_auto_updates = false); se o usuário ligá-las no UZDoom, ele mesmo pode trocar arquivos da pasta fora do controle do app."
+  },
+  "_todo": [
+    "O GZDoom original (ZDoom/gzdoom) não foi usado: o último release é g4.14.2 (maio de 2025); o UZDoom é a continuação ativa (5.0.3 em setembro de 2026, preview em outubro de 2026) e o README dele aponta zdoom.org como página oficial. O site zdoom.org não pôde ser acessado daqui para confirmar."
+  ],
+  "_sources": [
+    "https://github.com/UZDoom/UZDoom/releases/latest",
+    "https://github.com/UZDoom/UZDoom/releases",
+    "https://github.com/UZDoom/UZDoom/releases/expanded_assets/5.0.3",
+    "https://github.com/UZDoom/UZDoom/releases/expanded_assets/5.0.0",
+    "https://github.com/UZDoom/UZDoom/releases/download/5.0.3/_release.json",
+    "https://raw.githubusercontent.com/UZDoom/UZDoom/HEAD/README.md",
+    "https://raw.githubusercontent.com/UZDoom/UZDoom/5.0.3/src/version.h",
+    "https://raw.githubusercontent.com/UZDoom/UZDoom/5.0.3/src/gameconfigfile.cpp",
+    "https://raw.githubusercontent.com/UZDoom/UZDoom/5.0.3/src/d_iwad.cpp",
+    "https://raw.githubusercontent.com/UZDoom/UZDoom/5.0.3/src/common/platform/win32/i_specialpaths.cpp",
+    "https://raw.githubusercontent.com/UZDoom/UZDoom/5.0.3/src/common/platform/posix/unix/i_specialpaths.cpp",
+    "https://raw.githubusercontent.com/UZDoom/UZDoom/5.0.3/.github/workflows/continuous_integration.yml",
+    "https://github.com/ZDoom/gzdoom/releases/latest",
+    "https://raw.githubusercontent.com/UZDoom/UZDoom/5.0.3/CMakeLists.txt",
+    "https://raw.githubusercontent.com/UZDoom/UZDoom/5.0.3/src/widgets/updatebuttonbar.cpp",
+    "https://slayersclub.bethesda.net/en/article/3cq6YIMrlRw6Yqt9uiDGFb/expanded-widescreen-art-from-doom-and-doom-ii"
+  ],
+  "_verified": [
+    "Release 5.0.3 (23/09/2026, Latest) tem Windows-UZDoom-Release-x86_64.zip, Linux-UZDoom-Release-x86_64.AppImage (+ .zsync), MacOS-UZDoom-Release-ARM64.dmg e _release.json; 5.0.0 usa os mesmos nomes.",
+    "O .zip do Windows não tem pasta raiz: uzdoom.exe, uzdoom.pk3, brightmaps.pk3, game_support.pk3, game_widescreen_gfx.pk3, lights.pk3, libcurl-x64.dll, sndfile.dll, soft_oal.dll, updater.exe, licenses.zip, fm_banks/ e soundfonts/uzdoom.sf2. Nenhum WAD de jogo vem no pacote.",
+    "Busca de IWADs (gameconfigfile.cpp/d_iwad.cpp): \".\", $DOOMWADDIR, $DOOMWADPATH, $HOME e $PROGDIR (Windows) ou $PROGDIR, ~/.local/share/games/uzdoom, ~/.local/share/games/doom e /usr/share/games/doom (Linux), mais instalações da GOG, Steam e Bethesda (cvar i_searchdistributors, ligada por padrão).",
+    "Verificação independente (5.0.3): o squashfs (zstd) do AppImage tem AppRun -> usr/bin/uzdoom (link simbólico, a pasta atual é mantida) e só bibliotecas em usr/lib; nenhum WAD de jogo. O game_widescreen_gfx.pk3 traz a arte widescreen que a Bethesda liberou para uso em source ports.",
+    "Configuração: Windows usa uzdoom_portable.ini na pasta do programa (se existir e for gravável, fora de Program Files) ou Documentos/My Games/UZDoom/uzdoom.ini, com saves em Save/ (portátil) ou Saved Games/UZDoom; Linux usa $XDG_CONFIG_HOME/uzdoom/uzdoom.ini (~/.config/uzdoom)."
+  ]
+}

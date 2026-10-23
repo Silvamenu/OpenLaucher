@@ -1,0 +1,31 @@
+{
+  "id": "nfs-hot-pursuit-remastered",
+  "name": "Need for Speed: Hot Pursuit Remastered",
+  "originalGame": "PlayStation 4",
+  "description": "Roda no shadPS4 com o dump da sua própria cópia. Está como jogável na lista oficial (Windows): 30 quadros estáveis, com raras falhas de textura e troféus que não desbloqueiam.",
+  "category": "playstation",
+  "compatibility": "playable",
+  "repoUrl": "https://github.com/shadps4-emu/shadPS4",
+  "accentColor": "#d9631e",
+  "runner": {
+    "manifest": "shadps4",
+    "args": ["-g", "{gameFile}"]
+  },
+  "requirements": [
+    {
+      "id": "game",
+      "type": "userFile",
+      "label": "Seu dump do jogo (eboot.bin)",
+      "extensions": ["bin"],
+      "helpText": "Escolha o arquivo eboot.bin que fica na raiz da pasta do dump do seu jogo (pasta CUSAxxxxx, ex.: CUSA23264 ou CUSA23265). O dump precisa ser feito por você, a partir da sua própria cópia e do seu próprio console; o app não fornece jogos. Se tiver a atualização do jogo, deixe a pasta dela ao lado com o nome CUSAxxxxx-UPDATE (ou CUSAxxxxx-patch): o shadPS4 a aplica sozinho."
+    }
+  ],
+  "updates": { "source": "none" },
+  "_todo": [
+    "Status pela lista oficial: CUSA23264 'playable' no Windows (v0.18.0, jogo 1.03, testadas 5-6 corridas) e CUSA23265 'playable' no Windows (v0.16.0/v0.17.0). Sem relatos para Linux; não há confirmação de que a campanha inteira foi concluída."
+  ],
+  "_sources": [
+    "https://github.com/shadps4-compatibility/shadps4-game-compatibility/issues/2822",
+    "https://github.com/shadps4-compatibility/shadps4-game-compatibility/issues/1696"
+  ]
+}

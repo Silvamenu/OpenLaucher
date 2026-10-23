@@ -48,8 +48,8 @@ export function resolvePathTemplate(template: string, ctx: PathContext): string 
   return path.isAbsolute(native) ? path.normalize(native) : path.join(ctx.gameDir, native)
 }
 
-/** Substitui variáveis em valores livres (ex.: variáveis de ambiente), sem resolver caminho. */
-export function expandVariables(value: string, ctx: PathContext): string {
-  const vars = pathVariables(ctx)
+/** Substitui variáveis em valores livres (ex.: variáveis de ambiente), sem resolver caminho. `extra` soma variáveis (ex.: {gameFile}). */
+export function expandVariables(value: string, ctx: PathContext, extra: Record<string, string> = {}): string {
+  const vars: Record<string, string> = { ...pathVariables(ctx), ...extra }
   return value.replace(VAR_RE, (whole, name: string) => vars[name] ?? whole)
 }

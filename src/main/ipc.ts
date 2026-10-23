@@ -2,8 +2,9 @@ import { app, dialog, ipcMain, shell, type OpenDialogOptions, type SaveDialogOpt
 import path from 'node:path'
 import { AppError, toErrorShape } from '../shared/errors'
 import type { EntryPatch } from '../shared/ipc'
+import { RUNNER_GAME_FILE } from '../shared/manifest'
 import { installableOn } from '../shared/manifestUtils'
-import type { AppInfo, ConfigFileView, IpcResult, SettingsPatch, SettingsView } from '../shared/types'
+import type { AppInfo, ArtKind, ConfigFileView, IpcResult, SettingsPatch, SettingsView } from '../shared/types'
 import type { AppUpdater } from './appUpdater'
 import { listConfigBackups, readConfigFile, restoreConfigBackup, saveConfigFile } from './configFiles'
 import type { AppContext } from './context'
@@ -28,6 +29,11 @@ export interface Services {
 
 function str(value: unknown, name = 'valor'): string {
   if (typeof value !== 'string' || value.length === 0 || value.length > 4096) throw new AppError('UNKNOWN', `Parâmetro inválido: ${name}`)
+  return value
+}
+
+function artKind(value: unknown): ArtKind {
+  if (value !== 'cover' && value !== 'banner') throw new AppError('UNKNOWN', 'Parâmetro inválido: kind')
   return value
 }
 
@@ -97,7 +103,7 @@ export function registerIpc(s: Services): void {
   // Biblioteca --------------------------------------------------------------
   handle('library:list', () => library.list())
   handle('library:rescan', async () => {
-    await ctx.reloadManifests()
+    ctx.emit('manifests:changed', await ctx.reloadManifests())
     return library.broadcast()
   })
   // Só pastas escolhidas pelo usuário no diálogo (ou a subpasta imediata que a detecção acha nelas).
@@ -155,15 +161,52 @@ export function registerIpc(s: Services): void {
   })
   handle('library:launch', (id) => library.launch(str(id)))
   handle('library:icon', (id) => library.icon(str(id)))
-  handle('library:pickCover', async (id) => {
+  handle('library:pickArt', async (id, kind) => {
+    const entryId = library.requireEntry(str(id)).id
+    const art = artKind(kind)
     const file = await openDialog({
-      title: text().pickCover,
+      title: art === 'cover' ? text().pickCover : text().pickBanner,
       properties: ['openFile'],
       filters: [{ name: text().images, extensions: COVER_EXTENSIONS.map((ext) => ext.slice(1)) }]
     })
-    return file ? library.setCover(str(id), file) : library.item(entryOrThrow(str(id)).entry)
+    return file ? library.setArt(entryId, art, file) : library.item(library.requireEntry(entryId))
   })
-  handle('library:clearCover', (id) => library.clearCover(str(id)))
+  handle('library:clearArt', (id, kind) => library.clearArt(str(id), artKind(kind)))
+  // Jogo via emulador: o usuário escolhe o arquivo do jogo dele (o dump) aqui no diálogo.
+  handle('library:addRunnerGame', async (manifestId) => {
+    const manifest = ctx.getManifest(str(manifestId, 'manifestId'))
+    const req = manifest?.runner ? manifest.requirements.find((r) => r.id === RUNNER_GAME_FILE) : undefined
+    if (!manifest || !req || req.type !== 'userFile') throw new AppError('NOT_FOUND')
+    const filters =
+      req.extensions.length > 0
+        ? [
+            { name: req.label, extensions: req.extensions },
+            { name: text().allFiles, extensions: ['*'] }
+          ]
+        : undefined
+    const file = await openDialog({ title: text().pickGameFile(manifest.name), properties: ['openFile'], filters })
+    return file ? library.addRunnerGame(manifest.id, file) : null
+  })
+  // Projetos adicionados pelo link do repositório do GitHub.
+  handle('library:inspectRepo', (url) => updates.inspectRepo(str(url, 'url')))
+  handle('library:installFromRepo', async (url, assetName) => {
+    const inspection = await updates.inspectRepo(str(url, 'url'))
+    const parent = await openDialog({ title: text().pickInstallFolder(inspection.repo.split('/')[1]), properties: ['openDirectory', 'createDirectory'] })
+    // Projeto que já está no catálogo não precisa de arquivo escolhido (usa o manifesto pronto).
+    const asset = typeof assetName === 'string' ? assetName.slice(0, 512) : ''
+    return parent ? updates.installFromRepo(str(url, 'url'), asset, parent) : null
+  })
+  handle('library:pickExecutable', async (id) => {
+    const { entry } = entryOrThrow(str(id))
+    const file = await openDialog({
+      title: text().pickExecutable,
+      defaultPath: entry.path,
+      properties: ['openFile'],
+      filters: ctx.platform === 'win32' ? [{ name: text().programs, extensions: ['exe'] }] : undefined
+    })
+    return file ? library.pickCustomExecutable(entry.id, file) : library.requirements(entry.id)
+  })
+  handle('library:removeCustomManifest', (manifestId) => library.removeCustomManifest(str(manifestId, 'manifestId')))
   // Pasta escolhida aqui no diálogo; o download segue o mesmo caminho validado das atualizações.
   handle('library:install', async (manifestId) => {
     const manifest = ctx.getManifest(str(manifestId, 'manifestId'))

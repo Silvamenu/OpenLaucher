@@ -12,7 +12,8 @@ import type {
 } from '../../../shared/types'
 import { I18nProvider } from '../i18n'
 
-export type Route = { page: 'library' } | { page: 'add' } | { page: 'downloads' } | { page: 'settings' } | { page: 'game'; id: string; tab?: GameTab }
+export type Route =
+  { page: 'library' } | { page: 'add' } | { page: 'downloads' } | { page: 'settings' } | { page: 'faq' } | { page: 'game'; id: string; tab?: GameTab }
 export type GameTab = 'setup' | 'configs' | 'updates' | 'about'
 
 export interface Toast {
@@ -138,6 +139,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     })()
     const offs = [
       window.api.on('library:changed', (list) => setItems(list)),
+      window.api.on('manifests:changed', (report) => setManifests(report)),
       window.api.on('appUpdate:state', (state) => setAppUpdate(state)),
       window.api.on('settings:changed', (view) => setSettings(view)),
       window.api.on('navigate:game', (id) => setRoute({ page: 'game', id, tab: 'updates' })),

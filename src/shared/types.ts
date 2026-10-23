@@ -77,17 +77,34 @@ export interface GameEntry {
   autoUpdate: boolean
   userFiles: Record<string, string>
   firstRunDone: Record<string, boolean>
-  /** Capa personalizada (incrementa a cada troca, para invalidar o cache da imagem). */
+  /** Capa personalizada: muda a cada troca (carimbo de tempo), para invalidar o cache da imagem. */
   coverVersion?: number
+  /** Banner personalizado do topo da página do jogo (mesma lógica da capa). */
+  bannerVersion?: number
 }
+
+/** Imagens que o usuário pode trocar em cada jogo. */
+export type ArtKind = 'cover' | 'banner'
 
 export type GameStatus = 'ready' | 'needsSetup' | 'missingFolder' | 'unknownManifest'
 
-export type RequirementDetail = 'ok' | 'notFound' | 'notSelected' | 'missingFile' | 'sizeMismatch' | 'hashMismatch' | 'notDone' | 'markedDone'
+export type RequirementDetail =
+  | 'ok'
+  | 'notFound'
+  | 'notSelected'
+  | 'missingFile'
+  | 'sizeMismatch'
+  | 'hashMismatch'
+  | 'notDone'
+  | 'markedDone'
+  | 'runnerMissing'
+  | 'runnerBusy'
+  | 'runnerBroken'
 
 export interface RequirementStatus {
   id: string
-  type: 'executable' | 'file' | 'userFile' | 'firstRun'
+  /** "runner": o emulador onde o jogo roda (jogos via emulador no lugar do executável). */
+  type: 'executable' | 'runner' | 'file' | 'userFile' | 'firstRun'
   label: string
   helpText?: string
   optional: boolean
@@ -99,6 +116,12 @@ export interface RequirementStatus {
   matchedLabel?: string
   canCopyToGameDir?: boolean
   extensions?: string[]
+  /** Manifesto do emulador (requisito "runner"). */
+  runnerId?: string
+  /** Entrada do emulador na biblioteca (requisito "runner"), quando ele já foi adicionado. */
+  runnerEntryId?: string
+  /** O executável pode ser escolhido pelo usuário (projetos adicionados pelo link do repositório). */
+  canPickExecutable?: boolean
 }
 
 export interface RequirementsReport {
@@ -114,6 +137,18 @@ export interface ReleaseAsset {
   size: number
   url: string
   digest?: string | null
+}
+
+/** O que o app encontrou no último release de um repositório informado pelo usuário. */
+export interface RepoInspection {
+  repo: string
+  tag: string
+  /** Arquivos que o app sabe instalar, do mais provável ao menos provável para este sistema. */
+  assets: { name: string; size: number }[]
+  /** Escolha automática, quando não há empate. */
+  suggested: string | null
+  /** Projeto já suportado com o mesmo repositório (melhor usar o manifesto pronto). */
+  manifestId: string | null
 }
 
 export interface ReleaseInfo {
@@ -278,6 +313,10 @@ export type AppErrorCode =
   | 'WRONG_PIN'
   | 'PROFILE_EXISTS'
   | 'INVALID_PROFILE'
+  | 'INVALID_IMAGE'
+  | 'INVALID_REPO_URL'
+  | 'RUNNER_MISSING'
+  | 'GAME_FILE_MISSING'
   | 'UNKNOWN'
 
 export interface AppErrorShape {

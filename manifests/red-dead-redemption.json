@@ -1,0 +1,43 @@
+{
+  "id": "red-dead-redemption",
+  "name": "Red Dead Redemption",
+  "originalGame": "Xbox 360",
+  "description": "Roda no Xenia Canary com o dump da sua própria cópia. A lista oficial marca como jogável, sem problemas que impeçam terminar o jogo. Uma das missões pode demorar a carregar e o reflexo do sol atravessa prédios (melhora com occlusion_query = \"fast\").",
+  "category": "xbox",
+  "compatibility": "playable",
+  "repoUrl": "https://github.com/xenia-canary/xenia-canary",
+  "accentColor": "#a5482a",
+  "runner": {
+    "manifest": "xenia-canary",
+    "args": ["{gameFile}"]
+  },
+  "requirements": [
+    {
+      "id": "game",
+      "type": "userFile",
+      "label": "Seu dump do jogo (arquivo GOD, ISO ou default.xex)",
+      "extensions": ["iso", "xex", "zar"],
+      "helpText": "Escolha o arquivo do jogo feito por você, a partir do seu próprio disco ou console. Se você instalou o jogo no seu Xbox 360 e o transferiu para um pendrive, ele fica em Content/0000000000000000/5454082B/, dentro de uma subpasta (por exemplo 00007000): é o arquivo sem extensão, com nome de letras e números, ao lado de uma pasta .data com o mesmo nome (use 'Todos os arquivos' no seletor para vê-lo). Se o jogo estiver extraído, escolha o default.xex; arquivos .iso e .zar também funcionam. Atualizações (TU) e DLC que você tiver são instaladas no Xenia em Content > Install Content. O app não fornece jogos.",
+      "_todo": "A subpasta exata do jogo instalado/transferido (00007000 ou outra) não foi confirmada para instalações de disco no console sem modificação; o texto cita 00007000 só como exemplo (o Quickstart oficial também não fixa a pasta)."
+    }
+  ],
+  "updates": {
+    "source": "none"
+  },
+  "_todo": [
+    "Lista oficial (issue #129, TitleID 5454082B): state-playable; relato de 09/2024 sem problemas que impeçam o progresso e nota de colaborador de 06/2026 (build fbd620c) sobre occlusion_query.",
+    "Relato antigo (2023) sobre ragdolls mais curtos que no console continua sem resolução registrada.",
+    "O TitleID 5454082B é o da versão original; a edição Game of the Year (2 discos, com Undead Nightmare) não foi conferida separadamente.",
+    "O Xenia abre o jogo pelo caminho passado como argumento posicional (opção 'target' em xenia_main.cc); a tela cheia pode ser forçada com --fullscreen=true, não usado aqui."
+  ],
+  "_sources": [
+    "https://github.com/xenia-canary/game-compatibility/issues/129",
+    "https://github.com/xenia-canary/game-compatibility/labels?page=2",
+    "https://github.com/xenia-canary/game-compatibility/labels?page=3",
+    "https://raw.githubusercontent.com/xenia-canary/xenia-canary/HEAD/src/xenia/app/xenia_main.cc",
+    "https://raw.githubusercontent.com/xenia-canary/xenia-canary/HEAD/src/xenia/app/emulator_window.cc",
+    "https://raw.githubusercontent.com/wiki/xenia-canary/xenia-canary/Quickstart.md",
+    "https://raw.githubusercontent.com/xenia-canary/xenia-canary/HEAD/src/xenia/xbox.h",
+    "https://raw.githubusercontent.com/xenia-canary/xenia-canary/HEAD/src/xenia/emulator.cc"
+  ]
+}

@@ -13,9 +13,50 @@ export interface LaunchCallbacks {
   onExit: (entryId: string, seconds: number) => void
 }
 
-/** Inicia os jogos com `cwd` na pasta do jogo e mede o tempo jogado. */
+/** O que é executado ao abrir um jogo. */
+export interface LaunchPlan {
+  exe: string
+  args: string[]
+  cwd: string
+  env: Record<string, string>
+}
+
+/** Jogo comum: o executável dele, com a pasta do jogo como diretório de trabalho. */
+export function directPlan(manifest: Manifest, entry: GameEntry, exeRel: string, platform: Platform): LaunchPlan {
+  const ctx = { gameDir: entry.path, platform }
+  return {
+    exe: path.join(entry.path, exeRel),
+    args: launchArgsFor(manifest, platform).map((a) => expandVariables(a, ctx)),
+    cwd: entry.path,
+    env: Object.fromEntries(Object.entries(launchEnvFor(manifest, platform)).map(([k, v]) => [k, expandVariables(v, ctx)]))
+  }
+}
+
+/**
+ * Jogo via emulador: o emulador abre o arquivo do jogo do usuário. Roda na pasta do emulador (onde
+ * ficam as configurações dele); {gameFile} e {gameDir} nos argumentos são o arquivo e a pasta do jogo.
+ */
+export function runnerPlan(
+  game: { manifest: Manifest; entry: GameEntry; gameFile: string },
+  emulator: { manifest: Manifest; entry: GameEntry; exe: string },
+  platform: Platform
+): LaunchPlan {
+  const runner = game.manifest.runner
+  const args = !runner ? [] : Array.isArray(runner.args) ? runner.args : (runner.args[platform] ?? ['{gameFile}'])
+  const gameCtx = { gameDir: game.entry.path, platform }
+  const emulatorCtx = { gameDir: emulator.entry.path, platform }
+  return {
+    exe: emulator.exe,
+    args: args.map((a) => expandVariables(a, gameCtx, { gameFile: game.gameFile })),
+    cwd: emulator.entry.path,
+    env: Object.fromEntries(Object.entries(launchEnvFor(emulator.manifest, platform)).map(([k, v]) => [k, expandVariables(v, emulatorCtx)]))
+  }
+}
+
+/** Inicia os jogos e mede o tempo jogado. */
 export class GameLauncher {
-  private readonly running = new Set<string>()
+  /** Quantas sessões usam cada entrada agora (um emulador pode estar rodando vários jogos). */
+  private readonly running = new Map<string, number>()
 
   constructor(
     private readonly platform: Platform,
@@ -23,14 +64,13 @@ export class GameLauncher {
   ) {}
 
   isRunning(entryId: string): boolean {
-    return this.running.has(entryId)
+    return (this.running.get(entryId) ?? 0) > 0
   }
 
-  async launch(entry: GameEntry, manifest: Manifest, exeRel: string | null): Promise<void> {
-    if (this.running.has(entry.id)) throw new AppError('ALREADY_RUNNING')
-    // A pasta do jogo já foi conferida por quem chama (LibraryService.launch).
-    if (!exeRel) throw new AppError('EXE_NOT_FOUND', '', { path: entry.path })
-    const exe = path.join(entry.path, exeRel)
+  /** `alsoBusy`: entradas usadas pelo jogo enquanto ele roda (o emulador não pode ser atualizado no meio). */
+  async launch(entryId: string, plan: LaunchPlan, alsoBusy: string[] = []): Promise<void> {
+    if (this.isRunning(entryId)) throw new AppError('ALREADY_RUNNING')
+    const exe = plan.exe
 
     // AppImages e binários Linux precisam do bit de execução.
     if (this.platform !== 'win32') {
@@ -43,13 +83,9 @@ export class GameLauncher {
       }
     }
 
-    const ctx = { gameDir: entry.path, platform: this.platform }
-    const extraEnv = Object.fromEntries(Object.entries(launchEnvFor(manifest, this.platform)).map(([k, v]) => [k, expandVariables(v, ctx)]))
-    const args = launchArgsFor(manifest, this.platform).map((a) => expandVariables(a, ctx))
-
-    const child = spawn(exe, args, {
-      cwd: entry.path,
-      env: { ...process.env, ...extraEnv },
+    const child = spawn(exe, plan.args, {
+      cwd: plan.cwd,
+      env: { ...process.env, ...plan.env },
       stdio: 'ignore',
       windowsHide: false,
       detached: false
@@ -65,11 +101,16 @@ export class GameLauncher {
     })
 
     const startedAt = Date.now()
-    this.running.add(entry.id)
-    this.callbacks.onStart(entry.id)
+    const ids = [entryId, ...alsoBusy.filter((id) => id !== entryId)]
+    ids.forEach((id) => this.running.set(id, (this.running.get(id) ?? 0) + 1))
+    this.callbacks.onStart(entryId)
     child.once('exit', () => {
-      this.running.delete(entry.id)
-      this.callbacks.onExit(entry.id, Math.round((Date.now() - startedAt) / 1000))
+      for (const id of ids) {
+        const left = (this.running.get(id) ?? 1) - 1
+        if (left > 0) this.running.set(id, left)
+        else this.running.delete(id)
+      }
+      this.callbacks.onExit(entryId, Math.round((Date.now() - startedAt) / 1000))
     })
   }
 }

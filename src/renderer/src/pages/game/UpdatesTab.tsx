@@ -10,7 +10,7 @@ import { errorMessage, formatBytes, formatDate, formatProgressDetail, formatRate
 import { useAppState } from '../../state/AppState'
 
 export function UpdatesTab({ item }: { item: LibraryItem }) {
-  const { progress, toast, info } = useAppState()
+  const { progress, toast, info, items, manifests, navigate } = useAppState()
   const { t, locale } = useI18n()
   const id = item.entry.id
   const manifest = item.manifest
@@ -28,6 +28,24 @@ export function UpdatesTab({ item }: { item: LibraryItem }) {
   useEffect(() => {
     void window.api.updates.rateLimit().then(setRateLimit)
   }, [state.checkedAt])
+
+  // Jogo via emulador: o que atualiza é o emulador (o dump do usuário não muda).
+  if (manifest?.runner) {
+    const emulatorId = manifest.runner.manifest
+    const name = manifests.manifests.find((m) => m.id === emulatorId)?.name ?? emulatorId
+    const emulator = items.find((i) => i.entry.manifestId === emulatorId)
+    return (
+      <Card className="max-w-[760px] p-5">
+        <div className="text-[14px] font-medium">{t('upd.runner.title', { name })}</div>
+        <p className="mt-1.5 text-[13px] leading-relaxed text-subtle">{t('upd.runner.body', { name })}</p>
+        {emulator && (
+          <Button className="mt-4" onClick={() => navigate({ page: 'game', id: emulator.entry.id, tab: 'updates' })}>
+            {t('upd.runner.open', { name })}
+          </Button>
+        )}
+      </Card>
+    )
+  }
 
   if (!manifest || !updates || updates.source !== 'github-releases') {
     return (

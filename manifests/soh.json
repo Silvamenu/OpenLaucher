@@ -3,6 +3,7 @@
   "name": "Ship of Harkinian",
   "originalGame": "The Legend of Zelda: Ocarina of Time",
   "description": "Port para PC de Ocarina of Time baseado na decompilação do jogo, com melhorias, randomizer e suporte a mods.",
+  "category": "nintendo",
   "repoUrl": "https://github.com/HarbourMasters/Shipwright",
   "website": "https://www.shipofharkinian.com",
   "accentColor": "#3f8f4a",

@@ -1,0 +1,78 @@
+{
+  "id": "openmw",
+  "name": "OpenMW",
+  "originalGame": "The Elder Scrolls III: Morrowind",
+  "description": "Motor de código aberto que roda Morrowind (com Tribunal e Bloodmoon), com melhorias gráficas, correções e suporte a mods. Usa os arquivos da sua própria cópia do jogo. Por enquanto o app não instala o OpenMW: instale-o pelo pacote oficial do projeto e adicione a pasta dele ao app.",
+  "category": "pc",
+  "repoUrl": "https://github.com/OpenMW/openmw",
+  "website": "https://www.openmw.org",
+  "accentColor": "#8b6b3d",
+  "executables": {
+    "win32": ["openmw-launcher.exe"],
+    "linux": ["openmw-launcher"]
+  },
+  "detectFiles": ["openmw-launcher.exe", "openmw.exe", "openmw-launcher", "openmw.x86_64", "openmw.cfg", "defaults.bin"],
+  "requirements": [
+    {
+      "id": "morrowind-data",
+      "type": "firstRun",
+      "label": "Indicar os arquivos do seu Morrowind no OpenMW Launcher",
+      "doneWhen": ["{documents}/My Games/OpenMW/openmw.cfg", "{appData}/openmw/openmw.cfg"],
+      "helpText": "Abra o jogo pelo app: o OpenMW Launcher oferece o assistente de instalação (Installation Wizard). Escolha \"Existing Installation\" (instalação existente): selecione a instalação detectada ou clique em \"Browse...\" e escolha o arquivo Morrowind.esm, que fica na pasta \"Data Files\" da sua cópia do Morrowind (GOG, Steam ou CD). O assistente também importa as configurações do Morrowind.ini. Depois é só clicar em Play no launcher.",
+      "_todo": "O launcher grava o openmw.cfg do usuário (Documentos\\My Games\\OpenMW no Windows, ~/.config/openmw no Linux) ao salvar as configurações; o arquivo existir não garante que a pasta Data Files foi escolhida."
+    }
+  ],
+  "configFiles": [
+    {
+      "path": {
+        "win32": "{documents}/My Games/OpenMW/openmw.cfg",
+        "linux": "{appData}/openmw/openmw.cfg"
+      },
+      "format": "text",
+      "label": "Pastas de dados e mods (openmw.cfg)",
+      "editable": true,
+      "_todo": "Chaves como data= e content= se repetem (uma linha por pasta/plugin); por isso o arquivo é editado como texto."
+    },
+    {
+      "path": {
+        "win32": "{documents}/My Games/OpenMW/settings.cfg",
+        "linux": "{appData}/openmw/settings.cfg"
+      },
+      "format": "ini",
+      "label": "Configurações (settings.cfg)",
+      "editable": true
+    }
+  ],
+  "launchArgs": [],
+  "updates": {
+    "source": "none",
+    "_todo": [
+      "Instalação automática desativada. Windows: o release só traz o instalador NSIS (OpenMW-<versão>-Windows-x64.exe), que não é portátil.",
+      "Linux: openmw-<versão>-Linux-64Bit.tar.gz é portátil (pasta raiz única, scripts openmw e openmw-launcher que ajustam LD_LIBRARY_PATH=./lib), mas depende de 44 links simbólicos em lib/ (libosg*.so.162, libOpenThreads.so.21, libicu*.so.76, libQt6*.so.6) que o extrator do app descarta; o openmw.x86_64 não abriria.",
+      "Quando o extrator recriar links simbólicos relativos que ficam dentro da pasta do jogo, trocar por: {\"source\": \"github-releases\", \"repo\": \"OpenMW/openmw\", \"assetPatterns\": {\"linux\": \"openmw-*-Linux-64Bit.tar.gz\"}, \"includePrereleases\": false, \"preserve\": []}. O padrão não casa com o -debug.tar.gz (600 MB). Configurações e saves ficam fora da pasta do jogo."
+    ]
+  },
+  "_todo": [
+    "No Windows, use a pasta criada pelo instalador oficial (ex.: C:\\Program Files\\OpenMW 0.51.0), que tem openmw.exe, openmw-launcher.exe, openmw.cfg e defaults.bin na raiz.",
+    "Saves: Documentos\\My Games\\OpenMW\\saves no Windows e ~/.local/share/openmw/saves no Linux."
+  ],
+  "_sources": [
+    "https://github.com/OpenMW/openmw",
+    "https://github.com/OpenMW/openmw/releases",
+    "https://github.com/OpenMW/openmw/releases/latest",
+    "https://github.com/OpenMW/openmw/releases/expanded_assets/openmw-0.51.0",
+    "https://github.com/OpenMW/openmw/releases/expanded_assets/openmw-0.50.0",
+    "https://raw.githubusercontent.com/OpenMW/openmw/HEAD/README.md",
+    "https://raw.githubusercontent.com/OpenMW/openmw/openmw-0.51.0/CMakeLists.txt",
+    "https://raw.githubusercontent.com/OpenMW/openmw/openmw-0.51.0/docs/source/reference/modding/paths.rst",
+    "https://raw.githubusercontent.com/OpenMW/openmw/openmw-0.51.0/apps/wizard/existinginstallationpage.cpp",
+    "https://raw.githubusercontent.com/OpenMW/openmw/openmw-0.51.0/apps/wizard/ui/existinginstallationpage.ui"
+  ],
+  "_verified": [
+    "Release openmw-0.51.0 (19/06/2026, latest) tem openmw-0.51.0-Linux-64Bit.tar.gz (90,1 MB), openmw-0.51.0-Linux-64Bit-debug.tar.gz (600 MB), OpenMW-0.51.0-Windows-x64.exe (69,9 MB) e dois .dmg de macOS. A 0.50.0 usava OpenMW-0.50.0-win64.exe.",
+    "O .exe do Windows é um instalador NSIS (CPACK_GENERATOR NSIS no CMakeLists.txt; assinatura 'Nullsoft Install System v3.10' no arquivo); instala openmw.exe, openmw-launcher.exe e o openmw.cfg local na raiz.",
+    "O .tar.gz do Linux tem a pasta raiz openmw-0.51.0-Linux-64Bit/ com os scripts openmw e openmw-launcher (modo 744), os binários *.x86_64, openmw.cfg local, defaults.bin, resources/, lib/ e plugins/; README.packagecontents.txt manda rodar os scripts sem sufixo.",
+    "readelf: openmw.x86_64 precisa de libosg*.so.162, libOpenThreads.so.21 e libicu*.so.76; openmw-launcher.x86_64 precisa de libQt6*.so.6. Em lib/ esses nomes são links simbólicos para os arquivos reais.",
+    "openmw.cfg local: config=?userconfig?, user-data=?userdata?; paths.rst: ?userconfig? = Documents\\My Games\\OpenMW (Windows) e $XDG_CONFIG_HOME/openmw ou ~/.config/openmw (Linux)."
+  ]
+}

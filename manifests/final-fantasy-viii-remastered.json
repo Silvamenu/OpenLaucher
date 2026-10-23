@@ -1,0 +1,35 @@
+{
+  "id": "final-fantasy-viii-remastered",
+  "name": "Final Fantasy VIII Remastered",
+  "originalGame": "PlayStation 4",
+  "description": "Roda no shadPS4 com o dump da sua própria cópia. Está como jogável na lista oficial no Windows, Linux e macOS; a taxa de quadros baixa nas batalhas é igual à do console.",
+  "category": "playstation",
+  "compatibility": "playable",
+  "repoUrl": "https://github.com/shadps4-emu/shadPS4",
+  "accentColor": "#2c4f8a",
+  "runner": {
+    "manifest": "shadps4",
+    "args": ["-g", "{gameFile}"]
+  },
+  "requirements": [
+    {
+      "id": "game",
+      "type": "userFile",
+      "label": "Seu dump do jogo (eboot.bin)",
+      "extensions": ["bin"],
+      "helpText": "Escolha o arquivo eboot.bin que fica na raiz da pasta do dump do seu jogo (pasta CUSAxxxxx, ex.: CUSA08751). O dump precisa ser feito por você, a partir da sua própria cópia e do seu próprio console; o app não fornece jogos. Se tiver a atualização do jogo, deixe a pasta dela ao lado com o nome CUSAxxxxx-UPDATE (ou CUSAxxxxx-patch): o shadPS4 a aplica sozinho."
+    }
+  ],
+  "updates": {
+    "source": "none"
+  },
+  "_todo": [
+    "Status pela lista oficial: CUSA08751 'playable' no Windows (v0.16.0), Linux (v0.12.0, sem mudança na v0.17.0) e macOS (reavaliado como 'playable' na v0.20.0 em 2026-10-22). Outras regiões não verificadas."
+  ],
+  "_sources": [
+    "https://github.com/shadps4-compatibility/shadps4-game-compatibility/issues/1809",
+    "https://github.com/shadps4-compatibility/shadps4-game-compatibility/issues/1880",
+    "https://github.com/shadps4-compatibility/shadps4-game-compatibility/issues/1925",
+    "https://github.com/shadps4-compatibility/shadps4-game-compatibility/issues?q=FINAL+FANTASY+VIII"
+  ]
+}

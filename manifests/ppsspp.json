@@ -1,0 +1,70 @@
+{
+  "id": "ppsspp",
+  "name": "PPSSPP",
+  "originalGame": "PSP (PlayStation Portable)",
+  "description": "Emulador de PSP de código aberto, maduro e leve, com aumento de resolução e melhorias gráficas. Não precisa de BIOS: roda os jogos a partir do dump dos seus próprios UMDs ou dos jogos digitais que você comprou.",
+  "category": "emulators",
+  "repoUrl": "https://github.com/hrydgard/ppsspp",
+  "website": "https://www.ppsspp.org",
+  "accentColor": "#e8821e",
+  "executables": {
+    "win32": ["PPSSPPWindows64.exe"],
+    "linux": ["PPSSPP.AppImage", "PPSSPP*.AppImage"]
+  },
+  "detectFiles": ["PPSSPPWindows64.exe", "PPSSPP.AppImage", "assets/ppge_atlas.zim"],
+  "requirements": [],
+  "configFiles": [
+    {
+      "path": {
+        "win32": ["memstick/PSP/SYSTEM/ppsspp.ini", "{documents}/PPSSPP/PSP/SYSTEM/ppsspp.ini"],
+        "linux": "{appData}/ppsspp/PSP/SYSTEM/ppsspp.ini"
+      },
+      "format": "ini",
+      "label": "Configurações do PPSSPP (ppsspp.ini)",
+      "editable": true,
+      "_todo": "Criado na primeira execução."
+    },
+    {
+      "path": {
+        "win32": ["memstick/PSP/SYSTEM/controls.ini", "{documents}/PPSSPP/PSP/SYSTEM/controls.ini"],
+        "linux": "{appData}/ppsspp/PSP/SYSTEM/controls.ini"
+      },
+      "format": "ini",
+      "label": "Controles (controls.ini)",
+      "editable": true,
+      "_todo": "Criado na primeira execução."
+    }
+  ],
+  "launchArgs": [],
+  "updates": {
+    "source": "github-releases",
+    "repo": "hrydgard/ppsspp",
+    "assetPatterns": {
+      "win32": "PPSSPP-*-Windows-x64.zip",
+      "linux": "PPSSPP-*-anylinux-x86_64.AppImage"
+    },
+    "includePrereleases": false,
+    "preserve": ["installed.txt", "memstick/**"],
+    "_todo": [
+      "Releases antigos (v1.19.x e anteriores) não têm zip do Windows no GitHub; o app procura o release mais novo que tenha o asset (v1.20 em diante).",
+      "Builds ARM64 (Windows/Linux), macOS, iOS e o .tar.xz de código-fonte não são usados."
+    ]
+  },
+  "_todo": [
+    "Pastas de dados: no Windows o zip roda em modo portátil (pasta memstick ao lado do executável, porque o zip não tem installed.txt; se a pasta não puder ser gravada, usa Documentos\\PPSSPP). No Linux o AppImage usa $XDG_CONFIG_HOME/ppsspp ou ~/.config/ppsspp. Saves ficam em PSP/SAVEDATA e estados em PSP/PPSSPP_STATE dentro dessa pasta.",
+    "O site oficial (ppsspp.org) e a base de compatibilidade (report.ppsspp.org) não puderam ser abertos neste ambiente; as informações vieram do código-fonte da v1.20.4 e dos releases do GitHub.",
+    "Não verificado em execução real: nenhum binário foi executado nesta pesquisa (zip do Windows listado; AppImage é arquivo único)."
+  ],
+  "_sources": [
+    "https://github.com/hrydgard/ppsspp/releases/latest",
+    "https://github.com/hrydgard/ppsspp/releases",
+    "https://github.com/hrydgard/ppsspp/releases/expanded_assets/v1.20.4",
+    "https://github.com/hrydgard/ppsspp/releases/expanded_assets/v1.20",
+    "https://github.com/hrydgard/ppsspp/releases/expanded_assets/v1.19.3",
+    "https://raw.githubusercontent.com/hrydgard/ppsspp/HEAD/README.md",
+    "https://raw.githubusercontent.com/hrydgard/ppsspp/v1.20.4/Windows/main.cpp",
+    "https://raw.githubusercontent.com/hrydgard/ppsspp/v1.20.4/UI/NativeApp.cpp",
+    "https://raw.githubusercontent.com/hrydgard/ppsspp/v1.20.4/Core/System.cpp",
+    "https://raw.githubusercontent.com/hrydgard/ppsspp/v1.20.4/Core/Config.cpp"
+  ]
+}

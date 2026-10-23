@@ -1,0 +1,33 @@
+{
+  "id": "yakuza-0",
+  "name": "Yakuza 0",
+  "originalGame": "PlayStation 4",
+  "description": "Roda no shadPS4 com o dump da sua própria cópia. No Linux está como jogável na lista oficial; no Windows chega à jogatina, mas com desempenho baixo e uma falha de neblina no menu.",
+  "category": "playstation",
+  "compatibility": "ingame",
+  "repoUrl": "https://github.com/shadps4-emu/shadPS4",
+  "accentColor": "#b5122b",
+  "runner": {
+    "manifest": "shadps4",
+    "args": ["-g", "{gameFile}"]
+  },
+  "requirements": [
+    {
+      "id": "game",
+      "type": "userFile",
+      "label": "Seu dump do jogo (eboot.bin)",
+      "extensions": ["bin"],
+      "helpText": "Escolha o arquivo eboot.bin que fica na raiz da pasta do dump do seu jogo (pasta CUSAxxxxx, ex.: CUSA05070 ou CUSA05133). O dump precisa ser feito por você, a partir da sua própria cópia e do seu próprio console; o app não fornece jogos. Se tiver a atualização do jogo, deixe a pasta dela ao lado com o nome CUSAxxxxx-UPDATE (ou CUSAxxxxx-patch): o shadPS4 a aplica sozinho."
+    }
+  ],
+  "updates": { "source": "none" },
+  "_todo": [
+    "Status pela lista oficial: CUSA05070 'playable' no Linux (v0.12.5, jogo 1.05, ~30 min testados); CUSA05133 'ingame' no Windows (v0.13.0, desempenho baixo). Como o app é Windows primeiro, o manifesto usa 'ingame'. Relatos são antigos (até 2025-12). No macOS, CUSA05133 só chega a 'boots' (issue #373)."
+  ],
+  "_sources": [
+    "https://github.com/shadps4-compatibility/shadps4-game-compatibility/issues/2002",
+    "https://github.com/shadps4-compatibility/shadps4-game-compatibility/issues/1656",
+    "https://github.com/shadps4-compatibility/shadps4-game-compatibility/issues/373",
+    "https://raw.githubusercontent.com/shadps4-emu/shadPS4/HEAD/README.md"
+  ]
+}

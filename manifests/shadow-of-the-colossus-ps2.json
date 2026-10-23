@@ -1,0 +1,42 @@
+{
+  "id": "shadow-of-the-colossus-ps2",
+  "name": "Shadow of the Colossus",
+  "originalGame": "PlayStation 2",
+  "description": "Versão original de PS2, rodando no PCSX2 com a imagem do seu próprio disco. Marcado como jogável (Playable) na lista de compatibilidade oficial do PCSX2; é pesado de emular e pede um processador forte.",
+  "category": "playstation",
+  "compatibility": "playable",
+  "repoUrl": "https://github.com/PCSX2/pcsx2",
+  "accentColor": "#6b7a5a",
+  "runner": {
+    "manifest": "pcsx2",
+    "args": ["-portable", "-batch", "--", "{gameFile}"]
+  },
+  "requirements": [
+    {
+      "id": "game",
+      "type": "userFile",
+      "label": "Seu dump do jogo (ISO/CHD)",
+      "extensions": ["iso", "chd", "cso", "zso", "bin", "img", "mdf", "gz"],
+      "helpText": "Escolha a imagem do disco (.iso, .chd, .cso, .bin...) que você mesmo criou a partir do seu disco original de Shadow of the Colossus; o app não fornece jogos. Versões com status verificado: EUA (SCUS-97472), Europa (SCES-53326) e Japão (SCPS-15097, Wanda to Kyozou). O PCSX2 também precisa do BIOS do seu PS2 configurado (veja os requisitos do PCSX2)."
+    }
+  ],
+  "updates": {
+    "source": "none"
+  },
+  "_todo": [
+    "Status conferido em duas fontes oficiais do PCSX2: (1) bin/resources/GameIndex.yaml da v2.8.2, campo compat = 5 (Playable, segundo pcsx2/Docs/GameIndex.md); (2) os dados da lista de compatibilidade do site (pcsx2.net/compat), que vêm de static/data/compat/data.min.json no repositório PCSX2/pcsx2-net-www: SCUS-97472, SCES-53326 e SCPS-15097 aparecem como Playable. O site pcsx2.net em si não abre neste ambiente (DNS), então as notas do wiki por versão não foram lidas.",
+    "Argumentos verificados no código do PCSX2 v2.8.2 (QtHost.cpp): -portable usa a pasta de dados do PCSX2 instalado pelo app (a mesma do manifesto pcsx2), -batch fecha o PCSX2 junto com o jogo e -- marca o fim das opções antes do arquivo. Tela cheia não é forçada (opção 'Iniciar em tela cheia' do próprio PCSX2, ou o argumento -fullscreen).",
+    "'Pede um processador forte' vem do wiki do PCSX2 (very CPU intensive), visto só no resumo de uma busca.",
+    "O disco duplo 'Shadow of the Colossus + Ico' (SCED-53990) está sem status na base."
+  ],
+  "_sources": [
+    "https://raw.githubusercontent.com/PCSX2/pcsx2/v2.8.2/bin/resources/GameIndex.yaml",
+    "https://raw.githubusercontent.com/PCSX2/pcsx2/v2.8.2/pcsx2/Docs/GameIndex.md",
+    "https://raw.githubusercontent.com/PCSX2/pcsx2/v2.8.2/pcsx2-qt/QtHost.cpp",
+    "https://raw.githubusercontent.com/PCSX2/pcsx2/v2.8.2/pcsx2/VMManager.cpp",
+    "https://wiki.pcsx2.net/Shadow_of_the_Colossus",
+    "https://pcsx2.net/compat/",
+    "https://raw.githubusercontent.com/PCSX2/pcsx2-net-www/main/static/data/compat/data.min.json",
+    "https://raw.githubusercontent.com/PCSX2/pcsx2-net-www/main/src/pages/compat/index.js"
+  ]
+}

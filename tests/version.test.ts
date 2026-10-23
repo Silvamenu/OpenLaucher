@@ -51,6 +51,13 @@ describe('detecção de release mais novo', () => {
     expect(isNewerRelease({ tag: 'antigo', publishedAt: '2025-01-01T00:00:00Z' }, { tag: 'snapshot', publishedAt: '2026-01-01T00:00:00Z' })).toBe(false)
   })
 
+  it('mesma tag republicada (ex.: "latest", "ci-dev-build") é nova só se foi publicada depois', () => {
+    const installed = { tag: 'ci-dev-build', publishedAt: '2026-08-13T00:00:00Z' }
+    expect(isNewerRelease({ tag: 'ci-dev-build', publishedAt: '2026-09-01T00:00:00Z' }, installed)).toBe(true)
+    expect(isNewerRelease({ tag: 'ci-dev-build', publishedAt: '2026-08-13T00:00:00Z' }, installed)).toBe(false)
+    expect(isNewerRelease({ tag: 'ci-dev-build', publishedAt: '2026-09-01T00:00:00Z' }, 'ci-dev-build')).toBe(false)
+  })
+
   it('sem versão instalada conhecida não acusa atualização', () => {
     expect(isNewerRelease({ tag: '9.3.1' }, null)).toBe(false)
     expect(isNewerRelease({ tag: '9.3.1' }, undefined)).toBe(false)

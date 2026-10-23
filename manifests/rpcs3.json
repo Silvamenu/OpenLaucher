@@ -1,0 +1,123 @@
+{
+  "id": "rpcs3",
+  "name": "RPCS3",
+  "originalGame": "PlayStation 3",
+  "description": "Emulador de PlayStation 3 de código aberto. Roda jogos a partir do dump do seu próprio disco ou dos seus jogos digitais e precisa do firmware oficial do PS3, que a Sony oferece de graça no site dela.",
+  "category": "emulators",
+  "repoUrl": "https://github.com/RPCS3/rpcs3",
+  "website": "https://rpcs3.net",
+  "accentColor": "#1f5fa8",
+  "executables": {
+    "win32": ["rpcs3.exe"],
+    "linux": ["rpcs3.AppImage", "rpcs3-*_linux64.AppImage"]
+  },
+  "detectFiles": ["rpcs3.exe", "GuiConfigs/compat_database.dat", "rpcs3.AppImage", "rpcs3-*_linux64.AppImage"],
+  "requirements": [
+    {
+      "id": "firmware",
+      "type": "firstRun",
+      "label": "Instalar o firmware do PS3 (PS3UPDAT.PUP)",
+      "doneWhen": ["dev_flash/vsh/etc/version.txt", "{gameDir}/portable/dev_flash/vsh/etc/version.txt", "{appData}/rpcs3/dev_flash/vsh/etc/version.txt"],
+      "helpText": "Jogos comerciais só rodam com o firmware do PS3 instalado. Baixe o arquivo PS3UPDAT.PUP de graça na página oficial de atualização do sistema do PS3 da Sony (https://www.playstation.com/en-us/get-help/ps3-system-software/). Depois abra o RPCS3, vá em File > Install Firmware e escolha o arquivo. O firmware é instalado na pasta dev_flash do emulador: dentro da pasta do RPCS3 no Windows, ou em ~/.config/rpcs3 no Linux; se existir uma pasta portable ao lado do executável, ele vai para dentro dela. O app não fornece o firmware."
+    },
+    {
+      "id": "vcredist",
+      "type": "firstRun",
+      "optional": true,
+      "label": "Microsoft Visual C++ Redistributable 2015-2022 x64 (só no Windows)",
+      "helpText": "No Windows, o RPCS3 precisa desse pacote da Microsoft. Se o emulador não abrir e reclamar de MSVCP140.dll ou VCRUNTIME140.dll, instale-o pelo link oficial da Microsoft indicado pelo RPCS3: https://aka.ms/vs/17/release/VC_redist.x64.exe. Não é necessário no Linux. Marque como feito depois de instalar."
+    }
+  ],
+  "configFiles": [
+    {
+      "path": {
+        "win32": ["portable/config/config.yml", "config/config.yml", "config.yml"],
+        "linux": ["portable/config.yml", "{appData}/rpcs3/config.yml"]
+      },
+      "format": "text",
+      "label": "Configurações do emulador (config.yml)",
+      "editable": true,
+      "_todo": "Arquivo YAML (editado como texto). É criado na primeira execução. Configurações por jogo ficam em config/custom_configs/config_<ID>.yml."
+    },
+    {
+      "path": {
+        "win32": ["portable/GuiConfigs/CurrentSettings.ini", "GuiConfigs/CurrentSettings.ini"],
+        "linux": ["portable/GuiConfigs/CurrentSettings.ini", "{appData}/rpcs3/GuiConfigs/CurrentSettings.ini"]
+      },
+      "format": "ini",
+      "label": "Interface (CurrentSettings.ini)",
+      "editable": true
+    }
+  ],
+  "launchArgs": [],
+  "updates": {
+    "source": "github-releases",
+    "repo": "RPCS3/rpcs3-binaries-win",
+    "assetPatterns": {
+      "win32": ["rpcs3-*_win64_msvc.7z", "rpcs3-*_win64.7z"]
+    },
+    "includePrereleases": false,
+    "preserve": [
+      "portable/**",
+      "config/*.yml",
+      "config/*.dat",
+      "config/custom_configs/**",
+      "config/input_configs/*.yml",
+      "config/input_configs/*/**",
+      "GuiConfigs/CurrentSettings.ini",
+      "GuiConfigs/persistent_settings.dat",
+      "dev_hdd0/**",
+      "dev_hdd1/**",
+      "dev_flash/**",
+      "dev_flash2/**",
+      "dev_flash3/**",
+      "dev_usb000/**",
+      "dev_bdvd/**",
+      "games/**",
+      "savestates/**",
+      "patches/**",
+      "cache/**",
+      "data/**",
+      "captures/**",
+      "recordings/**",
+      "screenshots/**",
+      "Icons/game_icons/**",
+      "*.log",
+      "*.log.gz"
+    ],
+    "_todo": [
+      "O repositório principal (RPCS3/rpcs3) só publica código-fonte nos releases (ex.: v0.0.43 tem apenas os zips de código). Os binários oficiais saem por build, em repositórios separados: RPCS3/rpcs3-binaries-win (Windows x64, rpcs3-v<versão>-<build>-<commit>_win64_msvc.7z + .sha256) e RPCS3/rpcs3-binaries-linux (Linux x64, rpcs3-v<versão>-<build>-<commit>_linux64.AppImage). Como o manifesto aceita um único updates.repo, este cobre só o Windows.",
+      "Linux: sem padrão de asset aqui (o repositório de Windows não tem AppImage). No Linux, baixe o AppImage em https://github.com/RPCS3/rpcs3-binaries-linux/releases e adicione a pasta dele (detectada por rpcs3.AppImage ou rpcs3-*_linux64.AppImage), para que a entrada fique com o id rpcs3 e os jogos via runner a encontrem. O recurso 'instalar a partir de um repositório' gera um manifesto com outro id, que os jogos via runner não usam.",
+      "Padrões: primeiro o nome atual (..._win64_msvc.7z, conferido nos builds 0.0.37-18146, 0.0.43-20291 e 0.0.43-20375), depois o nome antigo (..._win64.7z). Nenhum casa com o .7z.sha256. Os builds Windows ARM64 não saem neste repositório (o último release tem só o .7z x64 e o .sha256).",
+      "O próprio RPCS3 tem um atualizador interno que pode atualizar a pasta por conta própria; nesse caso a versão registrada pelo app pode ficar desatualizada até a próxima verificação."
+    ]
+  },
+  "_todo": [
+    "Pasta de dados no Windows: a própria pasta do rpcs3.exe (configs em config/, firmware em dev_flash/, saves e jogos instalados em dev_hdd0/). Se existir uma pasta 'portable' ao lado do executável, tudo vai para portable/ (por isso os candidatos portable/ vêm primeiro). No Linux: $XDG_CONFIG_HOME/rpcs3 ou ~/.config/rpcs3, que é exatamente o {appData}/rpcs3 do app; cache em ~/.cache/rpcs3.",
+    "O RPCS3 se recusa a rodar a partir de pastas temporárias, de dentro de arquivos compactados ou do OneDrive (sem --allow-any-location). A pasta de instalação do app não pode ficar nesses lugares.",
+    "doneWhen do firmware usa dev_flash/vsh/etc/version.txt, o mesmo arquivo que o RPCS3 lê para saber a versão do firmware instalado (utils::get_firmware_version em rpcs3/util/sysinfo.cpp). O caminho portable/ usa {gameDir} porque a busca na pasta só desce 3 níveis e portable/dev_flash/vsh/etc fica no 4º."
+  ],
+  "_sources": [
+    "https://github.com/RPCS3/rpcs3-binaries-win/releases/latest",
+    "https://github.com/RPCS3/rpcs3-binaries-win/releases/expanded_assets/build-0dec46b12e856756ba04271207a99a1de2208720",
+    "https://github.com/RPCS3/rpcs3-binaries-win/releases/expanded_assets/build-ffba2bf09ef3980638f9327b25240d81414034ab",
+    "https://github.com/RPCS3/rpcs3-binaries-win/releases/expanded_assets/build-ffeb16fe1ec7a6a62ac317270dab20197b060ef9",
+    "https://github.com/RPCS3/rpcs3-binaries-linux/releases/latest",
+    "https://github.com/RPCS3/rpcs3-binaries-linux/releases/expanded_assets/build-0dec46b12e856756ba04271207a99a1de2208720",
+    "https://github.com/RPCS3/rpcs3/releases/expanded_assets/v0.0.43",
+    "https://github.com/RPCS3/rpcs3-binaries-win/releases/download/build-0dec46b12e856756ba04271207a99a1de2208720/rpcs3-v0.0.43-20375-0dec46b1_win64_msvc.7z",
+    "https://raw.githubusercontent.com/RPCS3/rpcs3/HEAD/README.md",
+    "https://raw.githubusercontent.com/RPCS3/rpcs3/HEAD/Utilities/File.cpp",
+    "https://raw.githubusercontent.com/RPCS3/rpcs3/HEAD/rpcs3/Emu/vfs_config.h",
+    "https://raw.githubusercontent.com/RPCS3/rpcs3/HEAD/rpcs3/Emu/system_utils.cpp",
+    "https://raw.githubusercontent.com/RPCS3/rpcs3/HEAD/rpcs3/util/sysinfo.cpp",
+    "https://raw.githubusercontent.com/RPCS3/rpcs3/HEAD/rpcs3/Emu/System.cpp",
+    "https://raw.githubusercontent.com/RPCS3/rpcs3/HEAD/rpcs3/rpcs3.cpp",
+    "https://raw.githubusercontent.com/RPCS3/rpcs3/HEAD/rpcs3/rpcs3qt/main_window.ui",
+    "https://raw.githubusercontent.com/RPCS3/rpcs3/HEAD/rpcs3/rpcs3qt/main_window.cpp",
+    "https://www.playstation.com/en-us/get-help/ps3-system-software/",
+    "https://raw.githubusercontent.com/RPCS3/rpcs3/HEAD/rpcs3/rpcs3qt/gui_settings.cpp",
+    "https://raw.githubusercontent.com/RPCS3/rpcs3/HEAD/rpcs3/rpcs3qt/settings.cpp",
+    "https://github.com/RPCS3/rpcs3/releases/latest"
+  ]
+}
