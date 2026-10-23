@@ -55,7 +55,7 @@ describe('capa e banner do jogo', () => {
     const { library, covers, file, entry } = await setup()
     await library.setArt('g1', 'cover', await file('capa.png', PNG))
     await library.setArt('g1', 'banner', await file('banner.jpeg', JPEG))
-    expect(entry()).toMatchObject({ coverVersion: 1, bannerVersion: 1 })
+    expect(entry()).toMatchObject({ coverVersion: expect.any(Number), bannerVersion: expect.any(Number) })
     expect((await fs.readdir(covers)).sort()).toEqual(['g1-banner.jpg', 'g1.png'])
     expect(await library.artFile('g1', 'cover')).toBe(path.join(covers, 'g1.png'))
     expect(await library.artFile('g1', 'banner')).toBe(path.join(covers, 'g1-banner.jpg'))
@@ -64,26 +64,29 @@ describe('capa e banner do jogo', () => {
   it('trocar a imagem apaga a anterior de outro formato e muda a versão', async () => {
     const { library, covers, file, entry } = await setup()
     await library.setArt('g1', 'banner', await file('a.png', PNG))
+    const first = entry().bannerVersion!
     await library.setArt('g1', 'banner', await file('b.jpg', JPEG))
-    expect(entry().bannerVersion).toBe(2)
+    expect(entry().bannerVersion).toBeGreaterThan(first)
     expect(await fs.readdir(covers)).toEqual(['g1-banner.jpg'])
   })
 
   it('recusa o que não é imagem, mesmo com extensão de imagem, sem mexer na atual', async () => {
     const { library, covers, file, entry } = await setup()
     await library.setArt('g1', 'cover', await file('ok.png', PNG))
+    const version = entry().coverVersion
     await expect(library.setArt('g1', 'cover', await file('falsa.png', Buffer.from('<svg/>')))).rejects.toMatchObject({ code: 'INVALID_IMAGE' })
-    expect(entry().coverVersion).toBe(1)
+    expect(entry().coverVersion).toBe(version)
     expect(await fs.readdir(covers)).toEqual(['g1.png'])
   })
 
   it('remover volta ao padrão só daquela imagem; remover o jogo apaga as duas', async () => {
     const { library, covers, file, entry } = await setup()
     await library.setArt('g1', 'cover', await file('c.png', PNG))
+    const coverVersion = entry().coverVersion
     await library.setArt('g1', 'banner', await file('b.png', PNG))
     await library.clearArt('g1', 'banner')
     expect(entry().bannerVersion).toBeUndefined()
-    expect(entry().coverVersion).toBe(1)
+    expect(entry().coverVersion).toBe(coverVersion)
     expect(await fs.readdir(covers)).toEqual(['g1.png'])
     await library.remove('g1')
     expect(await fs.readdir(covers)).toEqual([])
@@ -95,6 +98,21 @@ describe('capa e banner do jogo', () => {
     const pending = library.setArt('g1', 'cover', source)
     setEntry({ ...entry(), totalPlayTimeSec: 120 })
     await pending
-    expect(entry()).toMatchObject({ coverVersion: 1, totalPlayTimeSec: 120 })
+    expect(entry()).toMatchObject({ coverVersion: expect.any(Number), totalPlayTimeSec: 120 })
+  })
+
+  it('escolher outra imagem depois de remover gera uma URL nova (o cache não mostra a antiga)', async () => {
+    const { library, file, entry } = await setup()
+    const now = vi.spyOn(Date, 'now').mockReturnValue(1_000)
+    try {
+      await library.setArt('g1', 'banner', await file('a.png', PNG))
+      const first = entry().bannerVersion
+      await library.clearArt('g1', 'banner')
+      now.mockReturnValue(2_000)
+      await library.setArt('g1', 'banner', await file('b.png', PNG))
+      expect(entry().bannerVersion).not.toBe(first)
+    } finally {
+      now.mockRestore()
+    }
   })
 })

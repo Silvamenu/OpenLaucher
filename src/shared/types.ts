@@ -77,7 +77,7 @@ export interface GameEntry {
   autoUpdate: boolean
   userFiles: Record<string, string>
   firstRunDone: Record<string, boolean>
-  /** Capa personalizada (incrementa a cada troca, para invalidar o cache da imagem). */
+  /** Capa personalizada: muda a cada troca (carimbo de tempo), para invalidar o cache da imagem. */
   coverVersion?: number
   /** Banner personalizado do topo da página do jogo (mesma lógica da capa). */
   bannerVersion?: number

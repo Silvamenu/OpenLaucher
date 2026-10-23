@@ -284,10 +284,15 @@ export class LibraryService {
     for (const ext of COVER_EXTENSIONS) if (ext !== keep) await fs.rm(`${this.artBase(id, kind)}${ext}`, { force: true })
   }
 
-  /** Lê a entrada de novo depois das esperas: o tempo de jogo, por exemplo, pode ter mudado no meio. */
+  /**
+   * Lê a entrada de novo depois das esperas: o tempo de jogo, por exemplo, pode ter mudado no meio.
+   * A versão vai na URL da imagem e é um carimbo de tempo, não um contador: depois de remover e
+   * escolher outra, a URL não repete a anterior (o Chromium mostraria a imagem antiga do cache).
+   */
   private async saveArtVersion(id: string, kind: ArtKind, changed: boolean): Promise<LibraryItem> {
     const entry = this.requireEntry(id)
-    const version = changed ? ((kind === 'cover' ? entry.coverVersion : entry.bannerVersion) ?? 0) + 1 : undefined
+    const current = kind === 'cover' ? entry.coverVersion : entry.bannerVersion
+    const version = changed ? Math.max(Date.now(), (current ?? 0) + 1) : undefined
     const next: GameEntry = kind === 'cover' ? { ...entry, coverVersion: version } : { ...entry, bannerVersion: version }
     this.ctx.store.saveEntry(next)
     await this.broadcast()
