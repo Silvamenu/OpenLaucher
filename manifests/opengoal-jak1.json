@@ -1,0 +1,64 @@
+{
+  "id": "opengoal-jak1",
+  "name": "OpenGOAL: Jak and Daxter",
+  "originalGame": "Jak and Daxter: The Precursor Legacy (PS2)",
+  "description": "Port nativo para PC de Jak and Daxter, feito a partir da decompilação do jogo de PS2. Os dados do jogo saem da imagem ISO do seu próprio disco.",
+  "category": "playstation",
+  "repoUrl": "https://github.com/open-goal/jak-project",
+  "website": "https://opengoal.dev",
+  "accentColor": "#e07b24",
+  "executables": {
+    "win32": ["gk.exe"],
+    "linux": ["gk"]
+  },
+  "detectFiles": ["gk.exe", "gk", "extractor.exe", "extractor"],
+  "requirements": [
+    {
+      "id": "extract",
+      "type": "firstRun",
+      "label": "Extrair e compilar o jogo a partir do ISO do seu disco (extractor)",
+      "doneWhen": ["{gameDir}/data/out/jak1/iso/GAME.CGO"],
+      "helpText": "Gere um arquivo .iso do seu próprio disco de Jak and Daxter de PS2 (versões PAL, NTSC ou NTSC-J, inclusive Greatest Hits; as versões de PS3/PS4/PS5 não servem). No Windows, arraste o .iso sobre o extractor.exe que está na pasta do jogo; no Linux, rode ./extractor \"/caminho/do/seu/jogo.iso\" dentro dessa pasta. O extractor valida, extrai, decompila e compila os dados (leva alguns minutos) e abre o jogo no final. Depois de cada atualização do OpenGOAL, repita este passo."
+    }
+  ],
+  "configFiles": [
+    {
+      "path": "{appData}/OpenGOAL/jak1/settings/pc-settings.gc",
+      "format": "text",
+      "label": "Configurações do jogo (pc-settings.gc)",
+      "editable": true
+    }
+  ],
+  "launchArgs": ["-g", "jak1"],
+  "updates": {
+    "source": "github-releases",
+    "repo": "open-goal/jak-project",
+    "assetPatterns": {
+      "win32": "opengoal-windows-*.zip",
+      "linux": "opengoal-linux-*.tar.gz"
+    },
+    "includePrereleases": false,
+    "preserve": ["data/iso_data/**", "data/decompiler_out/**", "data/out/**"],
+    "_todo": [
+      "Os padrões não casam com os assets do LSP (opengoal-lsp-windows-*.exe, opengoal-lsp-*.bin) nem com os de macOS.",
+      "A release (v0.3.9) não traz data/iso_data, data/decompiler_out nem data/out: essas pastas são geradas a partir do disco do usuário. Depois de atualizar, o código compilado antigo continua em data/out e o usuário precisa rodar o extractor de novo (o launcher oficial também recompila a cada versão)."
+    ]
+  },
+  "_todo": [
+    "Um app não consegue passar o caminho do ISO para o extractor (jogos nativos só recebem launchArgs fixos); por isso a extração é um passo manual (arrastar o .iso sobre o extractor.exe). O launcher oficial (open-goal/launcher) faz isso com interface, mas no Windows ele só é distribuído como instalador .msi.",
+    "Só o Jak 1 está mapeado. O mesmo pacote também roda Jak II e Jak 3 (gk -g jak2 / -g jak3, extraindo os respectivos ISOs); poderiam virar manifestos separados.",
+    "Saves ficam em {appData}/OpenGOAL/jak1/saves (fora da pasta do jogo).",
+    "O extractor, sem flags, executa extração + decompilação + compilação e depois roda 'gk -g jak1' (decompiler/extractor/main.cpp)."
+  ],
+  "_sources": [
+    "https://github.com/open-goal/jak-project/releases/tag/v0.3.9",
+    "https://github.com/open-goal/jak-project/releases/expanded_assets/v0.3.9",
+    "https://github.com/open-goal/launcher/releases/expanded_assets/v2.11.2",
+    "https://raw.githubusercontent.com/open-goal/jak-project/HEAD/README.md",
+    "https://raw.githubusercontent.com/open-goal/jak-project/HEAD/decompiler/extractor/main.cpp",
+    "https://raw.githubusercontent.com/open-goal/jak-project/HEAD/game/main.cpp",
+    "https://raw.githubusercontent.com/open-goal/jak-project/HEAD/common/util/FileUtil.cpp",
+    "https://raw.githubusercontent.com/open-goal/jak-project/HEAD/goal_src/jak1/game.gp",
+    "https://raw.githubusercontent.com/open-goal/jak-project/HEAD/game/kernel/jak1/kmachine.cpp"
+  ]
+}

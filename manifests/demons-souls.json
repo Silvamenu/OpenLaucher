@@ -1,0 +1,41 @@
+{
+  "id": "demons-souls",
+  "name": "Demon's Souls",
+  "originalGame": "PlayStation 3",
+  "description": "Roda no RPCS3 com o dump da sua própria cópia. A lista oficial do RPCS3 classifica o jogo como 'Playable': dá para jogar do início ao fim, com pequenos problemas. Os recursos online originais não existem mais.",
+  "category": "playstation",
+  "compatibility": "playable",
+  "repoUrl": "https://github.com/RPCS3/rpcs3",
+  "accentColor": "#5b5340",
+  "runner": {
+    "manifest": "rpcs3",
+    "args": ["--no-gui", "{gameFile}"]
+  },
+  "requirements": [
+    {
+      "id": "game",
+      "type": "userFile",
+      "label": "Seu dump do jogo (EBOOT.BIN)",
+      "extensions": ["bin"],
+      "helpText": "Escolha o arquivo EBOOT.BIN da sua cópia de Demon's Souls. No dump do disco ele fica em PS3_GAME/USRDIR/EBOOT.BIN (ex.: BLUS30443/PS3_GAME/USRDIR/EBOOT.BIN). Na versão digital, ou se o jogo foi instalado pelo RPCS3, ele fica em dev_hdd0/game/<ID do jogo>/USRDIR/EBOOT.BIN, dentro da pasta de dados do RPCS3. O dump precisa ser feito por você, a partir do seu próprio disco e do seu próprio console; o app não fornece jogos. Atualizações do jogo (.pkg) são instaladas no RPCS3 em File > Install Packages/Raps/Edats e usadas automaticamente. A primeira abertura demora alguns minutos porque o RPCS3 compila os módulos do jogo."
+    }
+  ],
+  "updates": {
+    "source": "none"
+  },
+  "_todo": [
+    "Lista oficial (exportação de 22/10/2026): BLUS30443 (EUA, Atlus), BLES00932 (Europa) e BCJS30022 (Japão) = Playable, status de 2020-05-04. O nome dos IDs BLUS30443/BLES00932 foi conferido em relatos do fórum do RPCS3 e o BCJS30022 aparece como \"Demon's Souls\" no próprio banco.",
+    "Args verificados no código do RPCS3: --no-gui roda sem a interface e fecha o emulador ao sair do jogo; o caminho posicional pode ser o EBOOT.BIN ou a pasta do jogo. --fullscreen (só junto com --no-gui) não foi incluído: a tela cheia segue a configuração do emulador.",
+    "Imagens .iso também são aceitas pelo RPCS3 atual, mas discos criptografados exigem a chave do disco; por isso o seletor pede só o EBOOT.BIN.",
+    "Não consegui abrir rpcs3.net daqui (DNS bloqueado). O status veio da exportação oficial da lista de compatibilidade (rpcs3.net/compatibility?api=v1&export) que o CI do RPCS3 embute em cada build como GuiConfigs/compat_database.dat; usei a do build 0.0.43-20375 (22/10/2026)."
+  ],
+  "_sources": [
+    "https://rpcs3.net/compatibility",
+    "https://rpcs3.net/compatibility?api=v1&export",
+    "https://raw.githubusercontent.com/RPCS3/rpcs3/HEAD/.ci/deploy-windows.sh",
+    "https://github.com/RPCS3/rpcs3-binaries-win/releases/download/build-0dec46b12e856756ba04271207a99a1de2208720/rpcs3-v0.0.43-20375-0dec46b1_win64_msvc.7z",
+    "https://raw.githubusercontent.com/RPCS3/rpcs3/HEAD/rpcs3/rpcs3.cpp",
+    "https://raw.githubusercontent.com/RPCS3/rpcs3/HEAD/rpcs3/Emu/System.cpp",
+    "https://github.com/RPCS3/rpcs3/issues?q=is%3Aissue+is%3Aopen+%22Dark+Souls%22"
+  ]
+}

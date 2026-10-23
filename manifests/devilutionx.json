@@ -1,0 +1,101 @@
+{
+  "id": "devilutionx",
+  "name": "DevilutionX",
+  "originalGame": "Diablo e Diablo: Hellfire",
+  "description": "Port comunitário de Diablo e Hellfire para sistemas atuais, com correções de bugs e melhorias opcionais de qualidade de vida. Usa os arquivos de dados da sua própria cópia do jogo.",
+  "category": "pc",
+  "repoUrl": "https://github.com/diasurgical/devilutionX",
+  "accentColor": "#8a1c1c",
+  "executables": {
+    "win32": ["devilutionx.exe"],
+    "linux": ["devilutionx.appimage", "devilutionx"]
+  },
+  "detectFiles": ["devilutionx.exe", "devilutionx.appimage", "devilutionx", "devilutionx.mpq"],
+  "requirements": [
+    {
+      "id": "diabdat",
+      "type": "file",
+      "label": "Arquivos do seu Diablo (DIABDAT.MPQ)",
+      "patterns": [
+        "DIABDAT.MPQ",
+        "spawn.mpq",
+        "{appData}/diasurgical/devilution/DIABDAT.MPQ",
+        "{appData}/diasurgical/devilution/diabdat.mpq",
+        "{localAppData}/diasurgical/devilution/DIABDAT.MPQ",
+        "{localAppData}/diasurgical/devilution/diabdat.mpq"
+      ],
+      "helpText": "Copie o DIABDAT.MPQ do CD ou da sua instalação do Diablo (por exemplo, a da GOG) para a pasta do jogo. O DevilutionX também procura em %APPDATA%\\diasurgical\\devilution (Windows) ou ~/.local/share/diasurgical/devilution (Linux). No Windows, se o Diablo da GOG estiver instalado, o jogo encontra o arquivo sozinho mesmo que este item apareça como pendente. O spawn.mpq da versão de demonstração também é aceito, com conteúdo limitado."
+    },
+    {
+      "id": "hellfire",
+      "type": "file",
+      "label": "Arquivos da sua expansão Hellfire (hellfire.mpq e hf*.mpq)",
+      "optional": true,
+      "patterns": ["hellfire.mpq", "{appData}/diasurgical/devilution/hellfire.mpq", "{localAppData}/diasurgical/devilution/hellfire.mpq"],
+      "helpText": "Opcional: para jogar a expansão Hellfire, copie da sua cópia do jogo os arquivos hellfire.mpq, hfmonk.mpq, hfmusic.mpq e hfvoice.mpq para a mesma pasta do DIABDAT.MPQ."
+    }
+  ],
+  "configFiles": [
+    {
+      "path": {
+        "win32": ["{appData}/diasurgical/devilution/diablo.ini", "diablo.ini"],
+        "linux": ["{localAppData}/diasurgical/devilution/diablo.ini", "diablo.ini"]
+      },
+      "format": "ini",
+      "label": "Configurações (diablo.ini)",
+      "editable": true,
+      "_todo": "O diablo.ini só é criado na primeira execução. A pasta de dados (SDL pref path) vem primeiro de propósito: se nenhum dos dois existir, o editor cria o arquivo ali. Criar um diablo.ini na pasta do jogo faz o DevilutionX entrar em modo portátil (configurações e saves passam a ficar na pasta do jogo e os saves antigos deixam de aparecer). Se o usuário já usa o modo portátil e também tem um diablo.ini na pasta de dados, o editor abre o da pasta de dados."
+    }
+  ],
+  "launchArgs": [],
+  "updates": {
+    "source": "github-releases",
+    "repo": "diasurgical/devilutionX",
+    "assetPatterns": {
+      "win32": "devilutionx-windows-x86_64.zip",
+      "linux": ["devilutionx-linux-x86_64.appimage", "devilutionx-linux-x86_64.tar.xz"]
+    },
+    "includePrereleases": false,
+    "preserve": [
+      "DIABDAT.MPQ",
+      "spawn.mpq",
+      "hellfire.mpq",
+      "hfmonk.mpq",
+      "hfmusic.mpq",
+      "hfvoice.mpq",
+      "fonts.mpq",
+      "pl.mpq",
+      "ru.mpq",
+      "diablo.ini",
+      "*.sv",
+      "*.hsv"
+    ],
+    "_todo": [
+      "Linux: o AppImage (autocontido) é a primeira opção. O .tar.xz só é usado se o AppImage sumir do release, e o binário dele precisa da SDL2 instalada no sistema (o pacote também traz .deb/.rpm, que o app ignora).",
+      "Windows 32 bits (devilutionx-windows-i386.zip), Windows XP e Linux ARM64 não são selecionados automaticamente."
+    ]
+  },
+  "_todo": [
+    "Licença do projeto: Sustainable Use License (código disponível, uso não comercial), não uma licença OSI.",
+    "Linux: o AppImage pode exigir FUSE (libfuse2) em algumas distribuições; o app não verifica isso.",
+    "Os padrões {appData} no Linux (~/.config) e {localAppData} no Windows não são pastas que o DevilutionX procura; só servem para os outros sistemas."
+  ],
+  "_sources": [
+    "https://github.com/diasurgical/devilutionX",
+    "https://raw.githubusercontent.com/diasurgical/devilutionX/HEAD/LICENSE.md",
+    "https://github.com/diasurgical/devilutionX/releases/tag/1.5.5",
+    "https://github.com/diasurgical/devilutionX/releases/expanded_assets/1.5.5",
+    "https://raw.githubusercontent.com/diasurgical/devilutionX/HEAD/docs/installing.md",
+    "https://raw.githubusercontent.com/diasurgical/devilutionX/1.5.5/Source/init.cpp",
+    "https://raw.githubusercontent.com/diasurgical/devilutionX/1.5.5/Source/utils/paths.cpp",
+    "https://raw.githubusercontent.com/diasurgical/devilutionX/1.5.5/Source/pfile.cpp",
+    "https://raw.githubusercontent.com/diasurgical/devilutionX/1.5.5/Packaging/nix/AppImage.sh",
+    "https://raw.githubusercontent.com/diasurgical/devilutionX/1.5.5/Packaging/nix/AppRun"
+  ],
+  "_verified": [
+    "Release 1.5.5 (30/10/2025) tem devilutionx-windows-x86_64.zip, devilutionx-linux-x86_64.appimage e devilutionx-linux-x86_64.tar.xz.",
+    "O .zip do Windows tem uma única pasta raiz devilutionx/ com devilutionx.exe, devilutionx.mpq, SDL2.dll, libsodium-26.dll, discord_game_sdk.dll e README.txt.",
+    "O .tar.xz do Linux tem na raiz o binário devilutionx, devilutionx.sh, devilutionx.mpq, discord_game_sdk.so, devilutionx.deb e devilutionx.rpm.",
+    "O AppRun do AppImage só executa $APPDIR/usr/bin/devilutionx, mantendo a pasta atual; o DevilutionX procura DIABDAT.MPQ (ou diabdat.mpq) na pasta do executável, na pasta de dados (SDL pref path), na pasta atual e, no Windows, na instalação da GOG."
+  ]
+}

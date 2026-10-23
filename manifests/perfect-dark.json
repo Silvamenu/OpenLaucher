@@ -1,0 +1,69 @@
+{
+  "id": "perfect-dark",
+  "name": "Perfect Dark (PC Port)",
+  "originalGame": "Perfect Dark",
+  "description": "Port para PC de Perfect Dark baseado na decompilação do jogo (ainda em desenvolvimento), com mouselook, widescreen, 60 FPS e multiplayer em tela dividida. Precisa da sua própria ROM do N64.",
+  "category": "nintendo",
+  "repoUrl": "https://github.com/perfect-dark-pc-port/perfect_dark",
+  "accentColor": "#b3122e",
+  "executables": {
+    "win32": ["pd.x86_64.exe"],
+    "linux": ["pd.x86_64"]
+  },
+  "detectFiles": ["pd.x86_64.exe", "pd.x86_64", "data/put_your_rom_here.txt"],
+  "requirements": [
+    {
+      "id": "rom",
+      "type": "file",
+      "label": "Sua ROM de Perfect Dark (N64, EUA) em data/pd.ntsc-final.z64",
+      "patterns": ["data/pd.ntsc-final.z64"],
+      "helpText": "Copie a ROM do seu cartucho para a pasta \"data\" dentro da pasta do jogo e renomeie para pd.ntsc-final.z64. Use a versão americana NTSC 1.1 (\"NTSC version 8.7 final\", recomendada) no formato .z64; a NTSC 1.0 também funciona, mas não é recomendada."
+    },
+    {
+      "id": "gbc-rom",
+      "type": "file",
+      "label": "Opcional: sua ROM de Perfect Dark (Game Boy Color) em data/pd.gbc",
+      "optional": true,
+      "patterns": ["data/pd.gbc"],
+      "helpText": "Opcional: com a ROM da sua cópia de Perfect Dark para Game Boy Color na pasta \"data\" (com o nome pd.gbc), o port simula o Transfer Pak e libera alguns cheats automaticamente."
+    }
+  ],
+  "configFiles": [
+    {
+      "path": "pd.ini",
+      "format": "ini",
+      "label": "Configurações e controles (pd.ini)",
+      "editable": true
+    }
+  ],
+  "launchArgs": ["--portable"],
+  "updates": {
+    "source": "github-releases",
+    "repo": "perfect-dark-pc-port/perfect_dark",
+    "assetPatterns": {
+      "win32": "pd-x86_64-windows.zip",
+      "linux": "pd-x86_64-linux.tar.gz"
+    },
+    "includePrereleases": false,
+    "preserve": ["data/**", "pd.ini", "eeprom.bin", "gamecontrollerdb.txt", "pd.log", "mods/**"],
+    "_todo": "O projeto publica só uma release contínua com a tag fixa \"ci-dev-build\" (marcada como Latest e atualizada a cada build). Como a tag não muda, a comparação por tag do app não detecta novas builds; seria preciso comparar a data dos assets."
+  },
+  "_todo": [
+    "Linux: o binário pd.x86_64 não traz o SDL2 junto; depende de SDL2 (2.0.12+), libGL e zlib instalados no sistema.",
+    "O pacote também traz pd.pal.x86_64(.exe) e pd.jpn.x86_64(.exe) para ROMs PAL (data/pd.pal-final.z64) e JPN (data/pd.jpn-final.z64); o manifesto só abre o executável NTSC.",
+    "O README documenta só o MD5 das ROMs aceitas (NTSC 1.1: e03b088b6ac9e0080440efed07c1e40f), não SHA-1; por isso não há validação por hash.",
+    "Com --portable, a ROM é lida de <pasta do executável>/data e configuração (pd.ini) e save (eeprom.bin) ficam na pasta do executável. Sem ele, o Windows grava na pasta de trabalho (se gravável) e o Linux em ~/.local/share/perfectdark (a menos que já exista pd.ini na pasta de trabalho).",
+    "O repositório foi transferido de fgsfdsfgs/perfect_dark para perfect-dark-pc-port/perfect_dark. A API devolve os links de download com o dono novo, e o app só aceita downloads do repositório declarado; por isso o manifesto usa o dono novo."
+  ],
+  "_sources": [
+    "https://github.com/perfect-dark-pc-port/perfect_dark",
+    "https://raw.githubusercontent.com/perfect-dark-pc-port/perfect_dark/HEAD/README.md",
+    "https://github.com/perfect-dark-pc-port/perfect_dark/releases/latest",
+    "https://github.com/perfect-dark-pc-port/perfect_dark/releases/expanded_assets/ci-dev-build",
+    "https://raw.githubusercontent.com/wiki/perfect-dark-pc-port/perfect_dark/Command-line-parameters.md",
+    "https://raw.githubusercontent.com/wiki/perfect-dark-pc-port/perfect_dark/File-paths.md",
+    "https://raw.githubusercontent.com/perfect-dark-pc-port/perfect_dark/port/port/src/fs.c",
+    "https://raw.githubusercontent.com/perfect-dark-pc-port/perfect_dark/port/port/src/libultra.c",
+    "https://github.com/fgsfdsfgs/perfect_dark (redireciona para perfect-dark-pc-port/perfect_dark)"
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "id": "fallout2-ce",
+  "name": "Fallout 2 Community Edition",
+  "originalGame": "Fallout 2",
+  "description": "Reimplementação do motor de Fallout 2 com a jogabilidade original, correções de bugs e melhorias de qualidade de vida. Usa os arquivos de dados da sua própria cópia do jogo.",
+  "category": "pc",
+  "repoUrl": "https://github.com/alexbatalov/fallout2-ce",
+  "accentColor": "#b5832a",
+  "executables": {
+    "win32": ["fallout2-ce.exe"],
+    "linux": ["fallout2-ce"]
+  },
+  "detectFiles": ["fallout2-ce.exe", "fallout2-ce", "fallout2.cfg", "master.dat", "critter.dat"],
+  "requirements": [
+    {
+      "id": "master-dat",
+      "type": "file",
+      "label": "Arquivos do seu Fallout 2 (master.dat)",
+      "patterns": ["master.dat"],
+      "helpText": "Copie da sua instalação do Fallout 2 (GOG, Steam, Epic ou CD) para a pasta do jogo: master.dat, critter.dat, patch000.dat, a pasta data e, se existirem, a pasta sound e o fallout2.cfg. O fallout2-ce substitui o fallout2.exe original. No Linux, os nomes precisam bater com os do fallout2.cfg (normalmente tudo em minúsculas) e a biblioteca SDL2 precisa estar instalada no sistema."
+    },
+    {
+      "id": "critter-dat",
+      "type": "file",
+      "label": "Arquivos do seu Fallout 2 (critter.dat)",
+      "patterns": ["critter.dat"],
+      "helpText": "Fica na mesma pasta do master.dat na sua instalação do Fallout 2."
+    },
+    {
+      "id": "patch-dat",
+      "type": "file",
+      "label": "Patch oficial do seu Fallout 2 (patch000.dat)",
+      "optional": true,
+      "patterns": ["patch000.dat"],
+      "helpText": "As versões digitais (GOG, Steam, Epic) trazem este arquivo junto com o master.dat. Se a sua cópia tiver, copie também. Se a música não tocar, ajuste music_path1 no fallout2.cfg para data/sound/music/ ou sound/music/, conforme a sua pasta."
+    }
+  ],
+  "configFiles": [
+    {
+      "path": "fallout2.cfg",
+      "format": "ini",
+      "label": "Configurações do jogo (fallout2.cfg)",
+      "editable": true
+    },
+    {
+      "path": "f2_res.ini",
+      "format": "ini",
+      "label": "Resolução e tela cheia (f2_res.ini)",
+      "editable": true
+    },
+    {
+      "path": "ddraw.ini",
+      "format": "ini",
+      "label": "Opções avançadas estilo Sfall (ddraw.ini)",
+      "editable": true
+    }
+  ],
+  "launchArgs": [],
+  "updates": {
+    "source": "github-releases",
+    "repo": "alexbatalov/fallout2-ce",
+    "assetPatterns": {
+      "win32": "*windows-x64*.zip",
+      "linux": "*linux-x64*.tar.gz"
+    },
+    "includePrereleases": false,
+    "preserve": ["master.dat", "critter.dat", "patch000.dat", "f2_res.dat", "fallout2.cfg", "f2_res.ini", "ddraw.ini", "data/**", "sound/**", "mods/**"],
+    "_todo": "Builds de 32 bits (windows-x86, linux-x86) não são selecionadas automaticamente."
+  },
+  "_todo": [
+    "O binário do Linux depende da SDL2 do sistema (o release não traz AppImage); o app não verifica isso.",
+    "Licença do projeto: Sustainable Use License (código disponível, com restrição de uso comercial), não uma licença OSI.",
+    "Último release (v1.3.0) é de abril de 2024."
+  ],
+  "_sources": [
+    "https://raw.githubusercontent.com/alexbatalov/fallout2-ce/HEAD/LICENSE.md",
+    "https://github.com/alexbatalov/fallout2-ce",
+    "https://github.com/alexbatalov/fallout2-ce/releases",
+    "https://github.com/alexbatalov/fallout2-ce/releases/tag/v1.3.0",
+    "https://github.com/alexbatalov/fallout2-ce/releases/expanded_assets/v1.3.0",
+    "https://raw.githubusercontent.com/alexbatalov/fallout2-ce/HEAD/README.md",
+    "https://raw.githubusercontent.com/alexbatalov/fallout2-ce/v1.3.0/src/game.cc",
+    "https://raw.githubusercontent.com/alexbatalov/fallout2-ce/v1.3.0/src/game_config.cc"
+  ],
+  "_verified": [
+    "Release v1.3.0 (21/04/2024) tem fallout2-ce-windows-x64.zip e fallout2-ce-linux-x64.tar.gz.",
+    "O .zip do Windows contém só fallout2-ce.exe na raiz; o .tar.gz do Linux contém só o binário fallout2-ce.",
+    "O motor abre master.dat e critter.dat (caminhos do fallout2.cfg, padrão relativo à pasta atual), depois patch000.dat..patch999.dat e f2_res.dat se existirem; o fallout2.cfg é lido da pasta do executável."
+  ]
+}

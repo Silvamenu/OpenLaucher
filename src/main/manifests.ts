@@ -2,6 +2,7 @@ import { promises as fs } from 'node:fs'
 import path from 'node:path'
 import { parseManifestText, type Manifest } from '../shared/manifest'
 import type { ManifestsReport } from '../shared/types'
+import { isGeneratedManifest } from './repoInstall'
 
 export interface ManifestSource {
   dir: string
@@ -37,7 +38,21 @@ export async function loadManifests(sources: ManifestSource[]): Promise<Manifest
         errors.push({ file, message: `o id "${result.manifest.id}" deve ser igual ao nome do arquivo ("${expectedId}")` })
         continue
       }
-      byId.set(result.manifest.id, { ...result.manifest, origin: source.origin })
+      const manifest: Manifest = { ...result.manifest, origin: source.origin }
+      manifest.generated = isGeneratedManifest(manifest)
+      // Substituto de um embutido sem "category" (anterior às listas) continua na lista do original.
+      const replaced = byId.get(manifest.id)
+      if (manifest.category === 'custom' && replaced && !manifest.generated) manifest.category = replaced.category
+      byId.set(manifest.id, manifest)
+    }
+  }
+  // Jogos via emulador só valem se o emulador existir e for um programa (não outro jogo via emulador).
+  for (const manifest of [...byId.values()]) {
+    if (!manifest.runner) continue
+    const runner = byId.get(manifest.runner.manifest)
+    if (!runner || runner.runner) {
+      byId.delete(manifest.id)
+      errors.push({ file: manifest.id, message: `runner.manifest: emulador "${manifest.runner.manifest}" não encontrado` })
     }
   }
   const manifests = [...byId.values()].sort((a, b) => a.name.localeCompare(b.name))

@@ -1,0 +1,63 @@
+{
+  "id": "corsixth",
+  "name": "CorsixTH",
+  "originalGame": "Theme Hospital",
+  "description": "Reimplementação de código aberto de Theme Hospital (Bullfrog, 1997), com suporte a resoluções altas, zoom, editor de mapas e níveis personalizados. Usa os arquivos de dados da sua cópia de Theme Hospital.",
+  "category": "pc",
+  "repoUrl": "https://github.com/CorsixTH/CorsixTH",
+  "accentColor": "#2e8b9a",
+  "executables": {
+    "win32": ["CorsixTH.exe"],
+    "linux": ["corsixth.appimage"]
+  },
+  "detectFiles": ["CorsixTH.exe", "corsixth.appimage", "CorsixTH.lua"],
+  "requirements": [
+    {
+      "id": "th-data",
+      "type": "firstRun",
+      "label": "Indicar a pasta do seu Theme Hospital",
+      "helpText": "Na primeira execução o CorsixTH procura os arquivos do seu Theme Hospital em pastas comuns (GOG, EA/Origin, Arquivos de Programas, pasta do usuário). Se não encontrar, ele abre uma janela para você escolher a pasta do seu jogo (a que contém as pastas DATA, LEVELS e QDATA). A escolha fica salva no config.txt."
+    }
+  ],
+  "configFiles": [
+    {
+      "path": "{appData}/CorsixTH/config.txt",
+      "format": "text",
+      "label": "Configurações (config.txt)",
+      "editable": true
+    },
+    {
+      "path": "{appData}/CorsixTH/hotkeys.txt",
+      "format": "text",
+      "label": "Teclas de atalho (hotkeys.txt)",
+      "editable": true
+    }
+  ],
+  "launchArgs": [],
+  "updates": {
+    "source": "github-releases",
+    "repo": "CorsixTH/CorsixTH",
+    "assetPatterns": {
+      "win32": "CorsixTH-*-Windows-x64.zip",
+      "linux": "CorsixTH-*-x86_64.AppImage"
+    },
+    "includePrereleases": false,
+    "preserve": ["config.path.txt"],
+    "_todo": "O instalador (CorsixTHInstaller.exe), o .dmg e a assinatura .sig são ignorados. Betas e release candidates são publicados como pré-release e ficam de fora."
+  },
+  "_todo": [
+    "Configurações e saves ficam fora da pasta do jogo: %APPDATA%\\CorsixTH no Windows e ~/.config/CorsixTH no Linux ({appData} cobre os dois casos). Um arquivo config.path.txt ao lado do executável pode apontar outro local.",
+    "Sem doneWhen: o caminho escolhido fica na chave theme_hospital_install do config.txt (formato Lua), que o app não lê; o passo conta como feito após a primeira execução.",
+    "No Windows o CorsixTH.exe é um programa de console (subsystem 3), então uma janela de terminal pode abrir junto com o jogo.",
+    "Os arquivos da pasta Bitmap e a fonte FluidR3.sf3 do pacote são do próprio projeto; os gráficos e sons do jogo vêm da cópia do usuário."
+  ],
+  "_sources": [
+    "https://github.com/CorsixTH/CorsixTH/releases/latest",
+    "https://github.com/CorsixTH/CorsixTH/releases/expanded_assets/v0.70.1",
+    "https://github.com/CorsixTH/CorsixTH/releases/expanded_assets/v0.70.0",
+    "https://github.com/CorsixTH/CorsixTH/releases",
+    "https://raw.githubusercontent.com/CorsixTH/CorsixTH/HEAD/README.md",
+    "https://raw.githubusercontent.com/CorsixTH/CorsixTH/v0.70.1/CorsixTH/Lua/config_finder.lua",
+    "https://raw.githubusercontent.com/CorsixTH/CorsixTH/v0.70.1/CorsixTH/Lua/app.lua"
+  ]
+}

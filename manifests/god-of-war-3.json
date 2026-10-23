@@ -1,0 +1,42 @@
+{
+  "id": "god-of-war-3",
+  "name": "God of War III",
+  "originalGame": "PlayStation 3",
+  "description": "Roda no RPCS3 com o dump da sua própria cópia. A lista oficial do RPCS3 classifica o jogo como 'Ingame': chega à jogatina, mas ainda pode ter falhas gráficas, travamentos e quedas de desempenho, e pede uma CPU forte. Não é a versão Remastered de PS4.",
+  "category": "playstation",
+  "compatibility": "ingame",
+  "repoUrl": "https://github.com/RPCS3/rpcs3",
+  "accentColor": "#a3171e",
+  "runner": {
+    "manifest": "rpcs3",
+    "args": ["--no-gui", "{gameFile}"]
+  },
+  "requirements": [
+    {
+      "id": "game",
+      "type": "userFile",
+      "label": "Seu dump do jogo (EBOOT.BIN)",
+      "extensions": ["bin"],
+      "helpText": "Escolha o arquivo EBOOT.BIN da sua cópia de God of War III. No dump do disco ele fica em PS3_GAME/USRDIR/EBOOT.BIN (ex.: BCUS98111/PS3_GAME/USRDIR/EBOOT.BIN). Na versão digital, ou se o jogo foi instalado pelo RPCS3, ele fica em dev_hdd0/game/<ID do jogo>/USRDIR/EBOOT.BIN, dentro da pasta de dados do RPCS3. O dump precisa ser feito por você, a partir do seu próprio disco e do seu próprio console; o app não fornece jogos. Atualizações do jogo (.pkg) são instaladas no RPCS3 em File > Install Packages/Raps/Edats e usadas automaticamente. A primeira abertura demora alguns minutos porque o RPCS3 compila os módulos do jogo."
+    }
+  ],
+  "updates": {
+    "source": "none"
+  },
+  "_todo": [
+    "Lista oficial (exportação de 22/10/2026): BCUS98111 (EUA), BCES00510 e BCES00799 (Europa), BCAS25003 (Ásia) e BCKS15003 (Coreia) = Ingame, última atualização do status em 2026-04-19, versão testada 01.03.",
+    "Issues abertas no GitHub em 2026: crash ao criar save state (#18853) e falha silenciosa ao salvar com todos os slots cheios (#19163).",
+    "Args verificados no código do RPCS3: --no-gui roda sem a interface e fecha o emulador ao sair do jogo; o caminho posicional pode ser o EBOOT.BIN ou a pasta do jogo. --fullscreen (só junto com --no-gui) não foi incluído: a tela cheia segue a configuração do emulador.",
+    "Imagens .iso também são aceitas pelo RPCS3 atual, mas discos criptografados exigem a chave do disco; por isso o seletor pede só o EBOOT.BIN.",
+    "Não consegui abrir rpcs3.net daqui (DNS bloqueado). O status veio da exportação oficial da lista de compatibilidade (rpcs3.net/compatibility?api=v1&export) que o CI do RPCS3 embute em cada build como GuiConfigs/compat_database.dat; usei a do build 0.0.43-20375 (22/10/2026)."
+  ],
+  "_sources": [
+    "https://rpcs3.net/compatibility",
+    "https://rpcs3.net/compatibility?api=v1&export",
+    "https://raw.githubusercontent.com/RPCS3/rpcs3/HEAD/.ci/deploy-windows.sh",
+    "https://github.com/RPCS3/rpcs3-binaries-win/releases/download/build-0dec46b12e856756ba04271207a99a1de2208720/rpcs3-v0.0.43-20375-0dec46b1_win64_msvc.7z",
+    "https://raw.githubusercontent.com/RPCS3/rpcs3/HEAD/rpcs3/rpcs3.cpp",
+    "https://raw.githubusercontent.com/RPCS3/rpcs3/HEAD/rpcs3/Emu/System.cpp",
+    "https://github.com/RPCS3/rpcs3/issues?q=is%3Aissue+is%3Aopen+%22God+of+War%22"
+  ]
+}

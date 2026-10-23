@@ -17,6 +17,8 @@ const QUESTIONS: Question[] = [
   { q: 'faq.sha1.q', a: 'faq.sha1.a' },
   { q: 'faq.port.q', a: 'faq.port.a' },
   { q: 'faq.download.q', a: 'faq.download.a' },
+  { q: 'faq.emulator.q', a: 'faq.emulator.a' },
+  { q: 'faq.repo.q', a: 'faq.repo.a' },
   { q: 'faq.art.q', a: 'faq.art.a' },
   { q: 'faq.saves.q', a: 'faq.saves.a' },
   { q: 'faq.wontStart.q', a: 'faq.wontStart.a' },
@@ -50,7 +52,16 @@ export function FaqPage() {
     play: t('game.play'),
     gameOptions: t('game.more'),
     clearCover: t('game.clearCover'),
-    clearBanner: t('game.clearBanner')
+    clearBanner: t('game.clearBanner'),
+    addGame: t('nav.add'),
+    installRunner: t('add.installRunner', { name: 'shadPS4' }),
+    addRunnerGame: t('add.addGame'),
+    playable: t('compat.playable'),
+    ingame: t('compat.ingame'),
+    experimental: t('compat.experimental'),
+    repoTitle: t('repo.title'),
+    repoCheck: t('repo.check'),
+    pickExecutable: t('req.pickExecutable')
   }
 
   return (

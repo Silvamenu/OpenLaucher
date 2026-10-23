@@ -282,16 +282,19 @@ export function SettingsPage() {
           <div className="mb-3 text-[13.5px] text-fg-2">{t('settings.autoPerGame')}</div>
           {items.length === 0 && <p className="text-[12px] text-subtle">{t('settings.noGames')}</p>}
           <div className="space-y-3">
-            {items.map((item) => (
-              <Toggle
-                key={item.entry.id}
-                checked={item.entry.autoUpdate}
-                disabled={item.manifest?.updates.source !== 'github-releases'}
-                onChange={(v) => void save(() => window.api.library.update(item.entry.id, { autoUpdate: v }))}
-                label={item.name}
-                hint={item.manifest?.updates.source !== 'github-releases' ? t('upd.noBinaries.title') : undefined}
-              />
-            ))}
+            {/* Jogos via emulador não se atualizam sozinhos: quem atualiza é o emulador. */}
+            {items
+              .filter((item) => !item.manifest?.runner)
+              .map((item) => (
+                <Toggle
+                  key={item.entry.id}
+                  checked={item.entry.autoUpdate}
+                  disabled={item.manifest?.updates.source !== 'github-releases'}
+                  onChange={(v) => void save(() => window.api.library.update(item.entry.id, { autoUpdate: v }))}
+                  label={item.name}
+                  hint={item.manifest?.updates.source !== 'github-releases' ? t('upd.noBinaries.title') : undefined}
+                />
+              ))}
           </div>
         </div>
         <div className="px-[18px] py-4">

@@ -1,0 +1,45 @@
+{
+  "id": "mario-kart-8",
+  "name": "Mario Kart 8",
+  "originalGame": "Nintendo Wii U",
+  "description": "Roda no Cemu com o dump da sua própria cópia de Wii U. Marcado como \"Perfect\" na lista oficial do Cemu (teste no Cemu 2.0-59, versão americana). Há um problema aberto no Cemu 2.x de manchas pretas e sombras erradas nos personagens com Vulkan em algumas placas AMD.",
+  "category": "nintendo",
+  "compatibility": "playable",
+  "repoUrl": "https://github.com/cemu-project/Cemu",
+  "accentColor": "#d4202a",
+  "runner": {
+    "manifest": "cemu",
+    "args": ["-g", "{gameFile}"]
+  },
+  "requirements": [
+    {
+      "id": "game",
+      "type": "userFile",
+      "label": "Seu dump do jogo (.wud, .wux, .wua ou .rpx)",
+      "extensions": ["wud", "wux", "wua", "iso", "rpx", "tmd"],
+      "helpText": "Escolha o dump que você fez da sua própria cópia, no seu próprio Wii U: a imagem de disco .wud/.wux, o arquivo .wua ou, num dump descriptografado (pastas code, content e meta), o arquivo .rpx que fica na pasta code do jogo base (IDs: EUA 000500001010EC00, Europa 000500001010ED00, Japão 000500001010EB00). A atualização e as DLCs, se tiver, também vêm do seu console: instale-as no Cemu (File > Install game title, update or DLC) ou deixe-as na pasta de jogos configurada no Cemu. Imagens .wud/.wux precisam da chave do disco no keys.txt do Cemu. O app não fornece jogos."
+    }
+  ],
+  "updates": { "source": "none" },
+  "_todo": [
+    "Status pela lista oficial do Cemu: 'Perfect' no Cemu 2.0-59 (USA). Sem relato oficial na v2.6.",
+    "wiki.cemu.info e compat.cemu.info estão bloqueados neste ambiente: o status acima veio dos trechos das páginas oficiais exibidos pela busca na web, não da leitura direta das páginas.",
+    "Nome do .rpx (Turbo.rpx, segundo fontes não oficiais) não verificado; o texto pede 'o arquivo .rpx da pasta code'.",
+    "Issue aberta cemu-project/Cemu#1014: manchas pretas nos personagens (e sombras quebradas em karts/pilotos) desde a 2.0-58, ainda presente na 2.5 com Vulkan (RX 5500 XT); a 1.26.2f não tinha o problema. Não muda a nota 'playable' (gráfico, não impede terminar)."
+  ],
+  "_titleIds": {
+    "USA": "000500001010EC00",
+    "EUR": "000500001010ED00",
+    "JPN": "000500001010EB00"
+  },
+  "_sources": [
+    "https://wiki.cemu.info/wiki/Mario_Kart_8",
+    "https://compat.cemu.info/?sort=M",
+    "https://raw.githubusercontent.com/cemu-project/cemu_graphic_packs/HEAD/src/MarioKart8/Graphics/rules.txt",
+    "https://raw.githubusercontent.com/cemu-project/Cemu/v2.6/bin/gameProfiles/default/000500001010ec00.ini",
+    "https://raw.githubusercontent.com/cemu-project/Cemu/v2.6/bin/gameProfiles/default/000500001010ed00.ini",
+    "https://raw.githubusercontent.com/cemu-project/Cemu/v2.6/bin/gameProfiles/default/000500001010EB00.ini",
+    "https://raw.githubusercontent.com/cemu-project/Cemu/v2.6/src/config/LaunchSettings.cpp",
+    "https://github.com/cemu-project/Cemu/issues/1014"
+  ]
+}

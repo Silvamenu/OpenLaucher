@@ -43,7 +43,12 @@ const api: RelaunchApi = {
     icon: (id) => call('library:icon', id),
     pickArt: (id, kind) => call('library:pickArt', id, kind),
     clearArt: (id, kind) => call('library:clearArt', id, kind),
-    install: (manifestId) => call('library:install', manifestId)
+    install: (manifestId) => call('library:install', manifestId),
+    addRunnerGame: (manifestId) => call('library:addRunnerGame', manifestId),
+    inspectRepo: (url) => call('library:inspectRepo', url),
+    installFromRepo: (url, assetName) => call('library:installFromRepo', url, assetName),
+    pickExecutable: (id) => call('library:pickExecutable', id),
+    removeCustomManifest: (manifestId) => call('library:removeCustomManifest', manifestId)
   },
   profiles: {
     state: () => call('profiles:state'),

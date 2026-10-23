@@ -14,6 +14,9 @@ const messages = {
     pickFile: 'Selecione o arquivo',
     pickCover: 'Escolha uma imagem de capa',
     pickBanner: 'Escolha uma imagem de banner (de preferência larga, como 1920 × 600)',
+    pickGameFile: (name: string) => `Escolha o arquivo do seu ${name}`,
+    pickExecutable: 'Escolha o executável do jogo',
+    programs: 'Programas',
     images: 'Imagens',
     allFiles: 'Todos os arquivos'
   },
@@ -29,6 +32,9 @@ const messages = {
     pickFile: 'Select the file',
     pickCover: 'Choose a cover image',
     pickBanner: 'Choose a banner image (preferably wide, like 1920 × 600)',
+    pickGameFile: (name: string) => `Choose the file of your ${name}`,
+    pickExecutable: 'Choose the game executable',
+    programs: 'Programs',
     images: 'Images',
     allFiles: 'All files'
   }

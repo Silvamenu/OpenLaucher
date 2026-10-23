@@ -1,0 +1,122 @@
+{
+  "id": "duckstation",
+  "name": "DuckStation",
+  "originalGame": "PlayStation (PS1)",
+  "description": "Emulador de PlayStation 1 focado em precisão e desempenho, com upscaling e melhorias gráficas. Roda jogos a partir do dump dos seus próprios discos e precisa do BIOS extraído do seu próprio console.",
+  "category": "emulators",
+  "repoUrl": "https://github.com/stenzek/duckstation",
+  "website": "https://www.duckstation.org",
+  "accentColor": "#d99a1e",
+  "executables": {
+    "win32": ["duckstation-qt-x64-ReleaseLTCG.exe", "duckstation-qt-*.exe"],
+    "linux": ["DuckStation-x64.AppImage", "DuckStation*.AppImage"]
+  },
+  "detectFiles": ["duckstation-qt-x64-ReleaseLTCG.exe", "DuckStation-x64.AppImage", "resources/discdb.yaml"],
+  "requirements": [
+    {
+      "id": "bios",
+      "type": "firstRun",
+      "label": "BIOS do seu PS1 (assistente de configuração do DuckStation)",
+      "doneWhen": [
+        "bios/*",
+        "{localAppData}/duckstation/bios/scph1001.bin",
+        "{localAppData}/duckstation/bios/SCPH1001.BIN",
+        "{localAppData}/duckstation/bios/scph5501.bin",
+        "{localAppData}/duckstation/bios/SCPH5501.BIN",
+        "{localAppData}/duckstation/bios/scph7001.bin",
+        "{localAppData}/duckstation/bios/SCPH7001.BIN",
+        "{localAppData}/duckstation/bios/scph101.bin",
+        "{localAppData}/duckstation/bios/SCPH101.BIN",
+        "{localAppData}/duckstation/bios/scph5500.bin",
+        "{localAppData}/duckstation/bios/SCPH5500.BIN",
+        "{localAppData}/duckstation/bios/scph5502.bin",
+        "{localAppData}/duckstation/bios/SCPH5502.BIN",
+        "{appData}/duckstation/bios/scph1001.bin",
+        "{appData}/duckstation/bios/SCPH1001.BIN",
+        "{appData}/duckstation/bios/scph5501.bin",
+        "{appData}/duckstation/bios/SCPH5501.BIN",
+        "{appData}/duckstation/bios/scph7001.bin",
+        "{appData}/duckstation/bios/SCPH7001.BIN",
+        "{appData}/duckstation/bios/scph101.bin",
+        "{appData}/duckstation/bios/SCPH101.BIN",
+        "{appData}/duckstation/bios/scph5500.bin",
+        "{appData}/duckstation/bios/SCPH5500.BIN",
+        "{appData}/duckstation/bios/scph5502.bin",
+        "{appData}/duckstation/bios/SCPH5502.BIN",
+        "{documents}/DuckStation/bios/scph1001.bin",
+        "{documents}/DuckStation/bios/scph5501.bin",
+        "{documents}/DuckStation/bios/scph7001.bin",
+        "{documents}/DuckStation/bios/scph101.bin",
+        "{documents}/DuckStation/bios/scph5500.bin",
+        "{documents}/DuckStation/bios/scph5502.bin"
+      ],
+      "helpText": "O DuckStation precisa do BIOS extraído do seu próprio console PlayStation (ou PS2); o app não fornece esse arquivo. Coloque o arquivo (ex.: SCPH1001.BIN, 512 KB) na pasta \"bios\" da pasta de dados do DuckStation: no Windows, %LOCALAPPDATA%\\DuckStation\\bios (ou Documentos\\DuckStation\\bios em instalações antigas); no Linux, ~/.local/share/duckstation/bios. No DuckStation, Ferramentas > Abrir diretório de arquivos abre essa pasta. Na primeira execução o assistente de configuração mostra a tela do BIOS: escolha a pasta e confira se o BIOS aparece. Se o arquivo tiver outro nome ou estiver em outra pasta, marque este passo como concluído.",
+      "_todo": "A detecção automática só reconhece nomes comuns (scph1001, scph5501, scph7001, scph101, scph5500, scph5502, com extensão .bin ou .BIN); o DuckStation aceita qualquer nome, porque identifica o BIOS pelo tamanho e pelo hash. Com outro nome, o usuário marca o passo como concluído."
+    }
+  ],
+  "configFiles": [
+    {
+      "path": {
+        "win32": ["{localAppData}/DuckStation/settings.ini", "{documents}/DuckStation/settings.ini", "settings.ini"],
+        "linux": ["{home}/.local/share/duckstation/settings.ini", "{appData}/duckstation/settings.ini", "settings.ini"]
+      },
+      "format": "ini",
+      "label": "Configurações do DuckStation (settings.ini)",
+      "editable": true,
+      "_todo": "Criado na primeira execução. A pasta de dados padrão vem primeiro de propósito: se o arquivo ainda não existir, o app grava nela; um settings.ini ao lado do executável (último candidato) ativaria o modo portátil do DuckStation (src/core/core.cpp: settings.ini ou portable.txt na pasta do programa) e ele deixaria de achar o BIOS da pasta de dados. Se as pastas Documentos\\DuckStation e %LOCALAPPDATA%\\DuckStation existirem ao mesmo tempo, o DuckStation usa Documentos."
+    }
+  ],
+  "launchArgs": [],
+  "updates": {
+    "source": "github-releases",
+    "repo": "stenzek/duckstation",
+    "assetPatterns": {
+      "win32": "duckstation-windows-x64-release.zip",
+      "linux": "DuckStation-x64.AppImage"
+    },
+    "includePrereleases": false,
+    "preserve": [
+      "portable.txt",
+      "settings.ini",
+      "bios/**",
+      "memcards/**",
+      "savestates/**",
+      "gamesettings/**",
+      "inputprofiles/**",
+      "cheats/**",
+      "patches/**",
+      "covers/**",
+      "gameicons/**",
+      "screenshots/**",
+      "shaders/**",
+      "subchannels/**",
+      "textures/**",
+      "videos/**",
+      "cache/**"
+    ],
+    "_todo": [
+      "O release estável do DuckStation é o \"Latest Rolling Release\" com a tag fixa \"latest\" (os builds de teste ficam na tag \"preview\", marcada como pré-lançamento e ignorada aqui). Como a tag não muda, o app não detecta versões novas comparando tags; o próprio DuckStation avisa e instala atualizações (updater.exe no Windows, atualizador do AppImage no Linux).",
+      "Builds alternativos não são selecionados: SSE2 para CPUs sem SSE4.1 (duckstation-windows-x64-sse2-release.zip, DuckStation-x64-SSE2.AppImage), ARM64/ARMhf e macOS. O instalador .exe do Windows não é usado.",
+      "O zip do Windows não tem pasta raiz: os arquivos ficam direto na pasta de instalação."
+    ]
+  },
+  "_todo": [
+    "Licença: desde 2024 o DuckStation usa CC BY-NC-ND 4.0 (código aberto para leitura, mas não é uma licença OSI). O README permite redistribuir releases sem modificação e considera configurações/pacotes pré-configurados como modificação; o app só baixa o release oficial do GitHub e não altera nada.",
+    "Pasta de dados (não portátil por padrão): Windows usa Documentos\\DuckStation se essa pasta já existir, senão %LOCALAPPDATA%\\DuckStation; Linux usa $XDG_CONFIG_HOME/duckstation se a variável estiver definida, senão ~/.local/share/duckstation (código de src/core/core.cpp, que difere um pouco do README).",
+    "No Windows, se aparecer erro de vcruntime140_1.dll, é preciso instalar o Visual C++ Redistributable x64 da Microsoft (indicado no README).",
+    "Requer Windows 10 1809+ e CPU com SSE4.1 no build padrão; no Linux, distribuição equivalente ao Ubuntu 22.04 ou mais nova.",
+    "Não verificado em execução real: nenhum binário foi executado nesta pesquisa (zip do Windows listado; AppImage é arquivo único)."
+  ],
+  "_sources": [
+    "https://github.com/stenzek/duckstation/releases/latest",
+    "https://github.com/stenzek/duckstation/releases",
+    "https://github.com/stenzek/duckstation/releases/expanded_assets/latest",
+    "https://github.com/stenzek/duckstation/releases/expanded_assets/v0.1-11894",
+    "https://raw.githubusercontent.com/stenzek/duckstation/HEAD/README.md",
+    "https://raw.githubusercontent.com/stenzek/duckstation/HEAD/src/duckstation-qt/qthost.cpp",
+    "https://raw.githubusercontent.com/stenzek/duckstation/HEAD/src/core/core.cpp",
+    "https://raw.githubusercontent.com/stenzek/duckstation/HEAD/src/core/settings.cpp",
+    "https://raw.githubusercontent.com/stenzek/duckstation/HEAD/src/duckstation-qt/mainwindow.ui",
+    "https://raw.githubusercontent.com/stenzek/duckstation/HEAD/src/duckstation-qt/translations/duckstation-qt_pt-BR.ts"
+  ]
+}

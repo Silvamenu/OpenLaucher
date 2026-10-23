@@ -1,6 +1,7 @@
 import { ChevronLeft, FolderSearch, ImageOff, LoaderCircle, Pencil, Play, SlidersHorizontal, Trash2 } from 'lucide-react'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { collectTodos, executablesFor, launchArgsFor } from '../../../shared/manifestUtils'
+import { RUNNER_GAME_FILE } from '../../../shared/catalog'
 import type { LibraryItem, RequirementsReport } from '../../../shared/types'
 import { GameCover, artUrl, coverGradient, hueOfItem } from '../components/GameArt'
 import { GlossaryText } from '../components/Glossary'
@@ -29,10 +30,11 @@ function MenuItem({ icon, children, onClick, danger }: { icon: ReactNode; childr
 
 function AboutTab({ item }: { item: LibraryItem }) {
   const { t, locale } = useI18n()
-  const { info } = useAppState()
+  const { info, manifests } = useAppState()
   const m = item.manifest
   if (!m) return null
   const platform = info?.platform ?? 'win32'
+  const runner = m.runner ? (manifests.manifests.find((x) => x.id === m.runner?.manifest)?.name ?? m.runner.manifest) : null
   const link = (url: string, label: string) => (
     <button type="button" className="text-link hover:underline" onClick={() => void window.api.app.openExternal(url)}>
       {label}
@@ -42,18 +44,23 @@ function AboutTab({ item }: { item: LibraryItem }) {
     [t('about.original'), m.originalGame ?? '—'],
     [t('about.repo'), link(m.repoUrl, m.repoUrl.replace('https://github.com/', ''))],
     ...(m.website ? ([[t('about.website'), link(m.website, m.website.replace('https://', ''))]] as [string, ReactNode][]) : []),
-    [
-      t('about.executables'),
-      <span key="exe" className="font-mono text-[12.5px]">
-        {executablesFor(m, platform).join(', ') || '—'}
-      </span>
-    ],
-    [
-      t('about.launchArgs'),
-      <span key="args" className="font-mono text-[12.5px]">
-        {launchArgsFor(m, platform).join(' ') || t('about.none')}
-      </span>
-    ],
+    // Jogo via emulador: quem abre é o emulador (o executável e os argumentos são os dele).
+    ...(runner
+      ? ([[t('about.runner'), runner]] as [string, ReactNode][])
+      : ([
+          [
+            t('about.executables'),
+            <span key="exe" className="font-mono text-[12.5px]">
+              {executablesFor(m, platform).join(', ') || '—'}
+            </span>
+          ],
+          [
+            t('about.launchArgs'),
+            <span key="args" className="font-mono text-[12.5px]">
+              {launchArgsFor(m, platform).join(' ') || t('about.none')}
+            </span>
+          ]
+        ] as [string, ReactNode][])),
     [
       t('about.manifest'),
       <span key="m">
@@ -144,6 +151,8 @@ export function GamePage({ id, tab }: { id: string; tab?: GameTab }) {
       toast('error', errorMessage(err, t))
     }
   }
+  // Num jogo via emulador a "pasta" é a do arquivo do jogo: localizar é escolher o arquivo de novo.
+  const relocate = () => act(() => (item.manifest?.runner ? window.api.library.pickUserFile(id, RUNNER_GAME_FILE) : window.api.library.changeFolder(id)))
 
   const launch = async () => {
     setLaunching(true)
@@ -194,8 +203,8 @@ export function GamePage({ id, tab }: { id: string; tab?: GameTab }) {
       )
     if (item.status === 'missingFolder')
       return (
-        <Button variant="primary" size="lg" icon={<FolderSearch size={16} />} onClick={() => act(() => window.api.library.changeFolder(id))}>
-          {t('game.missingFolder.locate')}
+        <Button variant="primary" size="lg" icon={<FolderSearch size={16} />} onClick={relocate}>
+          {item.manifest?.runner ? t('game.locateGameFile') : t('game.missingFolder.locate')}
         </Button>
       )
     if (item.status === 'needsSetup')
@@ -307,8 +316,8 @@ export function GamePage({ id, tab }: { id: string; tab?: GameTab }) {
                 <MenuItem icon={<Pencil size={15} />} onClick={() => (setMenu(false), setDialog('rename'))}>
                   {t('game.rename')}
                 </MenuItem>
-                <MenuItem icon={<FolderSearch size={15} />} onClick={() => act(() => window.api.library.changeFolder(id))}>
-                  {t('game.changeFolder')}
+                <MenuItem icon={<FolderSearch size={15} />} onClick={relocate}>
+                  {item.manifest?.runner ? t('game.changeGameFile') : t('game.changeFolder')}
                 </MenuItem>
                 {!!item.entry.coverVersion && (
                   <MenuItem icon={<ImageOff size={15} />} onClick={() => act(() => window.api.library.clearArt(id, 'cover'))}>
@@ -332,7 +341,7 @@ export function GamePage({ id, tab }: { id: string; tab?: GameTab }) {
         {(item.status === 'needsSetup' || item.status === 'missingFolder') && (
           <button
             type="button"
-            onClick={() => (item.status === 'missingFolder' ? act(() => window.api.library.changeFolder(id)) : showSection('setup'))}
+            onClick={() => (item.status === 'missingFolder' ? relocate() : showSection('setup'))}
             className="mt-5 flex w-full max-w-[560px] items-center gap-3 rounded-xl border border-line px-4 py-3 text-left text-[13px] text-fg-3 transition-colors hover:border-chip-line"
           >
             <Dot tone={statusTone(item)} />
@@ -363,8 +372,8 @@ export function GamePage({ id, tab }: { id: string; tab?: GameTab }) {
           </span>
           <span className="shrink-0 text-ghost">·</span>
           {item.status === 'missingFolder' ? (
-            <button type="button" className="shrink-0 text-link hover:underline" onClick={() => act(() => window.api.library.changeFolder(id))}>
-              {t('game.missingFolder.locate')}
+            <button type="button" className="shrink-0 text-link hover:underline" onClick={relocate}>
+              {item.manifest?.runner ? t('game.locateGameFile') : t('game.missingFolder.locate')}
             </button>
           ) : (
             <button type="button" className="shrink-0 text-link hover:underline" onClick={() => act(() => window.api.library.openFolder(id))}>

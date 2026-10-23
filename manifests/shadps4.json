@@ -1,0 +1,81 @@
+{
+  "id": "shadps4",
+  "name": "shadPS4",
+  "originalGame": "PlayStation 4",
+  "description": "Emulador de PlayStation 4 de código aberto, ainda em fase inicial. Roda jogos a partir do dump da sua própria cópia; a compatibilidade varia muito de jogo para jogo.",
+  "category": "emulators",
+  "repoUrl": "https://github.com/shadps4-emu/shadPS4",
+  "website": "https://shadps4.net",
+  "accentColor": "#6c2bd9",
+  "executables": {
+    "win32": ["shadPS4.exe"],
+    "linux": ["Shadps4-sdl.AppImage", "*.AppImage"]
+  },
+  "detectFiles": ["shadPS4.exe", "Shadps4-sdl.AppImage"],
+  "requirements": [
+    {
+      "id": "sys-modules",
+      "type": "file",
+      "label": "Módulos do sistema do seu PS4 (sys_modules)",
+      "optional": true,
+      "patterns": [
+        "user/sys_modules/*.sprx",
+        "{appData}/shadPS4/sys_modules/libSceNgs2.sprx",
+        "{appData}/shadPS4/sys_modules/libSceLibcInternal.sprx",
+        "{appData}/shadPS4/sys_modules/libSceFont.sprx",
+        "{localAppData}/shadPS4/sys_modules/libSceNgs2.sprx",
+        "{localAppData}/shadPS4/sys_modules/libSceLibcInternal.sprx",
+        "{localAppData}/shadPS4/sys_modules/libSceFont.sprx"
+      ],
+      "helpText": "Fortemente recomendado: o README do shadPS4 diz que esses módulos são necessários para os jogos rodarem corretamente, e os relatos da lista oficial de compatibilidade são feitos com eles. Os módulos (.sprx, como libSceNgs2.sprx e libSceFont.sprx) ficam na pasta /system/common/lib do seu próprio PS4 e precisam ser copiados de lá por você. Coloque-os na pasta sys_modules do shadPS4: user/sys_modules dentro da pasta do emulador (modo portátil), %APPDATA%\\shadPS4\\sys_modules no Windows ou ~/.local/share/shadPS4/sys_modules no Linux. O app não fornece esses arquivos."
+    }
+  ],
+  "configFiles": [
+    {
+      "path": {
+        "win32": ["user/config.json", "{appData}/shadPS4/config.json"],
+        "linux": ["user/config.json", "{localAppData}/shadPS4/config.json"]
+      },
+      "format": "json",
+      "label": "Configurações do emulador (config.json)",
+      "editable": true,
+      "_todo": "O config.json é criado na primeira execução. Versões antigas usavam config.toml (o emulador oferece converter)."
+    }
+  ],
+  "launchArgs": ["-b"],
+  "updates": {
+    "source": "github-releases",
+    "repo": "shadps4-emu/shadPS4",
+    "assetPatterns": {
+      "win32": "shadps4-win64-sdl-*.zip",
+      "linux": "shadps4-linux-sdl-*.zip"
+    },
+    "includePrereleases": false,
+    "preserve": ["user/**"],
+    "_todo": [
+      "Builds de macOS (shadps4-macos-sdl-*.zip) não são mapeadas.",
+      "O nome do zip de Windows às vezes inclui o ano (shadps4-win64-sdl-2026-0.20.0.zip) e às vezes não (shadps4-win64-sdl-0.19.0.zip); o padrão cobre os dois."
+    ]
+  },
+  "_todo": [
+    "Este manifesto usa o núcleo oficial (build SDL, sem interface Qt). Sem argumentos ele só mostra um aviso, por isso o app abre o emulador com -b (modo Big Picture, a interface embutida). A interface Qt oficial (shadps4-emu/shadps4-qtlauncher) só publica pré-lançamentos e não é instalada aqui.",
+    "Pasta de dados: o shadPS4 usa a pasta 'user' do diretório de trabalho se ela existir (modo portátil); senão usa %APPDATA%\\shadPS4 (Windows) ou ~/.local/share/shadPS4 (Linux). O app inicia o emulador na pasta de instalação.",
+    "Fontes do sistema e chave de troféus (opcionais) não foram mapeadas como requisitos."
+  ],
+  "_sources": [
+    "https://github.com/shadps4-emu/shadPS4/releases/latest",
+    "https://github.com/shadps4-emu/shadPS4/releases/expanded_assets/v.0.20.0",
+    "https://github.com/shadps4-emu/shadPS4/releases/expanded_assets/v.0.19.0",
+    "https://github.com/shadps4-emu/shadPS4/releases/expanded_assets/v.0.12.5",
+    "https://raw.githubusercontent.com/shadps4-emu/shadPS4/HEAD/README.md",
+    "https://raw.githubusercontent.com/shadps4-emu/shadPS4/v.0.20.0/README.md",
+    "https://raw.githubusercontent.com/shadps4-emu/shadPS4/v.0.20.0/src/emulator.cpp",
+    "https://raw.githubusercontent.com/shadps4-emu/shadPS4/v.0.20.0/src/core/file_sys/fs.cpp",
+    "https://raw.githubusercontent.com/shadps4-emu/shadPS4/v.0.20.0/src/main.cpp",
+    "https://raw.githubusercontent.com/shadps4-emu/shadPS4/v.0.20.0/src/common/path_util.cpp",
+    "https://raw.githubusercontent.com/shadps4-emu/shadPS4/HEAD/src/common/path_util.h",
+    "https://raw.githubusercontent.com/shadps4-emu/shadPS4/v.0.20.0/src/core/emulator_settings.cpp",
+    "https://github.com/shadps4-emu/shadPS4/wiki/I.-Quick-start-%5BUsers%5D",
+    "https://github.com/shadps4-emu/shadps4-qtlauncher"
+  ]
+}

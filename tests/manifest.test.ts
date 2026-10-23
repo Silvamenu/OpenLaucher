@@ -123,7 +123,20 @@ describe('manifestos embutidos', () => {
   it('todos os arquivos em manifests/ são válidos', async () => {
     const report = await loadManifests([{ dir, origin: 'builtin' }])
     expect(report.errors).toEqual([])
-    expect(report.manifests.map((m) => m.id).sort()).toEqual(['2ship', 'sm64-port', 'soh', 'spaghettikart', 'starship', 'zelda64recomp'])
+    const files = (await fs.readdir(dir)).filter((f) => f.endsWith('.json')).map((f) => f.replace(/\.json$/, ''))
+    expect(report.manifests.map((m) => m.id).sort()).toEqual(files.sort())
+    expect(files).toContain('god-of-war-3-remastered')
+  })
+
+  it('cada embutido está numa lista da plataforma e cada jogo via emulador aponta para um emulador', async () => {
+    const { manifests } = await loadManifests([{ dir, origin: 'builtin' }])
+    const byId = new Map(manifests.map((m) => [m.id, m]))
+    for (const m of manifests) {
+      expect(m.category, m.id).not.toBe('custom')
+      if (!m.runner) continue
+      expect(byId.get(m.runner.manifest)?.category, m.id).toBe('emulators')
+      expect(m.compatibility, m.id).toBeDefined()
+    }
   })
 
   it('projetos com binários publicados declaram assets para Windows e preservam dados do usuário', async () => {
@@ -131,8 +144,11 @@ describe('manifestos embutidos', () => {
     for (const m of manifests) {
       if (m.updates.source !== 'github-releases') continue
       expect(assetPatternsFor(m.updates, 'win32').length, m.id).toBeGreaterThan(0)
-      expect(m.updates.preserve.length, m.id).toBeGreaterThan(0)
-      expect(m.repoUrl.toLowerCase()).toContain(m.updates.repo.toLowerCase())
+      // O OpenRCT2 guarda configurações e saves fora da pasta do jogo (Documentos / ~/.config).
+      if (m.id !== 'openrct2') expect(m.updates.preserve.length, m.id).toBeGreaterThan(0)
+      // Binários podem vir de outro repositório do mesmo dono (ex.: RPCS3/rpcs3-binaries-win).
+      const owner = (repo: string) => repo.toLowerCase().split('/')[0]
+      expect(owner(new URL(m.repoUrl).pathname.slice(1)), m.id).toBe(owner(m.updates.repo))
     }
     const soh = manifests.find((m) => m.id === 'soh')!
     // soh.o2r pertence ao port e PRECISA ser atualizado; só os arquivos gerados da ROM são preservados.

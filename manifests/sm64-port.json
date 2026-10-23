@@ -3,6 +3,7 @@
   "name": "Super Mario 64 PC Port",
   "originalGame": "Super Mario 64",
   "description": "Port para PC de Super Mario 64 baseado na decompilação. O projeto não publica executáveis: compile a partir do código-fonte usando sua própria ROM. Também reconhece builds do sm64ex.",
+  "category": "nintendo",
   "repoUrl": "https://github.com/sm64-port/sm64-port",
   "accentColor": "#d4a017",
   "executables": {

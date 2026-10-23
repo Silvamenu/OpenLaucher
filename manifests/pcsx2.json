@@ -1,0 +1,88 @@
+{
+  "id": "pcsx2",
+  "name": "PCSX2",
+  "originalGame": "PlayStation 2",
+  "description": "Emulador de PlayStation 2 de código aberto e maduro: a maior parte da biblioteca do PS2 é jogável. Roda jogos a partir da imagem do seu próprio disco e precisa do BIOS extraído do seu próprio console.",
+  "category": "emulators",
+  "repoUrl": "https://github.com/PCSX2/pcsx2",
+  "website": "https://pcsx2.net",
+  "accentColor": "#2b5fb4",
+  "executables": {
+    "win32": ["pcsx2-qt.exe"],
+    "linux": ["pcsx2-qt.AppImage", "pcsx2-*.AppImage"]
+  },
+  "detectFiles": ["pcsx2-qt.exe", "pcsx2-*.AppImage", "resources/GameIndex.yaml"],
+  "requirements": [
+    {
+      "id": "bios",
+      "type": "firstRun",
+      "label": "BIOS do seu PS2 (assistente de configuração do PCSX2)",
+      "doneWhen": ["bios/*.bin", "PCSX2/bios/*.bin"],
+      "helpText": "O PCSX2 precisa do BIOS extraído do seu próprio console PS2; o app não fornece esse arquivo. O guia oficial do PCSX2 (pcsx2.net/docs/setup/bios) explica como fazer a extração no seu console. Coloque o arquivo do BIOS (ex.: SCPH-xxxxx.bin, entre 4 e 8 MB) na pasta 'bios' do PCSX2: no Windows, a pasta bios dentro da pasta do emulador; no Linux, PCSX2/bios ao lado do AppImage. Depois abra o PCSX2: na primeira vez o assistente de configuração mostra a tela do BIOS; atualize a lista e selecione o seu. Se você usar outra pasta no assistente, marque este passo como concluído."
+    }
+  ],
+  "configFiles": [
+    {
+      "path": {
+        "win32": "inis/PCSX2.ini",
+        "linux": "PCSX2/inis/PCSX2.ini"
+      },
+      "format": "ini",
+      "label": "Configurações do PCSX2 (PCSX2.ini)",
+      "editable": true,
+      "_todo": "Criado na primeira execução. Só vale para o modo portátil (-portable) usado pelo app."
+    }
+  ],
+  "launchArgs": ["-portable"],
+  "updates": {
+    "source": "github-releases",
+    "repo": "PCSX2/pcsx2",
+    "assetPatterns": {
+      "win32": "pcsx2-*-windows-x64-Qt.7z",
+      "linux": "pcsx2-*-linux-appimage-x64-Qt.AppImage"
+    },
+    "includePrereleases": false,
+    "preserve": [
+      "portable.ini",
+      "portable.txt",
+      "PCSX2/**",
+      "inis/**",
+      "bios/**",
+      "memcards/**",
+      "sstates/**",
+      "snaps/**",
+      "cheats/**",
+      "patches/**",
+      "covers/**",
+      "gamesettings/**",
+      "textures/**",
+      "inputprofiles/**",
+      "videos/**",
+      "cache/**",
+      "logs/**"
+    ],
+    "_todo": [
+      "Os builds nightly do PCSX2 (v2.9.x) são publicados como pré-lançamento no mesmo repositório e ficam de fora (includePrereleases: false); só a versão estável (v2.8.2 em 2026-10-23) é instalada.",
+      "Builds de macOS (pcsx2-*-macos-Qt.tar.xz), o instalador do Windows e o Flatpak não são usados."
+    ]
+  },
+  "_todo": [
+    "Modo portátil: o app sempre abre o PCSX2 com -portable (aqui e nos jogos), então tudo fica dentro da pasta do emulador. No Windows a pasta de dados é a própria pasta do emulador (bios/, memcards/, inis/PCSX2.ini...); no Linux o AppImage usa a pasta PCSX2/ ao lado dele. Se o usuário abrir o PCSX2 por fora, sem -portable, ele usa Documentos\\PCSX2 (Windows) ou ~/.config/PCSX2 (Linux), com outra configuração.",
+    "No Linux o AppImage (tipo 2, x86-64, conferido no cabeçalho ELF) precisa de suporte a FUSE no sistema para abrir; não foi executado aqui.",
+    "Ao abrir o PCSX2 direto (sem jogo) ele pode oferecer a própria atualização automática (updater.exe no Windows); o app não desativa isso.",
+    "Não verificado em execução real: nenhum binário foi executado nesta pesquisa (só listado e lido no código-fonte v2.8.2)."
+  ],
+  "_sources": [
+    "https://github.com/PCSX2/pcsx2/releases/latest",
+    "https://github.com/PCSX2/pcsx2/releases/expanded_assets/v2.8.2",
+    "https://github.com/PCSX2/pcsx2/releases/expanded_assets/v2.6.3",
+    "https://github.com/PCSX2/pcsx2/releases/expanded_assets/v2.9.138",
+    "https://github.com/PCSX2/pcsx2/releases",
+    "https://raw.githubusercontent.com/PCSX2/pcsx2/HEAD/README.md",
+    "https://raw.githubusercontent.com/PCSX2/pcsx2/v2.8.2/pcsx2/Pcsx2Config.cpp",
+    "https://raw.githubusercontent.com/PCSX2/pcsx2/v2.8.2/pcsx2-qt/QtHost.cpp",
+    "https://raw.githubusercontent.com/PCSX2/pcsx2/v2.8.2/pcsx2/ps2/BiosTools.cpp",
+    "https://raw.githubusercontent.com/PCSX2/pcsx2/v2.8.2/pcsx2/VMManager.cpp",
+    "https://raw.githubusercontent.com/PCSX2/pcsx2-net-www/main/docs/setup/bios.md"
+  ]
+}

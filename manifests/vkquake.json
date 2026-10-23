@@ -1,0 +1,81 @@
+{
+  "id": "vkquake",
+  "name": "vkQuake",
+  "originalGame": "Quake",
+  "description": "Port de Quake com renderização Vulkan, baseado no QuakeSpasm, com alta taxa de quadros, menu de mods e suporte ao relançamento de 2021. Usa os arquivos da sua própria cópia do jogo.",
+  "category": "pc",
+  "repoUrl": "https://github.com/Novum/vkQuake",
+  "accentColor": "#7a5a2e",
+  "executables": {
+    "win32": ["vkQuake.exe"],
+    "linux": ["vkquake.appimage"]
+  },
+  "detectFiles": ["vkQuake.exe", "vkquake.appimage", "vkQuake.pdb"],
+  "requirements": [
+    {
+      "id": "quake-data",
+      "type": "file",
+      "label": "Arquivos do seu Quake (id1/pak0.pak)",
+      "patterns": ["id1/pak0.pak", "QuakeEX.kpf", "{appData}/vkQuake/basedirs.txt", "{localAppData}/vkQuake/basedirs.txt"],
+      "helpText": "Copie a pasta id1 (com pak0.pak e pak1.pak) da sua cópia do Quake para a pasta do jogo. Para o relançamento de 2021, copie o conteúdo da pasta rerelease (id1 e QuakeEX.kpf). Se o Quake estiver instalado pela Steam, GOG ou Epic, o vkQuake encontra a instalação sozinho; se não encontrar, ele pede a pasta do jogo uma vez e guarda a escolha. Nesses casos este item pode continuar pendente. No Linux, os nomes precisam estar em minúsculas (id1, pak0.pak); algumas versões, como a da GOG, vêm em maiúsculas."
+    },
+    {
+      "id": "vcredist",
+      "type": "firstRun",
+      "label": "Microsoft Visual C++ Redistributable x64 (Windows, só se o jogo não abrir)",
+      "optional": true,
+      "helpText": "A build para Windows precisa do Microsoft Visual C++ Redistributable (x64). Se aparecer erro de DLL ausente ao abrir, instale-o pelo site da Microsoft. No Linux, o AppImage precisa de glibc 2.35 ou mais nova e de FUSE."
+    }
+  ],
+  "configFiles": [
+    {
+      "path": {
+        "win32": ["vkQuake.cfg", "{appData}/vkQuake/vkQuake.cfg"],
+        "linux": ["vkQuake.cfg", "{localAppData}/vkQuake/vkQuake.cfg"]
+      },
+      "format": "text",
+      "label": "Configurações (vkQuake.cfg)",
+      "editable": true,
+      "_todo": "Só existe depois da primeira execução. Com id1 na pasta do jogo (modo portátil), o vkQuake.cfg geral fica na pasta do jogo e os saves em id1/. Com a instalação da Steam/GOG/Epic, tudo vai para %APPDATA%\\vkQuake (Windows) ou ~/.local/share/vkQuake (Linux). Também existe um vkQuake.cfg por jogo/mod (ex.: id1/vkQuake.cfg)."
+    }
+  ],
+  "launchArgs": [],
+  "updates": {
+    "source": "github-releases",
+    "repo": "Novum/vkQuake",
+    "assetPatterns": {
+      "win32": "vkQuake-*_windows_x64.zip",
+      "linux": "vkQuake-*-x86_64.AppImage"
+    },
+    "includePrereleases": false,
+    "preserve": ["id1/**", "hipnotic/**", "rogue/**", "QuakeEX.kpf", "vkQuake.cfg", "*.pak"],
+    "_todo": "O instalador do Windows (vkQuake-Installer-windows_x64-*.exe) e a build Windows ARM64 (sem suporte oficial) são ignorados."
+  },
+  "_todo": [
+    "Mods (ex.: Arcane Dimensions) e expansões (hipnotic, rogue) ficam em subpastas ao lado de id1 e são escolhidos pelo menu Mods do jogo; o app não os gerencia."
+  ],
+  "_sources": [
+    "https://github.com/Novum/vkQuake/releases/latest",
+    "https://github.com/Novum/vkQuake/releases/tag/1.37.0",
+    "https://github.com/Novum/vkQuake/releases/expanded_assets/1.37.0",
+    "https://raw.githubusercontent.com/Novum/vkQuake/HEAD/readme.md",
+    "https://raw.githubusercontent.com/Novum/vkQuake/1.37.0/Quake/common.c",
+    "https://raw.githubusercontent.com/Novum/vkQuake/1.37.0/Quake/quakedef.h",
+    "https://raw.githubusercontent.com/Novum/vkQuake/1.37.0/Quake/main_sdl.c",
+    "https://raw.githubusercontent.com/Novum/vkQuake/1.37.0/Packaging/AppImage/run-in-docker.sh",
+    "https://raw.githubusercontent.com/Novum/vkQuake/1.37.0/Quake/sys_sdl_unix.c",
+    "https://raw.githubusercontent.com/Novum/vkQuake/1.37.0/Quake/sys_sdl_win.c",
+    "https://raw.githubusercontent.com/Novum/vkQuake/1.37.0/meson_options.txt",
+    "https://raw.githubusercontent.com/Novum/vkQuake/1.37.0/Windows/VisualStudio/vkquake.vcxproj",
+    "https://raw.githubusercontent.com/Novum/vkQuake/1.37.0/Packaging/AppImage/docker/Dockerfile",
+    "https://raw.githubusercontent.com/Novum/vkQuake/1.37.0/.github/workflows/build-windows.yml"
+  ],
+  "_verified": [
+    "Release 1.37.0 (2026, marcado como Latest) tem vkQuake-1.37.0-x86_64.AppImage, vkQuake-1.37.0_windows_x64.zip, vkQuake-1.37.0_windows_arm64.zip e vkQuake-Installer-windows_x64-1.37.0.exe.",
+    "O .zip x64 não tem pasta raiz: vkQuake.exe, vkQuake.pdb, SDL3.dll, DLLs de áudio (libFLAC, libmad, libmikmod, libmpg123, libogg, libopus, libopusfile, libvorbis, libvorbisfile, libxmp) e LICENSE.txt.",
+    "common.c (1.37.0): sem -basedir, a base é a pasta atual; se ela não tiver id1/pak0.pak nem QuakeEX.kpf, o motor procura Steam/GOG/Epic e, se não achar, abre um seletor de pasta (SDL3) e grava a escolha em basedirs.txt na pasta de preferências (SDL_GetPrefPath(\"\", \"vkQuake\")).",
+    "Configuração global: vkQuake.cfg na pasta de escrita (pasta do jogo no modo portátil; pasta de preferências quando os dados vêm da loja).",
+    "Verificação independente (1.37.0): o squashfs (zstd) do AppImage tem AppRun -> usr/bin/vkquake (link simbólico, sem mudar de pasta), usr/lib com SDL3/Vulkan/codecs e nenhum dado de jogo; sem DO_USERDIRS (meson_options: do_userdirs desativado), Sys_GetBasedir usa getcwd() no Linux e GetCurrentDirectory() no Windows, então a pasta do jogo definida pelo app é a base.",
+    "vkQuake.exe 1.37.0 é compilado com /MD (vkquake.vcxproj: RuntimeLibrary MultiThreadedDLL), por isso o Visual C++ Redistributable x64 pode ser necessário; o AppImage é gerado em ubuntu:22.04 (glibc 2.35)."
+  ]
+}

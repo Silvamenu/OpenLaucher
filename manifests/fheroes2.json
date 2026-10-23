@@ -1,0 +1,75 @@
+{
+  "id": "fheroes2",
+  "name": "fheroes2",
+  "originalGame": "Heroes of Might and Magic II",
+  "description": "Recriação de código aberto do motor de Heroes of Might and Magic II, com alta resolução, IA melhorada e muitas correções. Usa os arquivos de dados da sua cópia do jogo.",
+  "category": "pc",
+  "repoUrl": "https://github.com/ihhub/fheroes2",
+  "website": "https://ihhub.github.io/fheroes2/",
+  "accentColor": "#8a6a1f",
+  "executables": {
+    "win32": ["fheroes2.exe"],
+    "linux": ["fheroes2"]
+  },
+  "detectFiles": ["fheroes2.exe", "fheroes2", "files/data/resurrection.h2d"],
+  "requirements": [
+    {
+      "id": "homm2-data",
+      "type": "file",
+      "label": "Arquivos do seu Heroes of Might and Magic II (DATA/HEROES2.AGG)",
+      "patterns": [
+        "data/heroes2.agg",
+        "{appData}/fheroes2/data/HEROES2.AGG",
+        "{appData}/fheroes2/DATA/HEROES2.AGG",
+        "{appData}/fheroes2/data/heroes2.agg",
+        "{localAppData}/fheroes2/data/HEROES2.AGG",
+        "{localAppData}/fheroes2/DATA/HEROES2.AGG",
+        "{localAppData}/fheroes2/data/heroes2.agg"
+      ],
+      "helpText": "Copie as pastas ANIM, DATA, MAPS e MUSIC da instalação do seu Heroes of Might and Magic II (GOG, Ubisoft ou CD) para a pasta do jogo; algumas podem não existir, conforme a versão. Outra opção é rodar, na pasta do jogo, o script que vem no pacote: extract_homm2_resources.bat no Windows (procura a sua instalação e, se não achar, pede o caminho) ou extract_homm2_resources.sh no Linux (pede o caminho da sua instalação ou do instalador da GOG que você comprou, que exige o innoextract)."
+    },
+    {
+      "id": "system-libs",
+      "type": "firstRun",
+      "label": "Bibliotecas do sistema (só se o jogo não abrir)",
+      "optional": true,
+      "helpText": "Windows: se aparecer erro de DLL ausente, instale o Microsoft Visual C++ Redistributable (x64). Linux: o pacote não traz o SDL2; instale SDL2, SDL2_image e SDL2_mixer pelo gerenciador de pacotes da sua distribuição (no Debian/Ubuntu dá para rodar script/linux/install_sdl2.sh, que vem na pasta do jogo)."
+    }
+  ],
+  "configFiles": [
+    {
+      "path": "{appData}/fheroes2/fheroes2.cfg",
+      "format": "text",
+      "label": "Configurações (fheroes2.cfg)",
+      "editable": true
+    }
+  ],
+  "launchArgs": [],
+  "updates": {
+    "source": "github-releases",
+    "repo": "ihhub/fheroes2",
+    "assetPatterns": {
+      "win32": ["fheroes2_windows_x64_SDL2.zip", "fheroes2_windows_x64_*.zip"],
+      "linux": ["fheroes2_ubuntu_x86-64_SDL2.zip", "fheroes2_ubuntu_x86-64_*.zip"]
+    },
+    "includePrereleases": false,
+    "preserve": ["anim/**", "data/**", "music/**", "maps/*.mp2", "maps/*.mx2"],
+    "_todo": "Os instaladores (*_installer.exe), builds x86 de 32 bits, ARM64 e as tags de desenvolvimento (pré-releases, como fheroes2-emscripten-sdl2_dev) são ignorados."
+  },
+  "_todo": [
+    "Os dados do jogo também são procurados em %APPDATA%\\fheroes2 (Windows) e em ~/.config/fheroes2 ou ~/.local/share/fheroes2 (Linux); por isso esses caminhos estão nos padrões. O padrão {localAppData}/fheroes2 no Windows não é usado pelo jogo, só serve ao Linux.",
+    "Configuração em %APPDATA%\\fheroes2\\fheroes2.cfg (Windows) ou ~/.config/fheroes2/fheroes2.cfg (Linux); saves em <pasta de dados>/files/save (%APPDATA%\\fheroes2\\files\\save ou ~/.local/share/fheroes2/files/save), fora da pasta do jogo.",
+    "O pacote oficial traz também um script para baixar a demo gratuita do jogo original; o app não usa nem divulga esse script, e pede apenas os arquivos da cópia do próprio usuário.",
+    "O binário Linux depende do SDL2, do SDL2_image e do SDL2_mixer instalados no sistema (não é AppImage)."
+  ],
+  "_sources": [
+    "https://github.com/ihhub/fheroes2/releases/latest",
+    "https://github.com/ihhub/fheroes2/releases/expanded_assets/1.1.17",
+    "https://github.com/ihhub/fheroes2/releases",
+    "https://raw.githubusercontent.com/ihhub/fheroes2/HEAD/README.md",
+    "https://raw.githubusercontent.com/ihhub/fheroes2/HEAD/docs/INSTALL.md",
+    "https://raw.githubusercontent.com/ihhub/fheroes2/HEAD/src/engine/system.cpp",
+    "https://raw.githubusercontent.com/ihhub/fheroes2/HEAD/src/fheroes2/system/settings.cpp",
+    "https://raw.githubusercontent.com/ihhub/fheroes2/HEAD/src/fheroes2/game/game_io.cpp"
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "id": "dhewm3",
+  "name": "dhewm 3",
+  "originalGame": "Doom 3 e Resurrection of Evil",
+  "description": "Port de código aberto do Doom 3 baseado no código GPL do jogo, com suporte a widescreen e controle, menu de configurações moderno e correções de bugs. Usa os arquivos .pk4 da sua própria cópia do Doom 3 (a BFG Edition não é suportada).",
+  "category": "pc",
+  "repoUrl": "https://github.com/dhewm/dhewm3",
+  "website": "https://dhewm3.org",
+  "accentColor": "#9e2a1b",
+  "executables": {
+    "win32": ["dhewm3.exe"],
+    "linux": ["dhewm3"]
+  },
+  "detectFiles": ["dhewm3.exe", "dhewm3_notools.exe", "dhewm3", "base.dll", "base.so"],
+  "requirements": [
+    {
+      "id": "base-data",
+      "type": "file",
+      "label": "Arquivos do seu Doom 3 (base/pak000.pk4 a pak008.pk4)",
+      "patterns": ["base/pak000.pk4", "base/demo00.pk4", "demo/demo00.pk4"],
+      "helpText": "Copie os arquivos pak000.pk4 a pak008.pk4 da pasta base da sua instalação do Doom 3 para a pasta base dentro da pasta do jogo. As versões da Steam e da GOG já vêm atualizadas para a 1.3.1; a versão em CD precisa do patch oficial 1.3.1 (pak005 a pak008). A BFG Edition usa outro formato e não funciona. O demo00.pk4 da demo oficial também é aceito, com conteúdo limitado."
+    },
+    {
+      "id": "roe-data",
+      "type": "file",
+      "label": "Arquivos da sua expansão Resurrection of Evil (d3xp/pak000.pk4 e pak001.pk4)",
+      "optional": true,
+      "patterns": ["d3xp/pak000.pk4"],
+      "helpText": "Opcional: para jogar a expansão, copie pak000.pk4 e pak001.pk4 da pasta d3xp da sua instalação para a pasta d3xp dentro da pasta do jogo. A expansão é escolhida no menu Mods do jogo."
+    },
+    {
+      "id": "system-libs",
+      "type": "firstRun",
+      "label": "Bibliotecas do sistema (só se o jogo não abrir)",
+      "optional": true,
+      "helpText": "Windows: a build é de 32 bits e precisa do Microsoft Visual C++ 2017 Redistributable (x86); se aparecer erro de DLL ausente, instale-o pelo site da Microsoft. Linux: o pacote não traz SDL2, OpenAL e libcurl; instale-os pelo gerenciador de pacotes da sua distribuição (ou coloque as bibliotecas na pasta libs do jogo)."
+    }
+  ],
+  "configFiles": [
+    {
+      "path": {
+        "win32": ["{documents}/My Games/dhewm3/base/dhewm.cfg"],
+        "linux": ["{appData}/dhewm3/base/dhewm.cfg"]
+      },
+      "format": "text",
+      "label": "Configurações (dhewm.cfg)",
+      "editable": true,
+      "_todo": "Só existe depois da primeira execução. Saves ficam em Documentos\\My Games\\dhewm3\\base\\savegames (Windows) ou ~/.local/share/dhewm3/base/savegames (Linux). Com a expansão, a configuração dela fica em d3xp/dhewm.cfg na mesma pasta."
+    }
+  ],
+  "launchArgs": [],
+  "updates": {
+    "source": "github-releases",
+    "repo": "dhewm/dhewm3",
+    "assetPatterns": {
+      "win32": "dhewm3-[0-9]*_win32.zip",
+      "linux": "dhewm3-[0-9]*_Linux_amd64.tar.gz"
+    },
+    "includePrereleases": false,
+    "preserve": ["base/*.pk4", "d3xp/*.pk4", "demo/**", "libs/*.so*"],
+    "_todo": "O pacote de mods (dhewm3-mods-*), as GUIs widescreen opcionais (dhewm3-wide-guis-*.zip) e a build Linux ARM64 não são instalados."
+  },
+  "_todo": [
+    "O executável dhewm3_notools.exe (sem os editores, recomendado com NVIDIA DSR/AMD VSR) vem junto, mas o app abre o dhewm3.exe.",
+    "A pasta base/ já vem no pacote; por isso o dhewm3 sempre usa a pasta do jogo como base e não procura a instalação da Steam no registro do Windows. Os arquivos .pk4 precisam ser copiados.",
+    "O README.txt do pacote Windows 1.5.5 ainda diz \"1.5.5rc3\" (16/03/2026); o pacote Linux e o release em si são o 1.5.5 final (08/06/2026)."
+  ],
+  "_sources": [
+    "https://github.com/dhewm/dhewm3/releases/latest",
+    "https://github.com/dhewm/dhewm3/releases/expanded_assets/1.5.5",
+    "https://raw.githubusercontent.com/dhewm/dhewm3/1.5.5/neo/sys/win32/win_main.cpp",
+    "https://raw.githubusercontent.com/dhewm/dhewm3/1.5.5/neo/sys/linux/main.cpp",
+    "https://raw.githubusercontent.com/dhewm/dhewm3/1.5.5/neo/framework/Licensee.h",
+    "https://raw.githubusercontent.com/dhewm/dhewm3/1.5.5/neo/framework/FileSystem.cpp",
+    "https://dhewm3.org",
+    "https://github.com/dhewm/dhewm3/releases/expanded_assets/1.5.4"
+  ],
+  "_verified": [
+    "Release 1.5.5 (08/06/2026, Latest) tem dhewm3-1.5.5_win32.zip, dhewm3-1.5.5_Linux_amd64.tar.gz, dhewm3-1.5.5_Linux_arm64.tar.gz, dhewm3-mods-1.5.5_* e dhewm3-wide-guis-v0.2.zip.",
+    "O .zip do Windows tem uma única pasta raiz dhewm3/ com dhewm3.exe, dhewm3_notools.exe, dhewm3ded.exe, base.dll, d3xp.dll, SDL2.dll, OpenAL32.dll, libcurl-4.dll, base/ (gamepad.cfg, WHAT_TO_DO.txt) e d3xp/.",
+    "O .tar.gz do Linux tem uma única pasta raiz dhewm3/ com dhewm3 (0755), dhewm3ded, base.so, d3xp.so, libs/, base/ e d3xp/.",
+    "WHAT_TO_DO.txt/README.txt do pacote: base precisa de pak000-pak008.pk4 (Doom 3 1.3.1; Steam já atualizada) ou demo00.pk4 da demo; d3xp precisa de pak000-pak001.pk4.",
+    "Sys_GetPath: base = pasta do executável quando ela contém base/; config/saves em Documentos/My Games/dhewm3 (Windows), ~/.config/dhewm3 e ~/.local/share/dhewm3 (Linux); arquivo de configuração dhewm.cfg.",
+    "Verificação independente (1.5.5): dhewm3.exe é PE de 32 bits (i386) e importa VCRUNTIME140.dll (README: Visual C++ 2017 Redistributable x86); o binário Linux é x86_64 com RPATH $ORIGIN/libs e depende de libcurl.so.4, libopenal.so.1 e SDL2 do sistema. No Linux o dhewm3 tenta primeiro /usr/local/share/dhewm3 e só depois a pasta do executável (que já vem com base/)."
+  ]
+}

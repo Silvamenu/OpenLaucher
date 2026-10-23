@@ -1,0 +1,37 @@
+{
+  "id": "metal-gear-solid-ps1",
+  "name": "Metal Gear Solid",
+  "originalGame": "PlayStation (PS1)",
+  "description": "Roda no DuckStation com o dump dos seus próprios discos. Marcado como sem problemas (NoIssues) na base de compatibilidade oficial do DuckStation nas versões dos EUA e da Europa.",
+  "category": "playstation",
+  "compatibility": "playable",
+  "repoUrl": "https://github.com/stenzek/duckstation",
+  "accentColor": "#4a6b3a",
+  "runner": {
+    "manifest": "duckstation",
+    "args": ["-batch", "--", "{gameFile}"]
+  },
+  "requirements": [
+    {
+      "id": "game",
+      "type": "userFile",
+      "label": "Seu dump do jogo (CUE/CHD do disco 1)",
+      "extensions": ["cue", "chd", "bin", "iso", "img", "ecm", "mds", "ccd", "pbp", "m3u"],
+      "helpText": "Escolha a imagem que você mesmo criou a partir dos seus discos originais de Metal Gear Solid; o app não fornece jogos. O jogo tem 2 discos: escolha o arquivo .cue (ou .chd) do disco 1. Quando o jogo pedir outro disco, use Sistema > Mudar disco no DuckStation (ou escolha aqui um arquivo .m3u que liste todos os discos). Versões com status verificado: EUA (SLUS-00594 e SLUS-00776), Europa (SLES-01370/11370, SLES-01506/11506, SLES-01507/11507, SLES-01508/11508, SLES-01734/11734) e Japão Integral (SCPS-45412/45413). O DuckStation também precisa do BIOS do seu console configurado (veja os requisitos do DuckStation)."
+    }
+  ],
+  "updates": {
+    "source": "none"
+  },
+  "_todo": [
+    "Status tirado da base de jogos oficial do DuckStation (data/resources/gamedb.yaml, campo compatibility.rating: NoIssues). Essa base registra a versão testada, que é antiga (0.1-8xx a 0.1-9xxx); não há lista de compatibilidade separada mantida hoje.",
+    "Argumentos verificados no código do DuckStation (src/duckstation-qt/qthost.cpp, ajuda de linha de comando \"[parameters] [--] [boot filename]\"): -batch fecha o emulador quando o jogo é desligado e -- marca o fim das opções antes do arquivo. Tela cheia não é forçada (opção do próprio DuckStation, ou o argumento -fullscreen).",
+    "As versões japonesas originais (SLPM-86114/86115) estão sem status na base. O DuckStation aplica ajustes próprios para o jogo (velocidade de leitura do CD e PGXP) automaticamente."
+  ],
+  "_sources": [
+    "https://raw.githubusercontent.com/stenzek/duckstation/HEAD/data/resources/gamedb.yaml",
+    "https://raw.githubusercontent.com/stenzek/duckstation/HEAD/src/duckstation-qt/qthost.cpp",
+    "https://raw.githubusercontent.com/stenzek/duckstation/HEAD/src/duckstation-qt/mainwindow.cpp",
+    "https://raw.githubusercontent.com/stenzek/duckstation/HEAD/README.md"
+  ]
+}

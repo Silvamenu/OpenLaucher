@@ -1,0 +1,39 @@
+{
+  "id": "bloodborne",
+  "name": "Bloodborne",
+  "originalGame": "PlayStation 4",
+  "description": "Roda no shadPS4 com o dump da sua própria cópia (inclusive a The Old Hunters Edition). Chega à jogatina, mas ainda tem falhas gráficas (polígonos 'explodindo' em alguns inimigos), quedas de quadros e travamentos ocasionais.",
+  "category": "playstation",
+  "compatibility": "ingame",
+  "repoUrl": "https://github.com/shadps4-emu/shadPS4",
+  "accentColor": "#3b3f52",
+  "runner": {
+    "manifest": "shadps4",
+    "args": ["-g", "{gameFile}"]
+  },
+  "requirements": [
+    {
+      "id": "game",
+      "type": "userFile",
+      "label": "Seu dump do jogo (eboot.bin)",
+      "extensions": ["bin"],
+      "helpText": "Escolha o arquivo eboot.bin que fica na raiz da pasta do dump do seu jogo (pasta CUSAxxxxx, ex.: CUSA00900 na versão americana, CUSA00207 na europeia ou CUSA03173). O dump precisa ser feito por você, a partir da sua própria cópia e do seu próprio console; o app não fornece jogos. Se tiver a atualização do jogo, deixe a pasta dela ao lado com o nome CUSAxxxxx-UPDATE (ou CUSAxxxxx-patch): o shadPS4 a aplica sozinho. Nas configurações do shadPS4, a opção de readbacks (modo relaxado) reduz as falhas de polígonos, com algum custo de desempenho."
+    }
+  ],
+  "updates": { "source": "none" },
+  "_todo": [
+    "Status pela lista oficial: todas as entradas de Bloodborne (CUSA00900, CUSA03173, CUSA00207, CUSA03023/CUSA03014 The Old Hunters) estão como 'ingame' no Windows, Linux e macOS; nenhuma como 'playable'. Último relato: v0.19.0 (2026-10-05), ainda com 'vertex explosions'.",
+    "Nome exato da opção de readbacks no menu do emulador não verificado na v0.20.0."
+  ],
+  "_sources": [
+    "https://github.com/shadps4-compatibility/shadps4-game-compatibility/issues/29",
+    "https://github.com/shadps4-compatibility/shadps4-game-compatibility/issues/8",
+    "https://github.com/shadps4-compatibility/shadps4-game-compatibility/issues/93",
+    "https://github.com/shadps4-compatibility/shadps4-game-compatibility/issues/114",
+    "https://github.com/shadps4-compatibility/shadps4-game-compatibility/issues/1979",
+    "https://github.com/shadps4-compatibility/shadps4-game-compatibility/issues/869",
+    "https://github.com/shadps4-compatibility/shadps4-game-compatibility/issues/2046",
+    "https://github.com/shadps4-compatibility/shadps4-game-compatibility/issues?q=Bloodborne",
+    "https://raw.githubusercontent.com/shadps4-emu/shadPS4/HEAD/README.md"
+  ]
+}

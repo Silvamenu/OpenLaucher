@@ -1,0 +1,111 @@
+{
+  "id": "banjo-recomp",
+  "name": "Banjo: Recompiled",
+  "originalGame": "Banjo-Kazooie",
+  "description": "Recompilação estática de Banjo-Kazooie para PC (N64: Recompiled + RT64), com widescreen, alta taxa de quadros e mods. Precisa da sua própria ROM americana do N64.",
+  "category": "nintendo",
+  "repoUrl": "https://github.com/BanjoRecomp/BanjoRecomp",
+  "accentColor": "#e0a526",
+  "executables": {
+    "win32": ["BanjoRecompiled.exe"],
+    "linux": ["BanjoRecompiled"]
+  },
+  "detectFiles": ["BanjoRecompiled.exe", "BanjoRecompiled", "recompcontrollerdb.txt"],
+  "requirements": [
+    {
+      "id": "rom",
+      "type": "userFile",
+      "label": "Sua ROM de Banjo-Kazooie (N64, EUA 1.0)",
+      "optional": true,
+      "extensions": ["z64", "n64", "v64"],
+      "copyToGameDir": false,
+      "helpText": "Opcional: a ROM é escolhida dentro do próprio jogo, no menu inicial. Só a versão americana 1.0 do N64 é aceita; arquivos .n64/.v64 são convertidos pelo jogo.",
+      "_todo": "O projeto valida a ROM por XXH3 (0x1B67585D56E07F8C) e não documenta SHA-1; por isso não há validação por hash aqui."
+    },
+    {
+      "id": "select-rom",
+      "type": "firstRun",
+      "label": "Selecionar sua ROM no menu do jogo",
+      "doneWhen": ["bk.n64.us.1.0.z64", "{localAppData}/BanjoRecompiled/bk.n64.us.1.0.z64", "{home}/.config/BanjoRecompiled/bk.n64.us.1.0.z64"],
+      "helpText": "Abra o jogo e escolha sua ROM no menu inicial. O jogo valida e guarda uma cópia em sua pasta de dados (%LOCALAPPDATA%\\BanjoRecompiled no Windows ou ~/.config/BanjoRecompiled no Linux; ou na pasta do jogo, se existir um arquivo portable.txt)."
+    }
+  ],
+  "configFiles": [
+    {
+      "path": {
+        "win32": ["general.json", "{localAppData}/BanjoRecompiled/general.json"],
+        "linux": ["general.json", "{home}/.config/BanjoRecompiled/general.json"]
+      },
+      "format": "json",
+      "label": "Geral (general.json)",
+      "editable": true
+    },
+    {
+      "path": {
+        "win32": ["graphics.json", "{localAppData}/BanjoRecompiled/graphics.json"],
+        "linux": ["graphics.json", "{home}/.config/BanjoRecompiled/graphics.json"]
+      },
+      "format": "json",
+      "label": "Gráficos (graphics.json)",
+      "editable": true
+    },
+    {
+      "path": {
+        "win32": ["controls.json", "{localAppData}/BanjoRecompiled/controls.json"],
+        "linux": ["controls.json", "{home}/.config/BanjoRecompiled/controls.json"]
+      },
+      "format": "json",
+      "label": "Controles (controls.json)",
+      "editable": true
+    },
+    {
+      "path": {
+        "win32": ["sound.json", "{localAppData}/BanjoRecompiled/sound.json"],
+        "linux": ["sound.json", "{home}/.config/BanjoRecompiled/sound.json"]
+      },
+      "format": "json",
+      "label": "Som (sound.json)",
+      "editable": true
+    }
+  ],
+  "launchArgs": [],
+  "updates": {
+    "source": "github-releases",
+    "repo": "BanjoRecomp/BanjoRecomp",
+    "assetPatterns": {
+      "win32": "BanjoRecompiled-*-Windows.zip",
+      "linux": ["BanjoRecompiled-*-Linux-X64.tar.gz", "BanjoRecompiled-*-Linux-X64.zip"]
+    },
+    "includePrereleases": false,
+    "preserve": [
+      "portable.txt",
+      "saves/**",
+      "mods/**",
+      "mod_config/**",
+      "mods.json",
+      "general.json",
+      "graphics.json",
+      "controls.json",
+      "sound.json",
+      "*.z64",
+      "*.n64",
+      "*.v64"
+    ],
+    "_todo": "Na v1.0.0 o build Linux era .zip; a partir da v1.0.2 é .tar.gz (os dois padrões estão cobertos). Linux ARM64, Flatpak e macOS não são selecionados."
+  },
+  "_todo": [
+    "Os nomes general/graphics/controls/sound.json vêm do RecompFrontend (config ids) e a pasta BanjoRecompiled do program_id; não foram conferidos num jogo instalado.",
+    "Saves documentados no README: %LOCALAPPDATA%\\BanjoRecompiled\\saves (Windows) e ~/.config/BanjoRecompiled/saves (Linux)."
+  ],
+  "_sources": [
+    "https://github.com/BanjoRecomp/BanjoRecomp",
+    "https://raw.githubusercontent.com/BanjoRecomp/BanjoRecomp/HEAD/README.md",
+    "https://github.com/BanjoRecomp/BanjoRecomp/releases/latest",
+    "https://github.com/BanjoRecomp/BanjoRecomp/releases/expanded_assets/v1.0.2",
+    "https://github.com/BanjoRecomp/BanjoRecomp/releases/expanded_assets/v1.0.0",
+    "https://raw.githubusercontent.com/BanjoRecomp/BanjoRecomp/HEAD/src/main/main.cpp",
+    "https://raw.githubusercontent.com/BanjoRecomp/BanjoRecomp/HEAD/include/banjo_config.h",
+    "https://raw.githubusercontent.com/N64Recomp/RecompFrontend/main/recompui/include/recompui/config.h",
+    "https://raw.githubusercontent.com/N64Recomp/N64ModernRuntime/main/librecomp/src/recomp.cpp"
+  ]
+}

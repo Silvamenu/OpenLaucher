@@ -1,0 +1,89 @@
+{
+  "id": "fs2open",
+  "name": "FreeSpace 2 Open",
+  "originalGame": "FreeSpace 2",
+  "description": "Motor do FreeSpace 2 baseado no código-fonte liberado pela Volition e mantido pelo Source Code Project, com gráficos modernos, suporte a mods e correções. Usa os arquivos .vp da sua própria cópia do jogo.",
+  "category": "pc",
+  "repoUrl": "https://github.com/scp-fs2open/fs2open.github.com",
+  "website": "https://www.hard-light.net",
+  "accentColor": "#2b4c7e",
+  "executables": {
+    "win32": ["fs2_open_*_x64_SSE2.exe"],
+    "linux": ["fs2_open_*_x64_SSE2.AppImage"]
+  },
+  "detectFiles": ["fs2_open_*_x64_SSE2.exe", "fs2_open_*_x64_SSE2.AppImage", "qtfred_*.exe", "qtfred_*.AppImage"],
+  "requirements": [
+    {
+      "id": "fs2-data",
+      "type": "file",
+      "label": "Arquivos do seu FreeSpace 2 (root_fs2.vp e demais .vp)",
+      "patterns": ["root_fs2.vp"],
+      "helpText": "Copie para a pasta do jogo os nove arquivos .vp da sua instalação do FreeSpace 2 (GOG, Steam ou CD na versão 1.2): root_fs2.vp, smarty_fs2.vp, sparky_fs2.vp, sparky_hi_fs2.vp, stu_fs2.vp, tango1_fs2.vp, tango2_fs2.vp, tango3_fs2.vp e warble_fs2.vp. Se tiver, copie também a pasta data (vídeos) e os .vp opcionais da sua cópia (multi-mission-pack.vp, multi-voice-pack.vp, FS2OGGcutscenepack.vp). Não coloque outros .vp na raiz: mods ficam em subpastas."
+    }
+  ],
+  "configFiles": [
+    {
+      "path": {
+        "win32": ["{appData}/HardLightProductions/FreeSpaceOpen/fs2_open.ini"],
+        "linux": ["{localAppData}/HardLightProductions/FreeSpaceOpen/fs2_open.ini"]
+      },
+      "format": "ini",
+      "label": "Configurações (fs2_open.ini)",
+      "editable": true,
+      "_todo": "Só existe depois da primeira execução. Pilotos e saves ficam em data/players dentro da mesma pasta. Em instalações antigas (modo legado, configuração no registro do Windows ou em ~/.fs2_open), o motor pode usar outro local."
+    },
+    {
+      "path": {
+        "win32": ["{appData}/HardLightProductions/FreeSpaceOpen/data/cmdline_fso.cfg"],
+        "linux": ["{localAppData}/HardLightProductions/FreeSpaceOpen/data/cmdline_fso.cfg"]
+      },
+      "format": "text",
+      "label": "Opções de linha de comando (cmdline_fso.cfg)",
+      "editable": true,
+      "_todo": "Arquivo normalmente criado por launchers (como o Knossos.NET); pode não existir."
+    }
+  ],
+  "launchArgs": [],
+  "updates": {
+    "source": "github-releases",
+    "repo": "scp-fs2open/fs2open.github.com",
+    "assetPatterns": {
+      "win32": "fs2_open_+([0-9])_+([0-9])_+([0-9])-builds-x64-SSE2.zip",
+      "linux": "fs2_open_+([0-9])_+([0-9])_+([0-9])-builds-Linux-x86_64.tar.gz"
+    },
+    "includePrereleases": false,
+    "preserve": ["*.vp", "data/**"],
+    "_todo": [
+      "O projeto publica versões candidatas (ex.: release_26_2_0-RC2) como releases normais, sem a marca de pré-release, e a mais nova fica como \"Latest\". Os padrões só aceitam nomes de versão final (só números, ex.: fs2_open_26_0_1-builds-x64-SSE2.zip); quando o \"Latest\" é uma RC, o app procura na lista o release final mais novo (hoje release_26_0_1). A lista consultada tem 15 releases; se um dia houver mais de 14 RCs seguidas, nenhum release servirá até sair a versão final.",
+      "Builds AVX (mais rápidas em CPUs recentes), 32 bits, ARM64 e de depuração (-debug-*.7z) não são selecionadas; a SSE2 de 64 bits roda em qualquer CPU x64."
+    ]
+  },
+  "_todo": [
+    "PROBLEMA DO APP (não resolvível no manifesto): o nome do executável muda a cada versão (fs2_open_26_0_1_x64_SSE2.exe -> fs2_open_26_2_0_x64_SSE2.exe). A atualização copia os arquivos novos por cima e não apaga os antigos, e o app abre o primeiro arquivo que casa com o padrão; no Windows (NTFS, ordem alfabética) esse é o da versão ANTIGA. Até o app remover os arquivos do pacote anterior ou preferir o executável mais novo, depois de atualizar é preciso apagar os executáveis antigos à mão.",
+    "O pacote também traz builds FASTDBG (depuração) e o editor de missões (fred2_open; o qtfred aparece nas versões 26.2); o padrão dos executáveis ignora as FASTDBG.",
+    "Mods como as MediaVPs não são gerenciados pelo app; a comunidade usa o Knossos.NET para isso. Sem mods, o motor roda os dados originais.",
+    "Licença: o código original da Volition proíbe uso comercial (Copying.md); as mudanças do SCP desde 11/2020 são Unlicense. Distribuição gratuita do binário oficial é permitida."
+  ],
+  "_sources": [
+    "https://github.com/scp-fs2open/fs2open.github.com/releases/latest",
+    "https://github.com/scp-fs2open/fs2open.github.com/releases",
+    "https://github.com/scp-fs2open/fs2open.github.com/releases/expanded_assets/release_26_2_0-RC2",
+    "https://github.com/scp-fs2open/fs2open.github.com/releases/expanded_assets/release_26_0_1",
+    "https://raw.githubusercontent.com/scp-fs2open/fs2open.github.com/release_26_2_0-RC2/Readme.md",
+    "https://raw.githubusercontent.com/scp-fs2open/fs2open.github.com/release_26_2_0-RC2/freespace2/freespace.cpp",
+    "https://raw.githubusercontent.com/scp-fs2open/fs2open.github.com/release_26_2_0-RC2/code/cfile/cfile.cpp",
+    "https://raw.githubusercontent.com/scp-fs2open/fs2open.github.com/release_26_2_0-RC2/code/osapi/osapi.cpp",
+    "https://wiki.hard-light.net/index.php/FS2_Data_Structure",
+    "https://www.hard-light.net/forums/index.php/topic,56279.0.html",
+    "https://raw.githubusercontent.com/scp-fs2open/fs2open.github.com/release_26_0_1/freespace2/freespace.cpp",
+    "https://raw.githubusercontent.com/scp-fs2open/fs2open.github.com/release_26_0_1/code/osapi/osapi.cpp",
+    "https://raw.githubusercontent.com/scp-fs2open/fs2open.github.com/release_26_0_1/Copying.md"
+  ],
+  "_verified": [
+    "release_26_2_0-RC2 (19/10/2026) está marcado como Latest (não é pré-release); release_26_0_1 (15/09/2026) é a última versão final. Ambos têm fs2_open_<versão>-builds-x64-SSE2.zip, -x64-AVX.zip, -Win32-*.zip, -Linux-x86_64.tar.gz, -Linux-arm64.tar.gz, -Mac-*.tar.gz e -debug-*.7z (a RC2 também tem -ARM64.zip).",
+    "Teste com o pickAsset do app: os padrões escolhem fs2_open_26_0_1-builds-x64-SSE2.zip e fs2_open_26_0_1-builds-Linux-x86_64.tar.gz e não casam com nenhum asset da RC2 (nem com o código-fonte).",
+    "O .zip x64-SSE2 da 26.0.1 não tem pasta raiz única: fs2_open_26_0_1_x64_SSE2.exe, fs2_open_26_0_1_x64_SSE2-FASTDBG.exe, fred2_open_26_0_1_x64_SSE2(.exe/-FASTDBG.exe), DLLs (SDL2, OpenAL32, avcodec/avformat/avutil/swresample/swscale, freetype281) e pastas cmake/include/lib/share. O .exe não importa VCRUNTIME/MSVCP (CRT estático): não precisa do Visual C++ Redistributable.",
+    "O .tar.gz Linux-x86_64 da 26.0.1 tem só fs2_open_26_0_1_x64_SSE2.AppImage e a -FASTDBG.AppImage na raiz (0755). O AppRun do AppImage é um script que só ajusta LD_LIBRARY_PATH e executa bin/fs2_open_*; não muda de pasta. freespace.cpp chama cfile_init com _getcwd(), então a pasta do jogo (definida pelo app) é a raiz dos dados.",
+    "Configuração em SDL_GetPrefPath(\"HardLightProductions\", \"FreeSpaceOpen\") com o nome fs2_open.ini (osapi.cpp): %APPDATA%\\HardLightProductions\\FreeSpaceOpen no Windows e ~/.local/share/HardLightProductions/FreeSpaceOpen no Linux."
+  ]
+}

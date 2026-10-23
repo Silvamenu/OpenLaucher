@@ -3,6 +3,7 @@
   "name": "SpaghettiKart",
   "originalGame": "Mario Kart 64",
   "description": "Port para PC de Mario Kart 64 baseado na decompilação do jogo, com widescreen, alta taxa de quadros e mods.",
+  "category": "nintendo",
   "repoUrl": "https://github.com/HarbourMasters/SpaghettiKart",
   "accentColor": "#d35400",
   "executables": {

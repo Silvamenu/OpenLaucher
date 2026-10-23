@@ -1,0 +1,87 @@
+{
+  "id": "daggerfall-unity",
+  "name": "Daggerfall Unity",
+  "originalGame": "The Elder Scrolls II: Daggerfall",
+  "description": "Recriação de Daggerfall no motor Unity, com correções, melhorias de qualidade de vida e suporte a mods. Usa os arquivos de dados da sua própria cópia do Daggerfall de DOS.",
+  "category": "pc",
+  "repoUrl": "https://github.com/Interkarma/daggerfall-unity",
+  "accentColor": "#6b4f2a",
+  "executables": {
+    "win32": ["DaggerfallUnity.exe"],
+    "linux": ["DaggerfallUnity.x86_64"]
+  },
+  "detectFiles": ["DaggerfallUnity.exe", "DaggerfallUnity.x86_64", "DaggerfallUnity_Data/app.info", "DaggerfallUnity_Data/globalgamemanagers"],
+  "requirements": [
+    {
+      "id": "arena2",
+      "type": "firstRun",
+      "label": "Indicar os arquivos do seu Daggerfall (pasta ARENA2)",
+      "doneWhen": [
+        "DaggerfallUnity_Data/ARENA2/MAPS.BSA",
+        "{gameDir}/DaggerfallUnity_Data/StreamingAssets/GameFiles/ARENA2/MAPS.BSA",
+        "{gameDir}/DaggerfallUnity_Data/StreamingAssets/GameFiles/arena2/MAPS.BSA",
+        "{gameDir}/DaggerfallUnity_Data/StreamingAssets/GameFiles/arena2/maps.bsa"
+      ],
+      "helpText": "Na primeira execução, o Daggerfall Unity pede a pasta do seu Daggerfall de DOS: escolha a pasta que contém ARENA2 (na versão da Steam, é a pasta DF/DAGGER). A pasta ARENA2 precisa estar completa, com os arquivos .VID; a janela fica verde quando os arquivos estão certos. Depois, marque este passo como concluído. Outra opção: copie a pasta ARENA2 da sua cópia para DaggerfallUnity_Data/StreamingAssets/GameFiles, dentro da pasta do jogo; assim o jogo não pergunta nada e o app detecta sozinho.",
+      "_todo": "O caminho escolhido na tela do próprio jogo fica gravado em settings.ini (MyDaggerfallPath) e não é verificado pelo app; por isso este passo pode precisar ser marcado como concluído à mão."
+    }
+  ],
+  "configFiles": [
+    {
+      "path": {
+        "win32": ["PortableAppdata/settings.ini", "{home}/AppData/LocalLow/Daggerfall Workshop/Daggerfall Unity/settings.ini"],
+        "linux": ["PortableAppdata/settings.ini", "{appData}/unity3d/Daggerfall Workshop/Daggerfall Unity/settings.ini"]
+      },
+      "format": "ini",
+      "label": "Configurações (settings.ini)",
+      "editable": true,
+      "_todo": "O settings.ini é criado na primeira execução. Se existir um arquivo Portable.txt na pasta do jogo, o Daggerfall Unity entra em modo portátil e guarda configurações e saves em PortableAppdata, dentro da pasta do jogo."
+    }
+  ],
+  "launchArgs": [],
+  "updates": {
+    "source": "github-releases",
+    "repo": "Interkarma/daggerfall-unity",
+    "assetPatterns": {
+      "win32": "dfu_windows_64bit*.zip",
+      "linux": "dfu_linux_64bit*.zip"
+    },
+    "includePrereleases": false,
+    "preserve": [
+      "Portable.txt",
+      "PortableAppdata/**",
+      "DaggerfallUnity_Data/ARENA2/**",
+      "DaggerfallUnity_Data/arena2/**",
+      "DaggerfallUnity_Data/StreamingAssets/GameFiles/**",
+      "DaggerfallUnity_Data/StreamingAssets/Mods/**"
+    ],
+    "_todo": [
+      "O projeto recomenda descompactar cada versão nova numa pasta limpa, nunca por cima da anterior; a atualização do app copia os arquivos novos por cima e não apaga arquivos que saíram do pacote.",
+      "Windows 32 bits (dfu_windows_32bit-*.zip) e macOS (dfu_mac_universal-*.zip) não são selecionados automaticamente."
+    ]
+  },
+  "_todo": [
+    "O pacote traz scripts de missões e textos de biografia em formato de texto mantidos pelo projeto (StreamingAssets/Quests e BIOGs); texturas, modelos 3D, sons e vídeos vêm só da pasta ARENA2 da cópia do usuário.",
+    "Último release: v1.1.1-cve-2025 (5 de outubro; o ano não aparece na página, o nome da tag indica 2025), que só troca o UnityPlayer do Windows para corrigir uma falha de segurança do Unity; o pacote do Linux é o mesmo da v1.1.1."
+  ],
+  "_sources": [
+    "https://github.com/Interkarma/daggerfall-unity",
+    "https://github.com/Interkarma/daggerfall-unity/releases/latest",
+    "https://github.com/Interkarma/daggerfall-unity/releases/expanded_assets/v1.1.1-cve-2025",
+    "https://raw.githubusercontent.com/Interkarma/daggerfall-unity/HEAD/README.md",
+    "https://raw.githubusercontent.com/wiki/Interkarma/daggerfall-unity/Installing-Daggerfall-Unity-Cross-Platform.md",
+    "https://raw.githubusercontent.com/wiki/Interkarma/daggerfall-unity/Using-Steam-Release-of-Daggerfall-with-Daggerfall-Unity.md",
+    "https://raw.githubusercontent.com/Interkarma/daggerfall-unity/v1.1.1/Assets/Scripts/DaggerfallUnity.cs",
+    "https://raw.githubusercontent.com/Interkarma/daggerfall-unity/v1.1.1/Assets/Scripts/DaggerfallUnityApplication.cs",
+    "https://raw.githubusercontent.com/Interkarma/daggerfall-unity/v1.1.1/Assets/Scripts/SettingsManager.cs",
+    "https://raw.githubusercontent.com/Interkarma/daggerfall-unity/v1.1.1/Assets/Scripts/Game/Serialization/SaveLoadManager.cs",
+    "https://raw.githubusercontent.com/Interkarma/daggerfall-unity/v1.1.1/Assets/Scripts/Game/UserInterfaceWindows/DaggerfallUnitySetupGameWizard.cs"
+  ],
+  "_verified": [
+    "Release v1.1.1-cve-2025 (latest) tem dfu_windows_64bit-v1.1.1.zip (47,9 MB), dfu_windows_32bit-v1.1.1.zip, dfu_linux_64bit-v1.1.1.zip (56,1 MB) e dfu_mac_universal-v1.1.1.zip.",
+    "Os dois .zip (Windows 64 e Linux 64) não têm pasta raiz única: DaggerfallUnity.exe (ou DaggerfallUnity.x86_64, modo 755), UnityPlayer.dll/.so e DaggerfallUnity_Data/ ficam direto na raiz. Não há links simbólicos.",
+    "DaggerfallUnity_Data/app.info = 'Daggerfall Workshop' / 'Daggerfall Unity' (pasta de dados do Unity: %USERPROFILE%\\AppData\\LocalLow\\Daggerfall Workshop\\Daggerfall Unity no Windows e $XDG_CONFIG_HOME/unity3d/Daggerfall Workshop/Daggerfall Unity no Linux).",
+    "O jogo procura ARENA2 (ou arena2) em MyDaggerfallPath do settings.ini, depois em DaggerfallUnity_Data e depois em DaggerfallUnity_Data/StreamingAssets/GameFiles (readme.txt do pacote confirma essa pasta).",
+    "Portable.txt na pasta do executável faz o jogo usar PortableAppdata/ (settings.ini, saves em Saves/)."
+  ]
+}

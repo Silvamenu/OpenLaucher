@@ -3,6 +3,7 @@
   "name": "Zelda 64: Recompiled",
   "originalGame": "The Legend of Zelda: Majora's Mask",
   "description": "Recompilação estática de Majora's Mask para PC, com renderização moderna (RT64), alta taxa de quadros e mods.",
+  "category": "nintendo",
   "repoUrl": "https://github.com/Zelda64Recomp/Zelda64Recomp",
   "accentColor": "#b83b5e",
   "executables": {

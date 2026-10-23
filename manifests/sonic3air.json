@@ -1,0 +1,87 @@
+{
+  "id": "sonic3air",
+  "name": "Sonic 3 A.I.R.",
+  "originalGame": "Sonic 3 & Knuckles (Mega Drive)",
+  "description": "Remaster feito por fãs de Sonic 3 & Knuckles, com widescreen, opções novas e suporte a mods. Precisa da ROM da sua cópia de Sonic 3 & Knuckles da Steam.",
+  "category": "sega",
+  "repoUrl": "https://github.com/Eukaryot/sonic3air",
+  "website": "https://sonic3air.org",
+  "accentColor": "#1565c0",
+  "executables": {
+    "win32": ["Sonic3AIR.exe"],
+    "linux": ["sonic3air_linux"]
+  },
+  "detectFiles": ["Sonic3AIR.exe", "sonic3air_linux", "data/gamedata.bin"],
+  "requirements": [
+    {
+      "id": "rom",
+      "type": "userFile",
+      "label": "Sua ROM de Sonic 3 & Knuckles (Sonic_Knuckles_wSonic3.bin, Steam)",
+      "optional": true,
+      "extensions": ["bin"],
+      "validation": {
+        "sizes": [4194304]
+      },
+      "copyToGameDir": true,
+      "helpText": "Use o arquivo Sonic_Knuckles_wSonic3.bin da sua cópia de Sonic 3 & Knuckles da Steam. Se o jogo estiver instalado pela Steam, o Sonic 3 A.I.R. encontra a ROM sozinho. Se não, copie o arquivo para a pasta do jogo com exatamente esse nome (o app copia mantendo o nome atual; renomeie antes se for diferente), ou indique o arquivo quando o jogo pedir a ROM na primeira abertura (no Windows). Na primeira vez, o jogo guarda uma cópia da ROM na pasta de dados dele."
+    },
+    {
+      "id": "rom-found",
+      "type": "firstRun",
+      "label": "Abrir o jogo uma vez para ele localizar sua ROM",
+      "doneWhen": [
+        "{appData}/Sonic3AIR/Sonic_Knuckles_wSonic3.bin",
+        "{localAppData}/Sonic3AIR/Sonic_Knuckles_wSonic3.bin",
+        "savedata/Sonic_Knuckles_wSonic3.bin"
+      ],
+      "helpText": "Ao encontrar uma ROM válida, o jogo a copia para a pasta de dados (%APPDATA%\\Sonic3AIR no Windows, ~/.local/share/Sonic3AIR no Linux, ou a pasta savedata dentro do jogo, se ela existir)."
+    }
+  ],
+  "configFiles": [
+    {
+      "path": "config.json",
+      "format": "text",
+      "label": "Configuração da instalação (config.json, com comentários)",
+      "editable": true
+    },
+    {
+      "path": {
+        "win32": ["savedata/settings.json", "{appData}/Sonic3AIR/settings.json"],
+        "linux": ["savedata/settings.json", "{localAppData}/Sonic3AIR/settings.json"]
+      },
+      "format": "json",
+      "label": "Opções salvas (settings.json)",
+      "editable": true
+    }
+  ],
+  "launchArgs": [],
+  "updates": {
+    "source": "github-releases",
+    "repo": "Eukaryot/sonic3air",
+    "assetPatterns": {
+      "win32": ["sonic3air_game_64bit.zip", "sonic3air_game.zip"],
+      "linux": "sonic3air_game.tar.gz"
+    },
+    "includePrereleases": false,
+    "preserve": ["config.json", "savedata/**", "Sonic_Knuckles_wSonic3.bin"]
+  },
+  "_todo": [
+    "A ROM é conferida pelo próprio jogo (tamanho 0x400000 e checksum próprio em oxygenproject.json); o SHA-1 da ROM da Steam não foi verificado, por isso só o tamanho é validado aqui.",
+    "Os releases '-test' e '-preview' são marcados como pré-release e ficam de fora com includePrereleases=false.",
+    "Linux: o binário sonic3air_linux (x86_64) depende das bibliotecas do sistema (SDL2/OpenGL); a release também traz setup_linux.sh, que não é executado pelo app.",
+    "Pedido da ROM na primeira abertura: confirmado no Manual.pdf do pacote (seção Windows). No Linux não foi verificado se há janela de seleção.",
+    "O Sonic 3 & Knuckles saiu da loja Steam em 20/05/2022 (Manual.pdf); quem já tem o jogo na conta ainda pode baixá-lo."
+  ],
+  "_sources": [
+    "https://github.com/Eukaryot/sonic3air/releases/tag/v26.03.28.0-stable",
+    "https://github.com/Eukaryot/sonic3air/releases/expanded_assets/v26.03.28.0-stable",
+    "https://github.com/Eukaryot/sonic3air/releases",
+    "https://raw.githubusercontent.com/Eukaryot/sonic3air/HEAD/README.md",
+    "https://raw.githubusercontent.com/Eukaryot/sonic3air/HEAD/Oxygen/sonic3air/oxygenproject.json",
+    "https://raw.githubusercontent.com/Eukaryot/sonic3air/HEAD/Oxygen/oxygenengine/source/oxygen/resources/ResourcesCache.cpp",
+    "https://raw.githubusercontent.com/Eukaryot/sonic3air/master/Oxygen/oxygenengine/source/oxygen/engine/EngineMain.cpp",
+    "https://raw.githubusercontent.com/Eukaryot/sonic3air/master/Oxygen/oxygenengine/source/oxygen/engine/EngineDelegateInterface.h",
+    "https://raw.githubusercontent.com/Eukaryot/sonic3air/HEAD/Oxygen/oxygenengine/source/oxygen/platform/PlatformFunctions.cpp",
+    "https://github.com/Eukaryot/sonic3air/releases/download/v26.03.28.0-stable/sonic3air_game_64bit.zip"
+  ]
+}

@@ -20,13 +20,18 @@ export interface AssetLike {
 
 const SIDE_FILE_RE = /\.(sha1|sha256|sha512|sha256sum|md5|sig|asc|minisig|blockmap|txt|json|yml|yaml)$/i
 
+/** Arquivo auxiliar do release (checksum, assinatura, metadados), nunca o jogo. */
+export function isSideFile(name: string): boolean {
+  return SIDE_FILE_RE.test(name)
+}
+
 /**
  * Escolhe o asset do release que casa com os padrões da plataforma.
  * Os padrões são testados em ordem; o primeiro que casar com algum asset vence.
  * Arquivos auxiliares (checksums, assinaturas, metadados) são ignorados.
  */
 export function pickAsset<T extends AssetLike>(assets: T[], patterns: string[]): T | null {
-  const candidates = assets.filter((asset) => !SIDE_FILE_RE.test(asset.name))
+  const candidates = assets.filter((asset) => !isSideFile(asset.name))
   for (const pattern of patterns) {
     const isMatch = compile(pattern)
     const found = candidates.find((asset) => isMatch(asset.name))

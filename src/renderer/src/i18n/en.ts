@@ -82,6 +82,12 @@ export const en: Record<TranslationKey, string> = {
   'faq.download.q': "Why doesn't Relaunch download the full game?",
   'faq.download.a':
     "Because the games' content is copyrighted. Relaunch only downloads the port published by the project itself, straight from its official GitHub repository over HTTPS. The ROM and the assets always come from your cartridge.",
+  'faq.emulator.q': 'How do I play PS3, PS4 or Xbox 360 titles, like God of War III Remastered?',
+  'faq.emulator.a':
+    'These games run on an emulator, a program that mimics the console on your PC. In "{addGame}", open the platform list and click "{installRunner}": Relaunch downloads the emulator from its official repository. Then, in "{addRunnerGame}", pick your game file: the dump of your disc or of your digital purchase, made on your own console. Relaunch never downloads games.\nEach game\'s badge ({playable}, {ingame} or {experimental}) shows how well it runs today. Big games need a strong PC: a recent CPU and a graphics card with Vulkan.',
+  'faq.repo.q': "Can I install a project that isn't on the list?",
+  'faq.repo.a':
+    'Yes. In "{addGame}", paste the link to the project\'s GitHub repository into "{repoTitle}" and click "{repoCheck}". Relaunch shows the latest published version, picks the file for your system and, after installing, finds the executable (if it gets it wrong, use "{pickExecutable}" in the "{setupTab}" tab).\nThe download only comes from that repository\'s releases, over HTTPS. Only install projects you trust: Relaunch doesn\'t check what other projects publish.',
   'faq.art.q': "How do I change a game's cover and banner?",
   'faq.art.a':
     'On the game page, hover over the cover and click the pencil to choose another image. For the banner at the top, use the pencil in the top-right corner.\nTo go back to the default image, open "{gameOptions}" (the gear next to "{play}") and choose "{clearCover}" or "{clearBanner}". Images stay on this computer only: PNG, JPEG, GIF or WebP up to 20 MB.',
@@ -100,9 +106,9 @@ export const en: Record<TranslationKey, string> = {
   'faq.pin.q': 'I forgot my profile PIN.',
   'faq.pin.a':
     'Enter another profile (or create a new one), go to "{settings}" and remove the profile with the forgotten PIN. Then just create it again: the library and games stay as they are.',
-  'faq.official.q': 'Is Relaunch official Nintendo software?',
+  'faq.official.q': 'Is Relaunch official Nintendo, Sony or Microsoft software?',
   'faq.official.a':
-    'No. Relaunch and the ports are independent fan-made projects, not affiliated with Nintendo or with the other companies that own the games.',
+    'No. Relaunch, the ports and the emulators are independent fan-made projects, not affiliated with Nintendo, Sony, Microsoft or the other companies that own the games.',
 
   'add.title': 'Add game',
   'add.subtitle':
@@ -124,6 +130,38 @@ export const en: Record<TranslationKey, string> = {
   'add.downloadHint': 'Downloads the latest version from the official repository into a folder you choose.',
   'add.noDownload': "This project doesn't publish ready-made builds for your system.",
   'add.open': 'Open',
+  'add.search': 'Search games and emulators…',
+  'add.noMatches': 'No project found for "{query}".',
+  'add.via': 'via {name}',
+  'add.addGame': 'Add',
+  'add.addGameHint': 'Choose the file of your game (the dump of your copy). {name} opens the game directly.',
+  'add.installRunner': 'Install {name}',
+  'add.installRunnerHint': 'This game runs on {name}. Install the emulator once, then add its games.',
+  'add.removeCustom': 'Remove from list',
+  'add.removeCustomTitle': 'Remove {name} from the list?',
+  'add.removeCustomBody': 'The project leaves "Added by you". Nothing is deleted from your folders; to use it again, paste the repository link again.',
+  'catalog.nintendo': 'Nintendo',
+  'catalog.playstation': 'PlayStation',
+  'catalog.xbox': 'Xbox',
+  'catalog.sega': 'Sega',
+  'catalog.pc': 'Classic PC',
+  'catalog.emulators': 'Emulators',
+  'catalog.custom': 'Added by you',
+  'compat.playable': 'Playable',
+  'compat.ingame': 'Runs with issues',
+  'compat.experimental': 'Experimental',
+  'repo.title': 'Install from a GitHub repository',
+  'repo.subtitle': 'Paste the link of a project and the app installs the latest version published there.',
+  'repo.placeholder': 'https://github.com/owner/project',
+  'repo.check': 'Check',
+  'repo.release': 'Latest version: {tag}',
+  'repo.asset': 'File',
+  'repo.chooseAsset': 'Choose the file for your system…',
+  'repo.install': 'Install',
+  'repo.known': 'This project is already in the catalog ({name}): the install uses its ready-made information.',
+  'repo.noAssets': 'The latest release has no file the app can install on this system.',
+  'repo.warning':
+    "Only install projects you trust. Relaunch only downloads what was published in the repository itself, over HTTPS, but it doesn't know what the program does. Copyrighted games and ROMs remain the responsibility of whoever uses them.",
 
   'install.done': '{name} installed. Now just set up what it asks for.',
   'install.failed': 'Could not install {name}: {error}',
@@ -136,6 +174,8 @@ export const en: Record<TranslationKey, string> = {
   'game.rename': 'Rename',
   'game.renamePrompt': 'Display name',
   'game.changeFolder': 'Change game folder',
+  'game.changeGameFile': 'Change game file',
+  'game.locateGameFile': 'Locate game file',
   'game.setCover': 'Change cover',
   'game.clearCover': 'Remove cover',
   'game.setBanner': 'Change banner',
@@ -154,6 +194,13 @@ export const en: Record<TranslationKey, string> = {
   'game.tabs.about': 'About',
 
   'req.executable': 'Game executable',
+  'req.runner': 'Emulator',
+  'req.runnerMissing': 'Not installed. Install the emulator once for all of its games.',
+  'req.runnerBusy': 'Installing or updating the emulator…',
+  'req.runnerBroken': "The emulator is in your library, but its folder or executable wasn't found.",
+  'req.openRunner': 'Open emulator',
+  'req.installRunner': 'Install emulator',
+  'req.pickExecutable': 'Choose executable…',
   'req.found': 'Found: {file}',
   'req.notFound': 'Not found in the folder',
   'req.notSelected': 'No file selected',
@@ -232,6 +279,9 @@ export const en: Record<TranslationKey, string> = {
   'upd.closeGame.title': 'Close the game to continue',
   'upd.closeGame.body': 'The game is running. Close it and try again — files in use cannot be replaced.',
   'upd.retry': 'Try again',
+  'upd.runner.title': 'Updated through {name}',
+  'upd.runner.body': "This game runs on the {name} emulator: updates are the emulator's. Your game file doesn't change.",
+  'upd.runner.open': 'See {name} updates',
 
   'stage.checking': 'Preparing…',
   'stage.downloading': 'Downloading…',
@@ -251,6 +301,7 @@ export const en: Record<TranslationKey, string> = {
   'about.manifestBuiltin': 'bundled with the app',
   'about.manifestUser': 'user folder',
   'about.executables': 'Executables',
+  'about.runner': 'Emulator',
   'about.launchArgs': 'Launch arguments',
   'about.none': 'none',
   'about.added': 'Added on',
@@ -411,5 +462,8 @@ export const en: Record<TranslationKey, string> = {
   'error.PROFILE_EXISTS': 'A profile with this name already exists.',
   'error.INVALID_PROFILE': 'Invalid profile data.',
   'error.INVALID_IMAGE': 'Choose a PNG, JPEG, GIF or WebP image up to 20 MB.',
+  'error.INVALID_REPO_URL': 'Invalid link. Use the address of a GitHub repository, like https://github.com/owner/project.',
+  'error.RUNNER_MISSING': 'Install the {name} emulator to open this game.',
+  'error.GAME_FILE_MISSING': 'Choose the file of your game in the Setup tab.',
   'error.UNKNOWN': 'Unexpected error: {message}'
 }

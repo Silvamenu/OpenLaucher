@@ -27,6 +27,12 @@ function detailText(item: RequirementStatus, t: TFunction): string {
       return t('req.notDone')
     case 'markedDone':
       return t('req.markedDone')
+    case 'runnerMissing':
+      return t('req.runnerMissing')
+    case 'runnerBusy':
+      return t('req.runnerBusy')
+    case 'runnerBroken':
+      return t('req.runnerBroken')
   }
 }
 
@@ -41,7 +47,7 @@ export function ChecklistTab({
   onReport: (report: RequirementsReport) => void
   onLaunch: () => Promise<void>
 }) {
-  const { toast } = useAppState()
+  const { toast, navigate } = useAppState()
   const { t } = useI18n()
   const [open, setOpen] = useState<Record<string, boolean>>({})
   const [busy, setBusy] = useState<string | null>(null)
@@ -75,7 +81,8 @@ export function ChecklistTab({
         {report.items.map((req) => {
           const Icon = req.ok ? CircleCheck : req.optional ? CircleDashed : CircleX
           const color = req.ok ? 'text-ok' : req.optional ? 'text-faint' : 'text-bad'
-          const label = req.type === 'executable' ? `${t('req.executable')} · ${req.label}` : req.label
+          const label =
+            req.type === 'executable' ? `${t('req.executable')} · ${req.label}` : req.type === 'runner' ? `${t('req.runner')} · ${req.label}` : req.label
           return (
             <div key={req.id} className="px-[18px] py-4">
               <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
@@ -94,6 +101,31 @@ export function ChecklistTab({
                   {(req.type === 'executable' || req.type === 'file') && !req.ok && (
                     <Button size="sm" onClick={() => run('folder', () => window.api.library.openFolder(id))}>
                       {t('game.openFolder')}
+                    </Button>
+                  )}
+                  {req.type === 'executable' && req.canPickExecutable && (
+                    <Button
+                      size="sm"
+                      variant={req.ok ? 'ghost' : 'primary'}
+                      loading={busy === 'exe'}
+                      onClick={() => run('exe', () => window.api.library.pickExecutable(id))}
+                    >
+                      {t('req.pickExecutable')}
+                    </Button>
+                  )}
+                  {req.detail === 'runnerBroken' && req.runnerEntryId && (
+                    <Button size="sm" variant="primary" onClick={() => navigate({ page: 'game', id: req.runnerEntryId! })}>
+                      {t('req.openRunner')}
+                    </Button>
+                  )}
+                  {req.detail === 'runnerMissing' && req.runnerId && (
+                    <Button
+                      size="sm"
+                      variant="primary"
+                      loading={busy === 'runner'}
+                      onClick={() => run('runner', async () => void (await window.api.library.install(req.runnerId!)))}
+                    >
+                      {t('req.installRunner')}
                     </Button>
                   )}
                   {req.type === 'userFile' && (

@@ -13,6 +13,7 @@ import type {
   ProfilesState,
   RateLimitInfo,
   ReleaseInfo,
+  RepoInspection,
   RequirementsReport,
   SettingsPatch,
   SettingsView,
@@ -29,6 +30,7 @@ export interface ApiEvents {
   'appUpdate:state': AppUpdateState
   'settings:changed': SettingsView
   'navigate:game': string
+  'manifests:changed': ManifestsReport
 }
 
 export type ApiEventName = keyof ApiEvents
@@ -71,6 +73,16 @@ export interface RelaunchApi {
     clearArt(entryId: string, kind: ArtKind): Promise<LibraryItem>
     /** Escolhe a pasta, cadastra o jogo e baixa a versão mais recente em segundo plano (null se cancelar o diálogo). */
     install(manifestId: string): Promise<LibraryItem | null>
+    /** Jogo via emulador: escolhe o arquivo do jogo do usuário e cadastra (null se cancelar). */
+    addRunnerGame(manifestId: string): Promise<LibraryItem | null>
+    /** Último release de um repositório do GitHub informado pelo usuário e o que dá para instalar dele. */
+    inspectRepo(url: string): Promise<RepoInspection>
+    /** Instala o arquivo escolhido do último release do repositório (null se cancelar o diálogo da pasta). */
+    installFromRepo(url: string, assetName: string): Promise<LibraryItem | null>
+    /** Escolhe o executável de um projeto adicionado pelo link. */
+    pickExecutable(entryId: string): Promise<RequirementsReport>
+    /** Tira do catálogo um projeto adicionado pelo link (sem jogo na biblioteca). */
+    removeCustomManifest(manifestId: string): Promise<void>
   }
   profiles: {
     state(): Promise<ProfilesState>

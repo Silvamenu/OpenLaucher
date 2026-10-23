@@ -1,5 +1,5 @@
 import { spawn } from 'node:child_process'
-import { constants as fsConstants, createReadStream, createWriteStream, promises as fs } from 'node:fs'
+import { constants as fsConstants, createReadStream, createWriteStream, promises as fs, type Stats } from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { pipeline } from 'node:stream/promises'
@@ -11,7 +11,7 @@ import { AppError } from '../shared/errors'
 import { toPosix } from '../shared/patterns'
 import { isInside, isSameOrInside, walkFiles } from './fsutil'
 
-export type ArchiveKind = 'zip' | '7z' | 'tar' | 'raw'
+export type ArchiveKind = 'zip' | '7z' | 'tar' | 'tarxz' | 'raw'
 
 const RAW_EXTENSIONS = ['.exe', '.appimage', '.dmg', '.bin', '.x86_64']
 
@@ -50,6 +50,7 @@ export function archiveKindOf(fileName: string): ArchiveKind | null {
   if (lower.endsWith('.zip')) return 'zip'
   if (lower.endsWith('.7z')) return '7z'
   if (lower.endsWith('.tar.gz') || lower.endsWith('.tgz') || lower.endsWith('.tar') || lower.endsWith('.tar.bz2')) return 'tar'
+  if (lower.endsWith('.tar.xz') || lower.endsWith('.txz')) return 'tarxz'
   if (RAW_EXTENSIONS.some((ext) => lower.endsWith(ext))) return 'raw'
   return null
 }
@@ -175,27 +176,57 @@ export async function createZipFromDir(srcDir: string, outFile: string, options:
 // TAR / 7Z
 // ---------------------------------------------------------------------------
 
-async function extractTar(file: string, dest: string): Promise<void> {
-  await fs.mkdir(dest, { recursive: true })
+/**
+ * Regras de extração de TAR: node-tar já remove caminhos absolutos e "..". Links não são usados pela
+ * atualização (ficam de fora) e o teto de tamanho vale para o total. `onReject` interrompe a origem.
+ */
+function tarGuard(onReject: () => void = () => undefined) {
   const count = extractionBudget()
-  let rejected: AppError | null = null
-  // node-tar já remove caminhos absolutos e "..". Links não são usados pela atualização: ficam de fora.
-  await tar.x({
-    file,
-    cwd: dest,
-    preservePaths: false,
-    filter: (_path, entry) => {
+  const guard = {
+    rejected: null as AppError | null,
+    filter: (_path: string, entry: tar.ReadEntry | Stats) => {
       if ('type' in entry && entry.type !== 'File' && entry.type !== 'OldFile' && entry.type !== 'Directory') return false
       try {
         count('size' in entry ? (entry.size ?? 0) : 0)
         return true
       } catch (err) {
-        rejected ??= err as AppError
+        if (!guard.rejected) onReject()
+        guard.rejected ??= err as AppError
         return false
       }
     }
+  }
+  return guard
+}
+
+async function extractTar(file: string, dest: string): Promise<void> {
+  await fs.mkdir(dest, { recursive: true })
+  const guard = tarGuard()
+  await tar.x({ file, cwd: dest, preservePaths: false, filter: guard.filter })
+  if (guard.rejected) throw guard.rejected
+}
+
+/** .tar.xz: o 7-Zip embutido só descompacta o xz; o tar é lido em fluxo, com as regras de extractTar. */
+async function extractTarXz(file: string, dest: string, signal?: AbortSignal): Promise<void> {
+  await fs.mkdir(dest, { recursive: true })
+  const bin = await executable7z()
+  const child = spawn(bin, ['x', '-txz', '-so', '-bd', file], { stdio: ['ignore', 'pipe', 'ignore'], signal })
+  const exited = new Promise<number | null>((resolve, reject) => {
+    child.on('error', reject)
+    child.on('close', resolve)
   })
-  if (rejected) throw rejected
+  // Passou do teto: o 7-Zip para de descompactar na hora (sem gastar CPU com o resto de uma "bomba").
+  const guard = tarGuard(() => child.kill())
+  try {
+    await pipeline(child.stdout, tar.x({ cwd: dest, preservePaths: false, filter: guard.filter }))
+  } catch (err) {
+    if (!guard.rejected) throw err
+  }
+  const code = await exited.catch((err: Error) => {
+    throw new AppError('EXTRACT_FAILED', err.message)
+  })
+  if (guard.rejected) throw guard.rejected
+  if (code !== 0) throw new AppError('EXTRACT_FAILED', `7za saiu com código ${code}`)
 }
 
 export function sevenZipPath(): string {
@@ -324,6 +355,9 @@ async function extractOne(file: string, dest: string, options: ExtractPackageOpt
       return
     case 'tar':
       await extractTar(file, dest)
+      return
+    case 'tarxz':
+      await extractTarXz(file, dest, options.signal)
       return
     case '7z':
       await extract7z(file, dest, options.signal)

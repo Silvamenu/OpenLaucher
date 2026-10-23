@@ -1,0 +1,42 @@
+{
+  "id": "super-mario-3d-world",
+  "name": "Super Mario 3D World",
+  "originalGame": "Nintendo Wii U",
+  "description": "Roda no Cemu com o dump da sua própria cópia de Wii U. Marcado como \"Perfect\" na lista oficial do Cemu (teste no Cemu 2.0-88, versão americana); um relato mais antigo cita travamentos ocasionais em telas de carregamento.",
+  "category": "nintendo",
+  "compatibility": "playable",
+  "repoUrl": "https://github.com/cemu-project/Cemu",
+  "accentColor": "#e8a317",
+  "runner": {
+    "manifest": "cemu",
+    "args": ["-g", "{gameFile}"]
+  },
+  "requirements": [
+    {
+      "id": "game",
+      "type": "userFile",
+      "label": "Seu dump do jogo (.wud, .wux, .wua ou .rpx)",
+      "extensions": ["wud", "wux", "wua", "iso", "rpx", "tmd"],
+      "helpText": "Escolha o dump que você fez da sua própria cópia, no seu próprio Wii U: a imagem de disco .wud/.wux, o arquivo .wua ou, num dump descriptografado (pastas code, content e meta), o arquivo .rpx que fica na pasta code do jogo base (IDs: EUA 0005000010145C00, Europa 0005000010145D00, Japão 0005000010106100). A atualização, se tiver, também vem do seu console: instale-a no Cemu (File > Install game title, update or DLC) ou deixe-a na pasta de jogos configurada no Cemu. Imagens .wud/.wux precisam da chave do disco no keys.txt do Cemu. O app não fornece jogos."
+    }
+  ],
+  "updates": { "source": "none" },
+  "_todo": [
+    "Status pela lista oficial do Cemu: 'Perfect' no Cemu 2.0-88 (USA). Relatos no wiki: 'Perfect' na 2.0-59 (até os créditos, Vulkan) e na 2.0-88; 'Playable' na 2.0-34 com travamentos ocasionais em telas de carregamento a partir do mundo 3. A caixa de informações da página ainda mostra 'Runs' (desatualizada). Sem relato oficial na v2.6.",
+    "wiki.cemu.info e compat.cemu.info estão bloqueados neste ambiente: o status acima veio dos trechos das páginas oficiais exibidos pela busca na web, não da leitura direta das páginas.",
+    "Este é o Super Mario 3D World de Wii U; a versão de Switch (com Bowser's Fury) não faz parte."
+  ],
+  "_titleIds": {
+    "USA": "0005000010145C00",
+    "EUR": "0005000010145D00",
+    "JPN": "0005000010106100"
+  },
+  "_sources": [
+    "https://wiki.cemu.info/wiki/Super_Mario_3D_World",
+    "https://compat.cemu.info/?sort=S",
+    "https://raw.githubusercontent.com/cemu-project/Cemu/v2.6/bin/gameProfiles/default/0005000010145c00.ini",
+    "https://raw.githubusercontent.com/cemu-project/Cemu/v2.6/bin/gameProfiles/default/0005000010145d00.ini",
+    "https://raw.githubusercontent.com/cemu-project/Cemu/v2.6/bin/gameProfiles/default/0005000010106100.ini",
+    "https://raw.githubusercontent.com/cemu-project/Cemu/v2.6/src/config/LaunchSettings.cpp"
+  ]
+}

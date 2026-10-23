@@ -1,0 +1,63 @@
+{
+  "id": "unleashedrecomp",
+  "name": "Unleashed Recompiled",
+  "originalGame": "Sonic Unleashed (Xbox 360)",
+  "description": "Port não oficial para PC da versão de Xbox 360 de Sonic Unleashed, feito por recompilação estática, com alta resolução, ultrawide, alta taxa de quadros e mods. Usa os arquivos da sua cópia do jogo.",
+  "category": "xbox",
+  "repoUrl": "https://github.com/hedge-dev/UnleashedRecomp",
+  "accentColor": "#1d4ed8",
+  "executables": {
+    "win32": ["UnleashedRecomp.exe"]
+  },
+  "detectFiles": ["UnleashedRecomp.exe", "dxcompiler.dll"],
+  "requirements": [
+    {
+      "id": "install",
+      "type": "firstRun",
+      "label": "Instalar os arquivos do seu Sonic Unleashed (Xbox 360)",
+      "doneWhen": ["patched/default.xex"],
+      "helpText": "Abra o jogo: o instalador dele pede os arquivos da sua cópia de Xbox 360 (disco ou digital, região EUA ou Europa; a versão japonesa não funciona) e o Title Update. Os dois são obrigatórios e precisam ser da mesma região. Os arquivos devem ser copiados do seu próprio console (HD ou dispositivo USB do Xbox 360), sem modificações e sem compactar (.zip, .7z e .rar não são aceitos). Use \"Add Files\" para contêineres ou imagens copiadas do console e \"Add Folder\" para uma pasta com os arquivos já extraídos. Reserve 6 GiB livres (10 GiB com as DLCs)."
+    },
+    {
+      "id": "dlc",
+      "type": "firstRun",
+      "label": "Adicionar as DLCs (Adventure Packs) que você tem",
+      "optional": true,
+      "doneWhen": ["dlc/*/DLC.xml"],
+      "helpText": "Opcional, mas recomendado: as DLCs trazem a iluminação de alta qualidade do jogo inteiro. Podem ser adicionadas depois pelo instalador acessível na tela inicial do jogo. Elas também precisam vir da sua conta/console."
+    }
+  ],
+  "configFiles": [
+    {
+      "path": {
+        "win32": ["config.toml", "{appData}/UnleashedRecomp/config.toml"]
+      },
+      "format": "text",
+      "label": "Configurações (config.toml)",
+      "editable": true
+    }
+  ],
+  "launchArgs": [],
+  "updates": {
+    "source": "github-releases",
+    "repo": "hedge-dev/UnleashedRecomp",
+    "assetPatterns": {
+      "win32": "UnleashedRecomp-Windows.zip"
+    },
+    "includePrereleases": false,
+    "preserve": ["portable.txt", "config.toml", "game/**", "update/**", "dlc/**", "patched/**", "save/**", "mlsave/**"],
+    "_todo": "Linux: a release só traz UnleashedRecomp-Flatpak.zip (um pacote .flatpak, que o app não usa). Builds nativas de Linux existem só nos artefatos do GitHub Actions, por isso o Linux ficou de fora."
+  },
+  "_todo": [
+    "Por padrão, saves e config.toml ficam em %APPDATA%\\UnleashedRecomp (ou na pasta do jogo se existir portable.txt).",
+    "Release v1.0.3 verificada: UnleashedRecomp-Windows.zip contém UnleashedRecomp.exe, dxcompiler.dll, dxil.dll e D3D12/D3D12Core.dll na raiz."
+  ],
+  "_sources": [
+    "https://github.com/hedge-dev/UnleashedRecomp/releases/tag/v1.0.3",
+    "https://github.com/hedge-dev/UnleashedRecomp/releases/expanded_assets/v1.0.3",
+    "https://raw.githubusercontent.com/hedge-dev/UnleashedRecomp/HEAD/README.md",
+    "https://raw.githubusercontent.com/hedge-dev/UnleashedRecomp/HEAD/UnleashedRecomp/install/installer.cpp",
+    "https://raw.githubusercontent.com/hedge-dev/UnleashedRecomp/HEAD/UnleashedRecomp/user/paths.cpp",
+    "https://raw.githubusercontent.com/hedge-dev/UnleashedRecomp/HEAD/UnleashedRecomp/main.cpp"
+  ]
+}

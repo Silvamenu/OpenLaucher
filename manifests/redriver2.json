@@ -1,0 +1,78 @@
+{
+  "id": "redriver2",
+  "name": "REDRIVER2",
+  "originalGame": "Driver 2 (PlayStation)",
+  "description": "Engenharia reversa completa de Driver 2 (PS1), rodando nativamente no PC com correções e melhorias. Usa a imagem do CD 1 do seu próprio jogo (o CD 2 serve para converter vídeos e áudios).",
+  "category": "playstation",
+  "repoUrl": "https://github.com/OpenDriver2/REDRIVER2",
+  "accentColor": "#b71c1c",
+  "executables": {
+    "win32": ["REDRIVER2.exe"]
+  },
+  "detectFiles": ["REDRIVER2.exe", "cutscene_recorder.ini"],
+  "requirements": [
+    {
+      "id": "cd1",
+      "type": "file",
+      "label": "Imagem do CD 1 do seu Driver 2 (install/Driver2CD1.bin)",
+      "patterns": ["install/Driver2CD1.bin"],
+      "helpText": "Crie uma imagem BIN/CUE (formato bruto, 2352 bytes por setor) do CD 1 do seu próprio Driver 2 de PS1 (versão NTSC-U ou PAL) e copie o arquivo .bin para a pasta install do jogo com o nome Driver2CD1.bin. O app inicia o jogo apontando para essa imagem. Se o jogo não abrir, pode faltar o Microsoft Visual C++ Redistributable."
+    },
+    {
+      "id": "cd2",
+      "type": "file",
+      "label": "Imagem do CD 2 do seu Driver 2 (install/Driver2CD2.bin)",
+      "optional": true,
+      "patterns": ["install/Driver2CD2.bin"],
+      "helpText": "Faça o mesmo com o CD 2 e salve como install/Driver2CD2.bin. Ele é usado na conversão dos vídeos e áudios."
+    },
+    {
+      "id": "fmv",
+      "type": "firstRun",
+      "label": "Converter os vídeos e áudios dos seus CDs (_convert_cd_fmv_xa.bat)",
+      "optional": true,
+      "doneWhen": ["DRIVER2/XA/XABNK01.XA?0?.wav"],
+      "helpText": "Com as duas imagens na pasta install, instale o Java e rode _convert_cd_fmv_xa.bat na pasta do jogo (ele usa o jPSXdec que vem junto). A conversão gera os vídeos e áudios das cenas a partir dos seus CDs.",
+      "_todo": "doneWhen deduzido do código (xaplay.c lê '%sXA\\XABNK0%d.XA[%d].wav' com gDataFolder = 'DRIVER2\\', e o pacote já traz DRIVER2/XA/XABNK01.XA[0].SBN ao lado); a conversão não foi executada para confirmar. O '?' casa com os colchetes literais do nome."
+    }
+  ],
+  "configFiles": [
+    {
+      "path": "config.ini",
+      "format": "ini",
+      "label": "Configurações (config.ini)",
+      "editable": true
+    }
+  ],
+  "launchArgs": ["-cdimage", "install/Driver2CD1.bin"],
+  "updates": {
+    "source": "github-releases",
+    "repo": "OpenDriver2/REDRIVER2",
+    "assetPatterns": {
+      "win32": "REDRIVER2_Win32_Release.zip"
+    },
+    "includePrereleases": false,
+    "preserve": ["config.ini", "cutscene_recorder.ini", "install/Driver2CD1.bin", "install/Driver2CD2.bin", "install/*.cue"],
+    "_todo": "O padrão exato evita o pacote de desenvolvedor (REDRIVER2_Win32_Release_dev.zip). O release estável atual é 7.4-rc2 (marcado como Latest); o 8.0 é pré-release."
+  },
+  "_todo": [
+    "Linux ficou de fora: no release estável 7.4-rc2 o binário Linux (REDRIVER2_Linux_Release.tar.gz) é de 32 bits (i386) e depende de SDL2/OpenAL do sistema; o binário de 64 bits só existe no pré-release 8.0.",
+    "O executável do Windows é de 32 bits (x86), o que funciona no Windows de 64 bits.",
+    "'-cdimage <arquivo>' é uma opção de linha de comando do REDRIVER2 (src_rebuild/redriver2_psxpc.cpp, tag 7.4-rc2) e tem prioridade sobre [cdfs] image= do config.ini.",
+    "O Launcher.exe (assistente com Java, só Windows) que vem no pacote não é usado pelo app.",
+    "Saves e configurações do jogo ficam em %USERPROFILE%\\.driver2 (fora da pasta do jogo).",
+    "As imagens DRIVER2/GFX/GAL/*.TIM do pacote são capturas de tela do próprio projeto ('REDRIVER2 progress gallery'), não dados do disco; os dados do jogo vêm dos CDs do usuário."
+  ],
+  "_sources": [
+    "https://github.com/OpenDriver2/REDRIVER2/releases",
+    "https://github.com/OpenDriver2/REDRIVER2/releases/expanded_assets/7.4-rc2",
+    "https://github.com/OpenDriver2/REDRIVER2/releases/expanded_assets/8.0",
+    "https://github.com/OpenDriver2/REDRIVER2/wiki/Installation-instructions",
+    "https://raw.githubusercontent.com/OpenDriver2/REDRIVER2/HEAD/README.md",
+    "https://raw.githubusercontent.com/OpenDriver2/REDRIVER2/7.4-rc2/src_rebuild/redriver2_psxpc.cpp",
+    "https://raw.githubusercontent.com/OpenDriver2/REDRIVER2/7.4-rc2/src_rebuild/Game/C/loadsave.c",
+    "https://raw.githubusercontent.com/OpenDriver2/REDRIVER2/7.4-rc2/src_rebuild/Game/C/xaplay.c",
+    "https://raw.githubusercontent.com/OpenDriver2/REDRIVER2/7.4-rc2/src_rebuild/Game/C/system.c",
+    "https://raw.githubusercontent.com/OpenDriver2/REDRIVER2/7.4-rc2/src_rebuild/Game/C/main.c"
+  ]
+}

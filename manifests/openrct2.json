@@ -1,0 +1,64 @@
+{
+  "id": "openrct2",
+  "name": "OpenRCT2",
+  "originalGame": "RollerCoaster Tycoon 2",
+  "description": "Reimplementação de código aberto de RollerCoaster Tycoon 2, com resoluções altas, multijogador, plugins e várias correções. Usa os arquivos da sua cópia de RollerCoaster Tycoon 2.",
+  "category": "pc",
+  "repoUrl": "https://github.com/OpenRCT2/OpenRCT2",
+  "website": "https://openrct2.io",
+  "accentColor": "#d4472f",
+  "executables": {
+    "win32": ["openrct2.exe"],
+    "linux": ["openrct2.appimage"]
+  },
+  "detectFiles": ["openrct2.exe", "openrct2.appimage", "data/g2.dat"],
+  "requirements": [
+    {
+      "id": "rct2-data",
+      "type": "firstRun",
+      "label": "Indicar a pasta do seu RollerCoaster Tycoon 2",
+      "helpText": "Na primeira execução o OpenRCT2 procura sozinho a sua instalação do RollerCoaster Tycoon 2 (ou do RollerCoaster Tycoon Classic) nas pastas padrão da Steam e da GOG. Se não encontrar, ele pergunta onde está: escolha a pasta do seu jogo (a que contém Data/g1.dat). No Linux, a janela de escolha usa o zenity ou o kdialog, e também é possível indicar o instalador offline da GOG que você comprou (precisa do programa innoextract). A escolha fica salva no config.ini."
+    }
+  ],
+  "configFiles": [
+    {
+      "path": {
+        "win32": "{documents}/OpenRCT2/config.ini",
+        "linux": "{appData}/OpenRCT2/config.ini"
+      },
+      "format": "ini",
+      "label": "Configurações (config.ini)",
+      "editable": true
+    }
+  ],
+  "launchArgs": [],
+  "updates": {
+    "source": "github-releases",
+    "repo": "OpenRCT2/OpenRCT2",
+    "assetPatterns": {
+      "win32": "OpenRCT2-*-windows-portable-x64.zip",
+      "linux": "OpenRCT2-*-linux-x86_64.AppImage"
+    },
+    "includePrereleases": false,
+    "preserve": [],
+    "_todo": "Os pacotes Linux .tar.gz são específicos de distribuição (bookworm, trixie, noble, resolute); por isso o AppImage foi escolhido. Instaladores (windows-installer-*.exe), ARM64, win32 e símbolos são ignorados pelos padrões."
+  },
+  "_todo": [
+    "Configurações, saves e plugins ficam fora da pasta do jogo: Documentos\\OpenRCT2 no Windows e ~/.config/OpenRCT2 no Linux (pode ser mudado com --user-data-path).",
+    "Sem doneWhen no primeiro passo: o caminho escolhido fica na chave [general] game_path do config.ini, e o config.ini é criado já na primeira abertura, mesmo antes da escolha. O passo é considerado feito após a primeira execução.",
+    "Também aceita --rct2-data-path=<pasta> na linha de comando, mas o caminho é de cada usuário e não foi posto em launchArgs.",
+    "No Windows o OpenRCT2 usa a pasta Documentos real do usuário (FOLDERID_Documents); se ela foi movida (por exemplo, para o OneDrive), o caminho do config.ini mostrado pelo app ({documents}) pode não ser o mesmo."
+  ],
+  "_sources": [
+    "https://github.com/OpenRCT2/OpenRCT2/releases/latest",
+    "https://github.com/OpenRCT2/OpenRCT2/releases/expanded_assets/v0.5.6",
+    "https://github.com/OpenRCT2/OpenRCT2/releases",
+    "https://raw.githubusercontent.com/OpenRCT2/OpenRCT2/HEAD/readme.md",
+    "https://raw.githubusercontent.com/OpenRCT2/OpenRCT2/HEAD/src/openrct2/PlatformEnvironment.cpp",
+    "https://raw.githubusercontent.com/OpenRCT2/OpenRCT2/HEAD/src/openrct2/config/Config.cpp",
+    "https://raw.githubusercontent.com/OpenRCT2/OpenRCT2/HEAD/src/openrct2/platform/Platform.Win32.cpp",
+    "https://raw.githubusercontent.com/OpenRCT2/OpenRCT2/HEAD/src/openrct2/platform/Platform.Linux.cpp",
+    "https://raw.githubusercontent.com/OpenRCT2/OpenRCT2/HEAD/src/openrct2/command_line/RootCommands.cpp",
+    "https://raw.githubusercontent.com/OpenRCT2/OpenRCT2/HEAD/src/openrct2-ui/UiContext.Linux.cpp"
+  ]
+}
