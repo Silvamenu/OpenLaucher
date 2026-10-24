@@ -505,17 +505,19 @@ As notas de cada release vêm do `CHANGELOG.md`, a mesma fonte do popup de novid
 
 1. No `CHANGELOG.md`, adicione uma seção `## [x.y.z] - AAAA-MM-DD` com as subseções `### Novidades`, `### Melhorias` e `### Correções`.
 2. Atualize `version` no `package.json`. Faça os passos 1 e 2 num PR.
-3. Depois do merge, crie e envie a tag a partir da `main`:
+3. Depois do merge, dispare o workflow de um destes dois jeitos:
+   - **Pelo site, sem terminal:** na aba [Actions](https://github.com/Silvamenu/Relaunch/actions/workflows/release.yml), abra **Release**, clique em **Run workflow**, deixe a branch `main`, informe a versão sem o `v` (por exemplo `0.2.0`) e confirme. O workflow cria a tag `vx.y.z` no commit atual da `main`.
+   - **Pelo terminal**, criando e enviando a tag a partir da `main`:
 
-   ```bash
-   git switch main && git pull
-   git tag vx.y.z
-   git push origin vx.y.z
-   ```
+     ```bash
+     git switch main && git pull
+     git tag vx.y.z
+     git push origin vx.y.z
+     ```
 
 4. Quando o workflow terminar, abra o rascunho em [Releases](https://github.com/Silvamenu/Relaunch/releases), confira o instalador e as notas e clique em **Publish release**.
 
-O workflow [`release.yml`](.github/workflows/release.yml) confere se a tag aponta para um commit da `main` e bate com a `version` do `package.json`, roda os testes e roda `npm run release`, que gera as notas a partir do `CHANGELOG.md` e envia o instalador e o `latest.yml` para um release em **rascunho**. Nada chega aos apps instalados antes do passo 4. Para gerar o rascunho fora do CI, use `GH_TOKEN=<token> npm run release`.
+O workflow [`release.yml`](.github/workflows/release.yml) confere se a tag aponta para um commit da `main` e bate com a `version` do `package.json`, roda os testes e roda `npm run release`, que gera as notas a partir do `CHANGELOG.md` e envia o instalador e o `latest.yml` para um release em **rascunho**. Na execução pelo site, ele só cria a tag depois dessas conferências e dos testes; se a execução falhar no meio, basta rodar de novo com a mesma versão. Nada chega aos apps instalados antes do passo 4. Para gerar o rascunho fora do CI, use `GH_TOKEN=<token> npm run release`.
 
 Os apps instalados checam os releases ao abrir e a cada 3 horas, baixam em segundo plano e instalam quando você clica no botão azul ou ao fechar o app.
 
