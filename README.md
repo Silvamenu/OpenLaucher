@@ -13,7 +13,7 @@
 
 O Relaunch é um launcher para Windows e Linux que reúne os **ports e recompilações de jogos feitos por fãs**: Ship of Harkinian, Zelda 64: Recompiled, Starship e outros. Ele baixa o port do repositório oficial (ou usa o que você já instalou), mostra o que falta configurar, abre o jogo e mantém tudo atualizado a partir dos releases oficiais de cada projeto. A interface está em português (Brasil) e em inglês.
 
-![Biblioteca do Relaunch no tema escuro, com cinco jogos e o status de cada um](docs/screenshots/biblioteca.png)
+![Biblioteca do Relaunch no tema escuro, com cinco jogos (entre eles God of War III Remastered, via shadPS4) e o status de cada um](docs/screenshots/biblioteca.png)
 
 > [!IMPORTANT]
 > O Relaunch **nunca** baixa, distribui ou embute ROMs, assets ou qualquer arquivo com direitos autorais. Ele só usa arquivos que você já possui, e só baixa os binários publicados pelos próprios projetos, direto do repositório declarado no manifesto, via HTTPS.
@@ -66,6 +66,8 @@ O app traz **66 projetos** em listas por plataforma, as mesmas da tela **Adicion
 - **Port ou recompilação**: o jogo refeito para rodar direto no PC. O app baixa o port do repositório oficial; o conteúdo do jogo vem da sua ROM ou do seu disco.
 - **Emulador**: o programa que imita o console. O app instala o emulador uma vez, do repositório oficial dele.
 - **Jogo via emulador**: jogos grandes de console (como **God of War III Remastered**). O app abre o emulador com o **seu** jogo, o dump da sua cópia. O selo mostra quão bem ele roda hoje, pela lista de compatibilidade oficial do emulador: **Jogável**, **Roda com falhas** ou **Experimental**.
+
+![Tela Adicionar jogo com a busca "god of war": a lista PlayStation aberta mostra sete jogos, cada um com o emulador e o selo de compatibilidade](docs/screenshots/catalogo.png)
 
 > [!NOTE]
 > O Relaunch nunca baixa jogos, ROMs, BIOS ou firmware. Os jogos via emulador pedem um PC forte (processador recente e placa de vídeo com Vulkan).
